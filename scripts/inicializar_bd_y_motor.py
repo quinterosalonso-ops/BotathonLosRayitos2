@@ -1,18 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Inicializador de Base de Datos SQLite (teleton_planificacion.db), Motor de Cálculo Parametrizable
-y Generador de Archivos Excel de Prueba para Blue Prism (Data - SQLite + MS Excel VBO - Extended).
-"""
+"""Inicializador MSSQLLocalDB, motor parametrizable y generador de Excel para Blue Prism."""
 
 import os
 import sys
 import math
-import sqlite3
+import re
 import zipfile
 import datetime
 import xml.etree.ElementTree as ET
 from collections import defaultdict
+
+import pyodbc
 
 sys.stdout.reconfigure(encoding='utf-8')
 
@@ -26,9 +25,35 @@ os.makedirs(DB_DIR, exist_ok=True)
 os.makedirs(DEMO_DIR, exist_ok=True)
 os.makedirs(SALIDAS_DIR, exist_ok=True)
 
-DB_PATH = os.path.join(DB_DIR, 'teleton_planificacion.db')
+DATABASE_NAME = 'TeletonPlanificacion'
+SQL_SCHEMA_PATH = os.path.join(DB_DIR, 'teleton_planificacion_mssql.sql')
 EXCEL_CONTRATOS = os.path.join(SOLICITUD_DIR, 'Nac - Base contratos x mes.xlsx')
 EXCEL_PLANIFICACION = os.path.join(SOLICITUD_DIR, 'Nac - Planificación Asistencial x mes.xlsx')
+
+
+def connection_string(database):
+    drivers = pyodbc.drivers()
+    driver = next((name for name in ('ODBC Driver 18 for SQL Server', 'ODBC Driver 17 for SQL Server') if name in drivers), None)
+    if driver is None:
+        raise RuntimeError('No se encontró ODBC Driver 18 o 17 for SQL Server.')
+    return (
+        f'DRIVER={{{driver}}};'
+        f'SERVER=(LocalDB)\\MSSQLLocalDB;'
+        f'DATABASE={database};'
+        'Trusted_Connection=yes;TrustServerCertificate=yes;'
+    )
+
+
+def ensure_database():
+    with pyodbc.connect(connection_string('master'), autocommit=True) as conn:
+        conn.cursor().execute(
+            "IF DB_ID(N'TeletonPlanificacion') IS NULL CREATE DATABASE [TeletonPlanificacion]"
+        )
+
+
+def connect_database():
+    ensure_database()
+    return pyodbc.connect(connection_string(DATABASE_NAME))
 
 NS = {'main': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
 EXCEL_EPOCH = datetime.date(1899, 12, 30)
@@ -93,474 +118,12 @@ def load_xlsx_sheet(path, sheet_xml_path):
 
 
 def create_schema(conn):
-    cur = conn.cursor()
-    cur.executescript("""
-    PRAGMA foreign_keys = ON;
-
-    DROP TABLE IF EXISTS auditoria_cambios;
-    DROP TABLE IF EXISTS errores_validacion;
-    DROP TABLE IF EXISTS ejecucion_sic;
-    DROP TABLE IF EXISTS planificacion_mensual;
-    DROP TABLE IF EXISTS dotacion_asistencial;
-    DROP TABLE IF EXISTS stg_contratos_buk;
-    DROP TABLE IF EXISTS contratos_buk;
-    DROP TABLE IF EXISTS excepciones_multi_it;
-    DROP TABLE IF EXISTS lop_instituto;
-    DROP TABLE IF EXISTS feriados_regionales;
-    DROP TABLE IF EXISTS calendario_2026;
-    DROP TABLE IF EXISTS factores_grupales;
-    DROP TABLE IF EXISTS catalogo_asignaciones;
-    DROP TABLE IF EXISTS distribucion_nac;
-    DROP TABLE IF EXISTS especialidades;
-    DROP TABLE IF EXISTS institutos;
-    DROP TABLE IF EXISTS parametros_globales;
-
-    -- 1. Parámetros Globales editables sin tocar código
-    CREATE TABLE parametros_globales (
-        clave TEXT PRIMARY KEY,
-        valor_numerico REAL,
-        valor_texto TEXT,
-        descripcion TEXT,
-        updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-
-    -- 2. Catálogo de Institutos Teletón (17 institutos)
-    CREATE TABLE institutos (
-        it INTEGER PRIMARY KEY,
-        codigo_inst TEXT NOT NULL,
-        nombre_instituto TEXT NOT NULL,
-        zona_geografica TEXT NOT NULL,
-        aplica_grupales_mayor INTEGER DEFAULT 0, -- 1 para Santiago (131) y Concepción (81)
-        dias_vacaciones_legales REAL DEFAULT 15.0, -- 20.0 en Coyhaique/Aysén (111)
-        sem_vac_ene REAL DEFAULT 0.0,              -- 0.4 en Coyhaique
-        sem_vac_feb REAL DEFAULT 3.0,              -- 3.6 en Coyhaique, 3.0 resto
-        dias_feriado_adicional REAL DEFAULT 5.0,
-        proyeccion_pacientes_2025 REAL DEFAULT 0.0
-    );
-
-    -- 3. Catálogo de Especialidades / Áreas
-    CREATE TABLE especialidades (
-        cod_esp TEXT PRIMARY KEY,
-        nombre_especialidad TEXT NOT NULL,
-        dias_jornada_nacional REAL DEFAULT 0.0
-    );
-
-    -- 4. Matriz Parametrizable de Distribución por Cargo y Tramo (Distribucion_NAC)
-    CREATE TABLE distribucion_nac (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        cod_esp TEXT,
-        cargo TEXT UNIQUE NOT NULL,
-        unidad TEXT,
-        std_min_directa REAL NOT NULL DEFAULT 40.0,
-        std_min_indirecta REAL NOT NULL DEFAULT 30.0,
-        std_min_pabellon REAL DEFAULT 0.0,
-        -- Tramo 1: >= 40 Horas
-        t1_pct_dir REAL NOT NULL DEFAULT 0.65,
-        t1_pct_ind REAL NOT NULL DEFAULT 0.10,
-        t1_pct_nas REAL NOT NULL DEFAULT 0.25,
-        -- Tramo 2: 22 <= Horas < 40
-        t2_pct_dir REAL NOT NULL DEFAULT 0.70,
-        t2_pct_ind REAL NOT NULL DEFAULT 0.10,
-        t2_pct_nas REAL NOT NULL DEFAULT 0.20,
-        -- Tramo 3: < 22 Horas
-        t3_pct_dir REAL NOT NULL DEFAULT 0.75,
-        t3_pct_ind REAL NOT NULL DEFAULT 0.10,
-        t3_pct_nas REAL NOT NULL DEFAULT 0.15,
-        es_quirurgico INTEGER DEFAULT 0
-    );
-
-    -- 5. Catálogo de Asignaciones Especiales
-    CREATE TABLE catalogo_asignaciones (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nombre_asignacion TEXT UNIQUE NOT NULL,
-        horas_semanales REAL DEFAULT 1.0,
-        requiere_autorizacion_dmn INTEGER DEFAULT 0,
-        descripcion TEXT
-    );
-
-    -- 6. Factores de Atención Grupal por Especialidad
-    CREATE TABLE factores_grupales (
-        cod_esp TEXT PRIMARY KEY,
-        pct_grupal_estandar REAL NOT NULL DEFAULT 0.0,
-        num_pacientes_san_con REAL NOT NULL DEFAULT 0.0,
-        num_pacientes_otros_it REAL NOT NULL DEFAULT 0.0
-    );
-
-    -- 7. Calendario 2026 por Mes
-    CREATE TABLE calendario_2026 (
-        mes INTEGER PRIMARY KEY,
-        nombre_mes TEXT NOT NULL,
-        fecha_inicio TEXT NOT NULL,
-        fecha_termino TEXT NOT NULL,
-        periodo_serial_excel INTEGER NOT NULL,
-        dias_totales INTEGER NOT NULL,
-        dias_inhabiles_sin_vac INTEGER NOT NULL,
-        dias_inhabiles_con_vac INTEGER NOT NULL,
-        dias_habiles_sin_vac INTEGER NOT NULL,
-        dias_habiles_con_vac INTEGER NOT NULL,
-        semanas_disponibles REAL NOT NULL,
-        regla_redondeo_semhab TEXT DEFAULT 'EXACT' -- 'ROUNDUP_1' en meses 5 y 7
-    );
-
-    -- 8. Feriados Nacionales y Regionales 2026
-    CREATE TABLE feriados_regionales (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        fecha TEXT NOT NULL,
-        mes INTEGER NOT NULL,
-        dia_semana INTEGER NOT NULL,
-        nombre_feriado TEXT NOT NULL,
-        ambito_it TEXT DEFAULT 'NACIONAL' -- 'NACIONAL' o código IT / abreviatura (Ari, Iqu, Cop, Coq, Nub)
-    );
-
-    -- 9. Producción LOP por Instituto
-    CREATE TABLE lop_instituto (
-        it INTEGER PRIMARY KEY,
-        instituto TEXT NOT NULL,
-        total_atenciones_lop REAL NOT NULL DEFAULT 0.0
-    );
-
-    -- 10. Excepciones Multi-Instituto
-    CREATE TABLE excepciones_multi_it (
-        excep_id TEXT PRIMARY KEY,
-        persona_id INTEGER NOT NULL,
-        it INTEGER NOT NULL,
-        instituto TEXT NOT NULL,
-        nombre_it TEXT,
-        cargo TEXT,
-        ccosto INTEGER,
-        fec_ingreso TEXT,
-        hs_ene REAL DEFAULT 0, hs_feb REAL DEFAULT 0, hs_mar REAL DEFAULT 0, hs_abr REAL DEFAULT 0,
-        hs_may REAL DEFAULT 0, hs_jun REAL DEFAULT 0, hs_jul REAL DEFAULT 0, hs_ago REAL DEFAULT 0,
-        hs_sep REAL DEFAULT 0, hs_oct REAL DEFAULT 0, hs_nov REAL DEFAULT 0, hs_dic REAL DEFAULT 0,
-        dias_semana REAL DEFAULT 5
-    );
-
-    -- 11. Contratos Mensuales BUK (Fuente: Nac - Base contratos x mes.xlsx)
-    CREATE TABLE contratos_buk (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        it INTEGER NOT NULL,
-        instituto TEXT NOT NULL,
-        persona_id INTEGER NOT NULL,
-        area_buk TEXT,
-        nombre_subarea TEXT,
-        centro_costo INTEGER,
-        fecha_nacimiento TEXT,
-        periodo_serial INTEGER,
-        periodo_fecha TEXT,
-        mes INTEGER,
-        tipo_contrato TEXT,
-        tipo_trab_anterior TEXT,
-        fecha_ingreso TEXT,
-        fecha_termino TEXT,
-        horas_semanales REAL NOT NULL,
-        cargo TEXT NOT NULL,
-        tipo_trabajador TEXT,
-        dias_jornada TEXT,
-        reg_sic TEXT,
-        cod_esp TEXT,
-        ndias REAL NOT NULL DEFAULT 5,
-        origen_carga TEXT DEFAULT 'INICIAL',
-        UNIQUE(it, persona_id, mes)
-    );
-
-    -- Tabla Staging para lectura cruda desde Blue Prism (MS Excel VBO - Extended -> Data - SQLite)
-    CREATE TABLE stg_contratos_buk (
-        IT TEXT,
-        Instituto TEXT,
-        PersonaId TEXT,
-        Area TEXT,
-        Nombre_Sub_area TEXT,
-        Centro_de_Costo TEXT,
-        Fecha_de_Nacimiento TEXT,
-        Periodo TEXT,
-        Tipo_de_Contrato TEXT,
-        Tipo_Trab_161225 TEXT,
-        Fecha_Ingreso_Compania TEXT,
-        Fecha_Termino TEXT,
-        Horas_Semanales TEXT,
-        Cargo TEXT,
-        Tipo_Trabajador TEXT,
-        Dias_de_la_Jornada TEXT,
-        Reg_SIC TEXT,
-        Cod_Esp TEXT,
-        Ndias TEXT
-    );
-
-    -- 12. Dotación Asistencial Calculada y Parametrizada (471 filas base + altas dinámicas)
-    CREATE TABLE dotacion_asistencial (
-        fila_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        orden INTEGER,
-        it INTEGER NOT NULL,
-        instituto TEXT NOT NULL,
-        division TEXT,
-        vacante_nuevo TEXT DEFAULT '',
-        excepcion_id TEXT DEFAULT '',
-        fecha_inicio_contrato TEXT,
-        fecha_termino_trabajo TEXT,
-        horario_vigente TEXT,
-        fecha_nacimiento TEXT,
-        persona_id INTEGER NOT NULL,
-        repetido TEXT DEFAULT '',
-        cargo TEXT NOT NULL,
-        area TEXT NOT NULL,
-        ccosto INTEGER,
-        desc_ccosto TEXT,
-        tipo_contrato TEXT,
-        tipo_cargo TEXT,
-        licencia_extensa TEXT DEFAULT '',
-        periodo_inicio_jornada TEXT,
-        periodo_fin_jornada TEXT,
-        -- Horas contratadas por mes (Ene..Dic)
-        hs_m1 REAL DEFAULT 0, hs_m2 REAL DEFAULT 0, hs_m3 REAL DEFAULT 0, hs_m4 REAL DEFAULT 0,
-        hs_m5 REAL DEFAULT 0, hs_m6 REAL DEFAULT 0, hs_m7 REAL DEFAULT 0, hs_m8 REAL DEFAULT 0,
-        hs_m9 REAL DEFAULT 0, hs_m10 REAL DEFAULT 0, hs_m11 REAL DEFAULT 0, hs_m12 REAL DEFAULT 0,
-        vigencia_hs_12 INTEGER DEFAULT 1,
-        hs_dic REAL DEFAULT 0,
-        prom_pond_hs REAL DEFAULT 0,
-        tramo_jornada TEXT DEFAULT '>=40',
-        cambio_jornada TEXT DEFAULT '',
-        dias_semana_contrato REAL DEFAULT 5,
-        hd_promedio REAL DEFAULT 8,
-        colacion_en_contrato TEXT DEFAULT 'N',
-        horas_colacion_contrato REAL DEFAULT 0,
-        hs_disp_antes_nas_ene_abr REAL DEFAULT 0,
-        hs_disp_antes_nas_dic REAL DEFAULT 0,
-        hs_pausa_saludable REAL DEFAULT 0,
-        hs_benef_colacion_15m REAL DEFAULT 0,
-        hs_otras_nas REAL DEFAULT 0,
-        hs_nas_total REAL DEFAULT 0,
-        pct_nas_base REAL DEFAULT 0,
-        pct_directo_base REAL DEFAULT 0,
-        pct_indirecto_base REAL DEFAULT 0,
-        asignacion_1 TEXT DEFAULT '',
-        hrs_asig_1 REAL DEFAULT 0,
-        asignacion_2 TEXT DEFAULT '',
-        hrs_asig_2 REAL DEFAULT 0,
-        asignacion_3_dmn TEXT DEFAULT '',
-        hrs_asig_3 REAL DEFAULT 0,
-        estado_aprobacion_dmn TEXT DEFAULT 'APROBADO',
-        hrs_asig_4_sindical REAL DEFAULT 0,
-        total_hrs_asignacion REAL DEFAULT 0,
-        -- Porcentajes y tasas Período 1 (Ene - Abr: 44h)
-        pct_nas_final_p1 REAL DEFAULT 0,
-        pct_directo_final_p1 REAL DEFAULT 0,
-        pct_indirecto_final_p1 REAL DEFAULT 0,
-        pct_asistencial_p1 REAL DEFAULT 0,
-        hs_disp_ate_p1 REAL DEFAULT 0,
-        ate_dir_sem_p1 REAL DEFAULT 0,
-        ate_ind_sem_p1 REAL DEFAULT 0,
-        ate_dir_grupal_sem_p1 REAL DEFAULT 0,
-        total_ate_sem_p1 REAL DEFAULT 0,
-        -- Porcentajes y tasas Período 2 (May - Dic: 42h)
-        pct_nas_final_p2 REAL DEFAULT 0,
-        pct_directo_final_p2 REAL DEFAULT 0,
-        pct_indirecto_final_p2 REAL DEFAULT 0,
-        pct_asistencial_p2 REAL DEFAULT 0,
-        hs_disp_ate_p2 REAL DEFAULT 0,
-        std_min_directa REAL DEFAULT 40,
-        std_min_indirecta REAL DEFAULT 30,
-        ate_dir_sem_p2 REAL DEFAULT 0,
-        ate_ind_sem_p2 REAL DEFAULT 0,
-        pct_grupal_estandar REAL DEFAULT 0,
-        cambio_pct_grupal_dmn REAL DEFAULT 0,
-        usa_override_grupal INTEGER DEFAULT 0,
-        num_pacientes_grupo REAL DEFAULT 0,
-        ate_dir_grupal_sem_p2 REAL DEFAULT 0,
-        ate_ind_total_sem_p2 REAL DEFAULT 0,
-        total_ate_sem_p2 REAL DEFAULT 0,
-        -- Semanas Calendario Base (BI..BT)
-        cal_m1 REAL DEFAULT 0, cal_m2 REAL DEFAULT 0, cal_m3 REAL DEFAULT 0, cal_m4 REAL DEFAULT 0,
-        cal_m5 REAL DEFAULT 0, cal_m6 REAL DEFAULT 0, cal_m7 REAL DEFAULT 0, cal_m8 REAL DEFAULT 0,
-        cal_m9 REAL DEFAULT 0, cal_m10 REAL DEFAULT 0, cal_m11 REAL DEFAULT 0, cal_m12 REAL DEFAULT 0,
-        semanas_habiles_planificadas REAL DEFAULT 0,
-        -- Licencias (BV..CG)
-        lic_m1 REAL DEFAULT 0, lic_m2 REAL DEFAULT 0, lic_m3 REAL DEFAULT 0, lic_m4 REAL DEFAULT 0,
-        lic_m5 REAL DEFAULT 0, lic_m6 REAL DEFAULT 0, lic_m7 REAL DEFAULT 0, lic_m8 REAL DEFAULT 0,
-        lic_m9 REAL DEFAULT 0, lic_m10 REAL DEFAULT 0, lic_m11 REAL DEFAULT 0, lic_m12 REAL DEFAULT 0,
-        -- Vacaciones (CH..CS)
-        vac_m1 REAL DEFAULT 0, vac_m2 REAL DEFAULT 0, vac_m3 REAL DEFAULT 0, vac_m4 REAL DEFAULT 0,
-        vac_m5 REAL DEFAULT 0, vac_m6 REAL DEFAULT 0, vac_m7 REAL DEFAULT 0, vac_m8 REAL DEFAULT 0,
-        vac_m9 REAL DEFAULT 0, vac_m10 REAL DEFAULT 0, vac_m11 REAL DEFAULT 0, vac_m12 REAL DEFAULT 0,
-        -- Permisos (CT..DE)
-        perm_m1 REAL DEFAULT 0, perm_m2 REAL DEFAULT 0, perm_m3 REAL DEFAULT 0, perm_m4 REAL DEFAULT 0,
-        perm_m5 REAL DEFAULT 0, perm_m6 REAL DEFAULT 0, perm_m7 REAL DEFAULT 0, perm_m8 REAL DEFAULT 0,
-        perm_m9 REAL DEFAULT 0, perm_m10 REAL DEFAULT 0, perm_m11 REAL DEFAULT 0, perm_m12 REAL DEFAULT 0,
-        -- Otros descuentos y beneficios (DF..DY)
-        feriado_zona_extrema_ene REAL DEFAULT 0,
-        feriado_zona_extrema_feb REAL DEFAULT 0,
-        mes_cumpleanos INTEGER DEFAULT 0,
-        dias_cumpleanos REAL DEFAULT 0,
-        visperas_fiestas_patrias REAL DEFAULT 0,
-        visperas_navidad_ano_nuevo REAL DEFAULT 0,
-        feriado_legal_adicional REAL DEFAULT 0,
-        dias_administrativos REAL DEFAULT 0,
-        plan_anual_capacitacion REAL DEFAULT 0,
-        hexa_ctr REAL DEFAULT 0,
-        jornada_nacional REAL DEFAULT 0,
-        dias_progresivos REAL DEFAULT 0,
-        dias_complementarios REAL DEFAULT 0,
-        ley_21530 REAL DEFAULT 0,
-        vacaciones_pendientes REAL DEFAULT 0,
-        jornadas_directiva_sindical REAL DEFAULT 0,
-        ajuste_dif_dias_contrato REAL DEFAULT 0,
-        lactancia_dias_ano REAL DEFAULT 0,
-        meses_2do_semestre REAL DEFAULT 0,
-        sem_mes_prorratear_2do_sem REAL DEFAULT 0,
-        -- Semanas Hábiles Efectivas por Mes (DZ..EK)
-        semhab_m1 REAL DEFAULT 0, semhab_m2 REAL DEFAULT 0, semhab_m3 REAL DEFAULT 0, semhab_m4 REAL DEFAULT 0,
-        semhab_m5 REAL DEFAULT 0, semhab_m6 REAL DEFAULT 0, semhab_m7 REAL DEFAULT 0, semhab_m8 REAL DEFAULT 0,
-        semhab_m9 REAL DEFAULT 0, semhab_m10 REAL DEFAULT 0, semhab_m11 REAL DEFAULT 0, semhab_m12 REAL DEFAULT 0,
-        semanas_habiles_totales REAL DEFAULT 0,
-        dias_habiles_totales REAL DEFAULT 0,
-        -- Atenciones Planificadas Directas por Mes (EN..EY)
-        plan_dir_m1 REAL DEFAULT 0, plan_dir_m2 REAL DEFAULT 0, plan_dir_m3 REAL DEFAULT 0, plan_dir_m4 REAL DEFAULT 0,
-        plan_dir_m5 REAL DEFAULT 0, plan_dir_m6 REAL DEFAULT 0, plan_dir_m7 REAL DEFAULT 0, plan_dir_m8 REAL DEFAULT 0,
-        plan_dir_m9 REAL DEFAULT 0, plan_dir_m10 REAL DEFAULT 0, plan_dir_m11 REAL DEFAULT 0, plan_dir_m12 REAL DEFAULT 0,
-        total_plan_ate_dir REAL DEFAULT 0,
-        -- Atenciones Planificadas Directas + Indirectas por Mes (FA..FL)
-        plan_tot_m1 REAL DEFAULT 0, plan_tot_m2 REAL DEFAULT 0, plan_tot_m3 REAL DEFAULT 0, plan_tot_m4 REAL DEFAULT 0,
-        plan_tot_m5 REAL DEFAULT 0, plan_tot_m6 REAL DEFAULT 0, plan_tot_m7 REAL DEFAULT 0, plan_tot_m8 REAL DEFAULT 0,
-        plan_tot_m9 REAL DEFAULT 0, plan_tot_m10 REAL DEFAULT 0, plan_tot_m11 REAL DEFAULT 0, plan_tot_m12 REAL DEFAULT 0,
-        total_plan_ate_dir_ind REAL DEFAULT 0,
-        -- Meta de Gestión (90%) Directa por Mes (FN..FY)
-        mg_dir_m1 REAL DEFAULT 0, mg_dir_m2 REAL DEFAULT 0, mg_dir_m3 REAL DEFAULT 0, mg_dir_m4 REAL DEFAULT 0,
-        mg_dir_m5 REAL DEFAULT 0, mg_dir_m6 REAL DEFAULT 0, mg_dir_m7 REAL DEFAULT 0, mg_dir_m8 REAL DEFAULT 0,
-        mg_dir_m9 REAL DEFAULT 0, mg_dir_m10 REAL DEFAULT 0, mg_dir_m11 REAL DEFAULT 0, mg_dir_m12 REAL DEFAULT 0,
-        total_mg_dir REAL DEFAULT 0,
-        -- Meta de Gestión (90%) Directa + Indirecta por Mes (GA..GL)
-        mg_tot_m1 REAL DEFAULT 0, mg_tot_m2 REAL DEFAULT 0, mg_tot_m3 REAL DEFAULT 0, mg_tot_m4 REAL DEFAULT 0,
-        mg_tot_m5 REAL DEFAULT 0, mg_tot_m6 REAL DEFAULT 0, mg_tot_m7 REAL DEFAULT 0, mg_tot_m8 REAL DEFAULT 0,
-        mg_tot_m9 REAL DEFAULT 0, mg_tot_m10 REAL DEFAULT 0, mg_tot_m11 REAL DEFAULT 0, mg_tot_m12 REAL DEFAULT 0,
-        total_mg_dir_ind REAL DEFAULT 0,
-        -- Resúmenes Anuales (GN..GV)
-        plan_anual_directa REAL DEFAULT 0,
-        plan_anual_indirecta REAL DEFAULT 0,
-        plan_anual_total REAL DEFAULT 0,
-        tiempo_anual_directa_hrs REAL DEFAULT 0,
-        tiempo_anual_indirecta_hrs REAL DEFAULT 0,
-        tiempo_anual_total_hrs REAL DEFAULT 0,
-        mg_anual_directa REAL DEFAULT 0,
-        mg_anual_indirecta REAL DEFAULT 0,
-        mg_anual_total REAL DEFAULT 0,
-        foja_pct REAL DEFAULT 0,
-        observaciones TEXT DEFAULT '',
-        version_id INTEGER DEFAULT 1,
-        updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-    );
-
-    -- 13. Tabla Desnormalizada Mensual por Profesional (para filtros por mes en Dashboard y cruce con SIC)
-    CREATE TABLE planificacion_mensual (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        fila_id INTEGER NOT NULL,
-        persona_id INTEGER NOT NULL,
-        it INTEGER NOT NULL,
-        instituto TEXT NOT NULL,
-        area TEXT NOT NULL,
-        cargo TEXT NOT NULL,
-        mes INTEGER NOT NULL,
-        nombre_mes TEXT NOT NULL,
-        periodo_jornada TEXT NOT NULL, -- 'Ene-Abr (44h)' o 'May-Dic (42h)'
-        horas_semanales_contratadas REAL NOT NULL,
-        semanas_calendario REAL NOT NULL,
-        semanas_habiles_efectivas REAL NOT NULL,
-        horas_mes_contratadas REAL NOT NULL,
-        horas_mes_disp_directa REAL NOT NULL,
-        horas_mes_disp_indirecta REAL NOT NULL,
-        horas_mes_nas REAL NOT NULL,
-        foja_mensual_pct REAL NOT NULL,
-        plan_ate_directa INTEGER NOT NULL,
-        plan_ate_indirecta INTEGER NOT NULL,
-        plan_ate_total INTEGER NOT NULL,
-        meta_90_directa INTEGER NOT NULL,
-        meta_90_indirecta INTEGER NOT NULL,
-        meta_90_total INTEGER NOT NULL
-    );
-
-    -- 14. Ejecución Real SIC (Sistema de Información Clínica) para contraste Plan vs Real
-    CREATE TABLE ejecucion_sic (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        persona_id INTEGER NOT NULL,
-        it INTEGER NOT NULL,
-        instituto TEXT NOT NULL,
-        area TEXT NOT NULL,
-        mes INTEGER NOT NULL,
-        ate_real_directa INTEGER NOT NULL DEFAULT 0,
-        ate_real_indirecta INTEGER NOT NULL DEFAULT 0,
-        ate_real_total INTEGER NOT NULL DEFAULT 0,
-        pct_cumplimiento_meta REAL DEFAULT 0.0,
-        estado_alerta TEXT DEFAULT 'OK',
-        fecha_carga TEXT DEFAULT CURRENT_TIMESTAMP,
-        UNIQUE(persona_id, it, mes)
-    );
-
-    -- 15. Bitácora de Errores de Validación detectados por Blue Prism
-    CREATE TABLE errores_validacion (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        fecha_deteccion TEXT DEFAULT CURRENT_TIMESTAMP,
-        origen_archivo TEXT NOT NULL,
-        fila_excel INTEGER,
-        persona_id TEXT,
-        it TEXT,
-        cargo TEXT,
-        campo_error TEXT NOT NULL,
-        valor_recibido TEXT,
-        descripcion_error TEXT NOT NULL,
-        severidad TEXT DEFAULT 'ERROR_BLOQUEANTE'
-    );
-
-    -- 16. Historial de Trazabilidad y Control de Versiones (Cambios BUK / Parámetros / Aprobaciones DMN)
-    CREATE TABLE auditoria_cambios (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        fecha_hora TEXT DEFAULT CURRENT_TIMESTAMP,
-        version_id INTEGER DEFAULT 1,
-        actor TEXT NOT NULL,            -- 'Bot Blue Prism', 'Planificación Central', 'DMN'
-        tipo_evento TEXT NOT NULL,      -- 'CARGA_INICIAL', 'ALTA_BUK', 'BAJA_BUK', 'CAMBIO_JORNADA', 'CAMBIO_PARAMETRO', 'APROBACION_ASIGNACION'
-        it INTEGER,
-        instituto TEXT,
-        persona_id INTEGER,
-        entidad_afectada TEXT,
-        campo_modificado TEXT,
-        valor_anterior TEXT,
-        valor_nuevo TEXT,
-        mes_inicio_vigencia INTEGER DEFAULT 1,
-        impacto_atenciones_anual INTEGER DEFAULT 0,
-        justificacion TEXT,
-        estado_aprobacion TEXT DEFAULT 'APROBADO'
-    );
-
-    -- Vista Consolidada Nacional por Instituto (Formato Solicitud.md)
-    CREATE VIEW vw_resumen_nacional_instituto AS
-    SELECT
-        i.it AS IT,
-        i.codigo_inst AS Cod_Inst,
-        i.nombre_instituto AS Instituto,
-        COUNT(d.fila_id) AS Dotacion_Profesionales,
-        ROUND(SUM(d.hs_dic), 0) AS Suma_Horas_Semanales_Dic,
-        ROUND(SUM(d.prom_pond_hs), 0) AS Suma_Horas_Semanales_Prom,
-        ROUND(SUM(d.hs_dic * d.pct_directo_final_p2), 2) AS Hrs_Sem_Atencion_Directa,
-        ROUND(SUM(d.hs_dic * d.pct_indirecto_final_p2), 2) AS Hrs_Sem_Atencion_Indirecta,
-        ROUND(SUM(d.hs_dic * d.pct_nas_final_p2), 2) AS Hrs_Sem_Actividad_NAS,
-        ROUND(
-            CASE WHEN SUM(d.hs_dic) > 0
-                 THEN SUM(d.hs_dic * d.pct_directo_final_p2) / SUM(d.hs_dic) * 100.0
-                 ELSE 0 END, 2
-        ) AS FOJA_Pct,
-        CAST(SUM(d.plan_anual_directa) AS INTEGER) AS Plan_Atencion_Anual_Directa,
-        CAST(SUM(d.plan_anual_indirecta) AS INTEGER) AS Plan_Atencion_Anual_Indirecta,
-        CAST(SUM(d.plan_anual_total) AS INTEGER) AS Plan_Total_Atenciones_Ano,
-        CAST(ROUND(SUM(d.plan_anual_total) * 0.90, 0) AS INTEGER) AS Meta_Gestion_90_Directo_Tabla,
-        CAST(SUM(d.mg_anual_directa) AS INTEGER) AS MG_Atencion_Anual_Directa,
-        CAST(SUM(d.mg_anual_indirecta) AS INTEGER) AS MG_Atencion_Anual_Indirecta,
-        CAST(SUM(d.mg_anual_total) AS INTEGER) AS MG_Total_Atenciones_Ano,
-        CAST(COALESCE(l.total_atenciones_lop, 0) AS INTEGER) AS Total_Atenciones_LOP,
-        CAST(SUM(d.mg_anual_total) + COALESCE(l.total_atenciones_lop, 0) AS INTEGER) AS Total_Planificacion_Con_LOP,
-        CAST(ROUND((SUM(d.mg_anual_total) + COALESCE(l.total_atenciones_lop, 0)) * 0.90, 0) AS INTEGER) AS Meta_Total_Con_LOP_90
-    FROM institutos i
-    LEFT JOIN dotacion_asistencial d ON i.it = d.it
-    LEFT JOIN lop_instituto l ON i.it = l.it
-    GROUP BY i.it, i.codigo_inst, i.nombre_instituto, l.total_atenciones_lop
-    ORDER BY i.it;
-    """)
+    with open(SQL_SCHEMA_PATH, 'r', encoding='utf-8') as schema_file:
+        schema = schema_file.read()
+    cursor = conn.cursor()
+    for batch in re.split(r"(?im)^\s*GO\s*$", schema):
+        if batch.strip():
+            cursor.execute(batch)
     conn.commit()
 
 
@@ -778,8 +341,9 @@ def seed_all_data(conn):
     for r_idx in range(2, 18):
         c = lop_rows.get(r_idx, {})
         if c.get('A'):
+            cur.execute("DELETE FROM lop_instituto WHERE it=?", (to_int(c.get('A')),))
             cur.execute(
-                "INSERT OR REPLACE INTO lop_instituto (it, instituto, total_atenciones_lop) VALUES (?, ?, ?)",
+                "INSERT INTO lop_instituto (it, instituto, total_atenciones_lop) VALUES (?, ?, ?)",
                 (to_int(c.get('A')), c.get('B', '').strip(), to_float(c.get('C'), 0.0))
             )
 
@@ -791,8 +355,9 @@ def seed_all_data(conn):
         it = to_int(c.get('C'))
         if pid > 0 and it > 0:
             excep_id = c.get('D', '').strip() or f"{r_idx}-{pid}"
+            cur.execute("DELETE FROM excepciones_multi_it WHERE excep_id=?", (excep_id,))
             cur.execute("""
-                INSERT OR REPLACE INTO excepciones_multi_it (
+                INSERT INTO excepciones_multi_it (
                     excep_id, persona_id, it, instituto, nombre_it, cargo, ccosto, fec_ingreso,
                     hs_ene, hs_feb, hs_mar, hs_abr, hs_may, hs_jun, hs_jul, hs_ago, hs_sep, hs_oct, hs_nov, hs_dic,
                     dias_semana
@@ -825,8 +390,9 @@ def seed_all_data(conn):
         mes = period_to_month.get(p_serial, 0)
         hs = to_float(c.get('M'))
         cont_by_pid_it[(pid, it)][mes] = hs
+        cur.execute("DELETE FROM contratos_buk WHERE it=? AND persona_id=? AND mes=?", (it, pid, mes))
         cur.execute("""
-            INSERT OR REPLACE INTO contratos_buk (
+            INSERT INTO contratos_buk (
                 it, instituto, persona_id, area_buk, nombre_subarea, centro_costo,
                 fecha_nacimiento, periodo_serial, periodo_fecha, mes, tipo_contrato,
                 tipo_trab_anterior, fecha_ingreso, fecha_termino, horas_semanales,
@@ -1015,9 +581,9 @@ def seed_all_data(conn):
                 tiempo_anual_directa_hrs, tiempo_anual_indirecta_hrs, tiempo_anual_total_hrs,
                 mg_anual_directa, mg_anual_indirecta, mg_anual_total,
                 foja_pct, observaciones, version_id
-            ) VALUES ({placeholders})
+            ) OUTPUT INSERTED.fila_id VALUES ({placeholders})
         """, vals_insert)
-        fila_id = cur.lastrowid
+        fila_id = cur.fetchone()[0]
 
         # Poblar planificacion_mensual (12 meses) y ejecucion_sic (meses 1..6 simulados realistas)
         area = c.get('N', '').strip()
@@ -1062,8 +628,9 @@ def seed_all_data(conn):
                 real_tot = real_dir + real_ind
                 pct_meta = round((real_tot / m_tot * 100.0), 1) if m_tot > 0 else 100.0
                 alerta = 'CUMPLIMIENTO_OPTIMO' if pct_meta >= 100.0 else ('EN_RIESGO' if pct_meta >= 90.0 else 'BAJO_META_90')
+                cur.execute("DELETE FROM ejecucion_sic WHERE persona_id=? AND it=? AND mes=?", (pid, it, m))
                 cur.execute("""
-                    INSERT OR REPLACE INTO ejecucion_sic (
+                    INSERT INTO ejecucion_sic (
                         persona_id, it, instituto, area, mes,
                         ate_real_directa, ate_real_indirecta, ate_real_total,
                         pct_cumplimiento_meta, estado_alerta
@@ -1077,7 +644,7 @@ def seed_all_data(conn):
             valor_anterior, valor_nuevo, mes_inicio_vigencia, impacto_atenciones_anual,
             justificacion, estado_aprobacion
         ) VALUES (
-            1, 'Bot Blue Prism (Data - SQLite)', 'CARGA_INICIAL', 'Dotación Nacional 2026',
+            1, 'Bot Blue Prism (Data - MSSQLLocalDB)', 'CARGA_INICIAL', 'Dotación Nacional 2026',
             'Línea Base Anual', '0 registros', '471 filas / 462 profesionales / 3.123 contratos BUK',
             1, 692706, 'Inicialización automática desde Nac - Base contratos x mes.xlsx y Nac - Planificación Asistencial x mes.xlsx',
             'APROBADO'
@@ -1197,7 +764,7 @@ def generate_demo_excels(conn):
         FROM ejecucion_sic
         WHERE mes <= 3
         ORDER BY it, persona_id, mes
-        LIMIT 300
+        OFFSET 0 ROWS FETCH NEXT 300 ROWS ONLY
     """)
     sic_rows = [list(r) for r in cur.fetchall()]
     headers_sic = [
@@ -1211,10 +778,8 @@ def generate_demo_excels(conn):
 
 
 def main():
-    if os.path.exists(DB_PATH):
-        os.remove(DB_PATH)
-    conn = sqlite3.connect(DB_PATH)
-    print(f"[1/3] Creando esquema relacional en {DB_PATH}...")
+    conn = connect_database()
+    print(f"[1/3] Creando esquema relacional en MSSQLLocalDB ({DATABASE_NAME})...")
     create_schema(conn)
     print("[2/3] Cargando catálogos, contratos BUK (3.123 filas) y planificación asistencial (471 filas)...")
     seed_all_data(conn)

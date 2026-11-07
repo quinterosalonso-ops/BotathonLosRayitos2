@@ -39,7 +39,7 @@ Este plan de trabajo organiza las **16 horas de desarrollo** para construir, pro
 - **Objetivo**: Tener los datos de ambos archivos Excel cargados y el motor matemático reproduciendo exactamente los números de `Dotacion_Asistencial` y `Planificacion Total`.
 - **Tareas**:
   1. **Modelado de Datos (Hora 1)**:
-     - Crear esquema de base de datos (SQLite / PostgreSQL) o almacén estructurado con:
+     - Crear esquema de base de datos en MSSQLLocalDB con:
        - `institutos`, `especialidades`, `cargos_distribucion_nac`, `catalogo_asignaciones`, `factores_grupales`, `calendario_2026`, `feriados_regionales`, `lop_instituto`.
        - `contratos_buk_mensual` (datos crudos desde `Dotacion_2026`).
        - `excepciones_multi_it`, `ausentismos_descuentos`, `asignaciones_profesional`.

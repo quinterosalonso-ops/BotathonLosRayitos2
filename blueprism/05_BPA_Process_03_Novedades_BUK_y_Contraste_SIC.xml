@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<process name="03_Novedades_BUK_y_Contraste_SIC" version="1.0" bpversion="7.5.1.18099" cpeversion="10.0.136.0" narrative="Proceso para Demo en Vivo: lee un reporte nuevo de BUK con cambios (altas, bajas, cambios de jornada y errores intencionales) y reporte SIC usando MS Excel VBO - Extended, valida y recalcula desde el mes de vigencia en Data - SQLite, y exporta el reporte consolidado actualizado." byrefcollection="true" processrunningmessage="" disableversioning="false" preferredid="33333333-aaaa-4bbb-8ccc-000000000003">
+<process name="03_Novedades_BUK_y_Contraste_SIC" version="1.0" bpversion="7.5.1.18099" cpeversion="10.0.136.0" narrative="Proceso para Demo en Vivo: lee un reporte nuevo de BUK con cambios (altas, bajas, cambios de jornada y errores intencionales) y reporte SIC usando MS Excel VBO - Extended, valida y recalcula desde el mes de vigencia en Data - MSSQLLocalDB, y exporta el reporte consolidado actualizado." byrefcollection="true" processrunningmessage="" disableversioning="false" preferredid="33333333-aaaa-4bbb-8ccc-000000000003">
   <view>
     <camerax>0</camerax>
     <cameray>150</cameray>
@@ -7,11 +7,11 @@
   </view>
   <preconditions />
   <endpoint narrative="" />
-  <stage stageid="p3000001-0000-4000-8000-000000000001" name="Start" type="Start">
+  <stage stageid="73c6da17-6a5a-5bdb-82b5-4f2b0ab73f26" name="Start" type="Start">
     <display x="15" y="-240" />
-    <onsuccess>p3000001-0000-4000-8000-000000000002</onsuccess>
+    <onsuccess>f4412b9d-9964-53a5-945c-c1670f47a052</onsuccess>
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000002" name="Excel::Create Instance" type="Action">
+  <stage stageid="f4412b9d-9964-53a5-945c-c1670f47a052" name="Excel::Create Instance" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="-180" w="150" h="30" />
     <inputs>
@@ -20,10 +20,10 @@
     <outputs>
       <output type="number" name="handle" friendlyname="handle" stage="vHandle" />
     </outputs>
-    <onsuccess>p3000001-0000-4000-8000-000000000003</onsuccess>
+    <onsuccess>568061df-0ff5-5626-93f6-2a1f9ece649a</onsuccess>
     <resource object="MS Excel VBO - Extended" action="Create Instance" />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000003" name="Excel::Open Reporte Novedades BUK" type="Action">
+  <stage stageid="568061df-0ff5-5626-93f6-2a1f9ece649a" name="Excel::Open Reporte Novedades BUK" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="-120" w="150" h="30" />
     <inputs>
@@ -33,10 +33,10 @@
     <outputs>
       <output type="text" name="Workbook Name" friendlyname="Workbook Name" stage="vWorkbook" />
     </outputs>
-    <onsuccess>p3000001-0000-4000-8000-000000000004</onsuccess>
+    <onsuccess>254c7e4a-d605-5246-838c-6935e288363c</onsuccess>
     <resource object="MS Excel VBO - Extended" action="Open Workbook" />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000004" name="Excel::Leer Novedades BUK (A1:S8)" type="Action">
+  <stage stageid="254c7e4a-d605-5246-838c-6935e288363c" name="Excel::Leer Novedades BUK (A1:S8)" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="-60" w="150" h="30" />
     <inputs>
@@ -49,10 +49,10 @@
     <outputs>
       <output type="collection" name="Data" friendlyname="Data" stage="cNovedadesBUK" />
     </outputs>
-    <onsuccess>p3000001-0000-4000-8000-000000000005</onsuccess>
+    <onsuccess>20483469-c49c-58c8-b714-d8b632c82af9</onsuccess>
     <resource object="MS Excel VBO - Extended" action="Get Worksheet Range As Collection" />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000005" name="Excel::Close Novedades BUK" type="Action">
+  <stage stageid="20483469-c49c-58c8-b714-d8b632c82af9" name="Excel::Close Novedades BUK" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="0" w="150" h="30" />
     <inputs>
@@ -60,10 +60,10 @@
       <input type="text" name="Workbook Name" friendlyname="Workbook Name" expr="[vWorkbook]" />
       <input type="flag" name="Save Data" friendlyname="Save Data" expr="False" />
     </inputs>
-    <onsuccess>p3000001-0000-4000-8000-000000000006</onsuccess>
+    <onsuccess>a1bed1a6-938f-58d3-8dae-160d9272292d</onsuccess>
     <resource object="MS Excel VBO - Extended" action="Close Workbook" />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000006" name="Excel::Open Reporte SIC" type="Action">
+  <stage stageid="a1bed1a6-938f-58d3-8dae-160d9272292d" name="Excel::Open Reporte SIC" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="60" w="150" h="30" />
     <inputs>
@@ -73,10 +73,10 @@
     <outputs>
       <output type="text" name="Workbook Name" friendlyname="Workbook Name" stage="vWorkbook" />
     </outputs>
-    <onsuccess>p3000001-0000-4000-8000-000000000007</onsuccess>
+    <onsuccess>b0946171-6be9-59ff-93f5-bfe84dbc7ce3</onsuccess>
     <resource object="MS Excel VBO - Extended" action="Open Workbook" />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000007" name="Excel::Leer Ejecucion SIC (A1:J301)" type="Action">
+  <stage stageid="b0946171-6be9-59ff-93f5-bfe84dbc7ce3" name="Excel::Leer Ejecucion SIC (A1:J301)" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="120" w="150" h="30" />
     <inputs>
@@ -89,10 +89,10 @@
     <outputs>
       <output type="collection" name="Data" friendlyname="Data" stage="cEjecucionSIC" />
     </outputs>
-    <onsuccess>p3000001-0000-4000-8000-000000000008</onsuccess>
+    <onsuccess>3f0b7bd3-defc-5456-b24a-8f3a56782c22</onsuccess>
     <resource object="MS Excel VBO - Extended" action="Get Worksheet Range As Collection" />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000008" name="Excel::Close Reporte SIC" type="Action">
+  <stage stageid="3f0b7bd3-defc-5456-b24a-8f3a56782c22" name="Excel::Close Reporte SIC" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="180" w="150" h="30" />
     <inputs>
@@ -100,21 +100,19 @@
       <input type="text" name="Workbook Name" friendlyname="Workbook Name" expr="[vWorkbook]" />
       <input type="flag" name="Save Data" friendlyname="Save Data" expr="False" />
     </inputs>
-    <onsuccess>p3000001-0000-4000-8000-000000000009</onsuccess>
+    <onsuccess>a8e719bd-bf06-57a9-8408-e264af716a25</onsuccess>
     <resource object="MS Excel VBO - Extended" action="Close Workbook" />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000009" name="SQLite::Set Connection Details" type="Action">
+  <stage stageid="a8e719bd-bf06-57a9-8408-e264af716a25" name="SQL Server::Set Connection Details" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="240" w="150" h="30" />
     <inputs>
-      <input type="text" name="DB File" friendlyname="DB File" expr="[vRutaBD]" />
-      <input type="flag" name="Create If Not Found" friendlyname="Create If Not Found" expr="True" />
-      <input type="text" name="Connection String" friendlyname="Connection String" expr="&quot;&quot;" />
+      <input type="text" name="Connection String" friendlyname="Connection String" expr="[vConnectionString]" />
     </inputs>
-    <onsuccess>p3000001-0000-4000-8000-000000000010</onsuccess>
-    <resource object="Data - SQLite" action="Set Connection Details" />
+    <onsuccess>d3f49790-a881-56d1-8d8b-3caa688d95c7</onsuccess>
+    <resource object="Data - MSSQLLocalDB" action="Set Connection Details" />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000010" name="SQLite::Write stg_novedades_buk" type="Action">
+  <stage stageid="d3f49790-a881-56d1-8d8b-3caa688d95c7" name="SQL Server::Write stg_novedades_buk" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="300" w="150" h="30" />
     <inputs>
@@ -127,10 +125,10 @@
       <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
       <output type="number" name="Records Affected" friendlyname="Records Affected" stage="vRegistrosAfectados" />
     </outputs>
-    <onsuccess>p3000001-0000-4000-8000-000000000011</onsuccess>
-    <resource object="Data - SQLite" action="Write Collection" />
+    <onsuccess>c22ea009-1703-51ea-b748-233967444397</onsuccess>
+    <resource object="Data - MSSQLLocalDB" action="Write Collection" />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000011" name="SQLite::Write stg_ejecucion_sic" type="Action">
+  <stage stageid="2498a01e-1f83-585a-81f2-8cbd7297ddbb" name="SQL Server::Write stg_ejecucion_sic" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="360" w="150" h="30" />
     <inputs>
@@ -143,10 +141,10 @@
       <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
       <output type="number" name="Records Affected" friendlyname="Records Affected" stage="vRegistrosAfectados" />
     </outputs>
-    <onsuccess>p3000001-0000-4000-8000-000000000012</onsuccess>
-    <resource object="Data - SQLite" action="Write Collection" />
+    <onsuccess>b018042c-07af-5079-ae1f-f4648369916a</onsuccess>
+    <resource object="Data - MSSQLLocalDB" action="Write Collection" />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000012" name="SQLite::Validar, Detectar Diff y Recalcular Metas" type="Action">
+  <stage stageid="26d1d778-cfd9-5699-ada5-7b9c505d2448" name="SQL Server::Validar, Detectar Diff y Recalcular Metas" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="420" w="150" h="30" />
     <inputs>
@@ -158,10 +156,10 @@
       <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
       <output type="number" name="Records Affected" friendlyname="Records Affected" stage="vRegistrosAfectados" />
     </outputs>
-    <onsuccess>p3000001-0000-4000-8000-000000000013</onsuccess>
-    <resource object="Data - SQLite" action="Execute Non Query" />
+    <onsuccess>e21476f0-97e1-5f31-89cb-822a4a5d800b</onsuccess>
+    <resource object="Data - MSSQLLocalDB" action="Execute Non Query" />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000013" name="SQLite::Obtener Errores Detectados" type="Action">
+  <stage stageid="c717acba-10f5-592c-b872-3a3b11fa57d6" name="SQL Server::Obtener Errores Detectados" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="480" w="150" h="30" />
     <inputs>
@@ -173,10 +171,10 @@
       <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
       <output type="collection" name="Results" friendlyname="Results" stage="cErroresDetectados" />
     </outputs>
-    <onsuccess>p3000001-0000-4000-8000-000000000014</onsuccess>
-    <resource object="Data - SQLite" action="Execute - Get Collection" />
+    <onsuccess>8defe253-9e0c-5f70-9687-fe7685d9cd36</onsuccess>
+    <resource object="Data - MSSQLLocalDB" action="Execute - Get Collection" />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000014" name="SQLite::Obtener Bitácora de Auditoría" type="Action">
+  <stage stageid="5c0dfd68-1bc1-5325-ac8e-6cecb2cbf239" name="SQL Server::Obtener Bitácora de Auditoría" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="540" w="150" h="30" />
     <inputs>
@@ -188,14 +186,14 @@
       <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
       <output type="collection" name="Results" friendlyname="Results" stage="cCambiosAuditados" />
     </outputs>
-    <onsuccess>p3000001-0000-4000-8000-000000000015</onsuccess>
-    <resource object="Data - SQLite" action="Execute - Get Collection" />
+    <onsuccess>bcb2beeb-1601-5a0c-96da-7cbd16829992</onsuccess>
+    <resource object="Data - MSSQLLocalDB" action="Execute - Get Collection" />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000015" name="SQLite::Obtener Consolidado Actualizado" type="Action">
+  <stage stageid="30d94eb5-821d-5890-82ee-66e4991365f9" name="SQL Server::Obtener Consolidado Actualizado" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="600" w="150" h="30" />
     <inputs>
-      <input type="text" name="SQL" friendlyname="SQL" expr="&quot;SELECT * FROM vw_resumen_nacional_instituto;&quot;" />
+      <input type="text" name="SQL" friendlyname="SQL" expr="&quot;SELECT r.*, COALESCE(s.Registros_SIC, 0) AS Registros_SIC, COALESCE(s.Ate_Real_Total_SIC, 0) AS Ate_Real_Total_SIC, CASE WHEN COALESCE(s.Meta_Gestion_SIC, 0) &gt; 0 THEN ROUND(s.Ate_Real_Total_SIC * 100.0 / s.Meta_Gestion_SIC, 2) ELSE 0 END AS Cumplimiento_SIC_Pct FROM dbo.vw_resumen_nacional_instituto r LEFT JOIN (SELECT e.it, COUNT(*) AS Registros_SIC, SUM(e.ate_real_total) AS Ate_Real_Total_SIC, SUM(COALESCE(p.meta_90_total, 0)) AS Meta_Gestion_SIC FROM dbo.ejecucion_sic e LEFT JOIN dbo.planificacion_mensual p ON p.persona_id = e.persona_id AND p.it = e.it AND p.mes = e.mes GROUP BY e.it) s ON s.it = r.IT ORDER BY r.IT;&quot;" />
       <input type="number" name="CommandTimeout" friendlyname="CommandTimeout" expr="30" />
     </inputs>
     <outputs>
@@ -203,20 +201,20 @@
       <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
       <output type="collection" name="Results" friendlyname="Results" stage="cResumenActualizado" />
     </outputs>
-    <onsuccess>p3000001-0000-4000-8000-000000000016</onsuccess>
-    <resource object="Data - SQLite" action="Execute - Get Collection" />
+    <onsuccess>0e632067-a5f3-59d7-a5a2-adcb6a4fbbc8</onsuccess>
+    <resource object="Data - MSSQLLocalDB" action="Execute - Get Collection" />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000016" name="SQLite::Close" type="Action">
+  <stage stageid="ca35f178-981a-58cc-8422-bdcb7e3be0a2" name="SQL Server::Close" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="660" w="150" h="30" />
     <outputs>
       <output type="flag" name="Success" friendlyname="Success" stage="vSuccess" />
       <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
     </outputs>
-    <onsuccess>p3000001-0000-4000-8000-000000000017</onsuccess>
-    <resource object="Data - SQLite" action="Close" />
+    <onsuccess>f39332b6-5c4e-56a8-9bc9-2285cefbb35f</onsuccess>
+    <resource object="Data - MSSQLLocalDB" action="Close" />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000017" name="Excel::Create Workbook Reporte Salida" type="Action">
+  <stage stageid="c4544194-238a-567c-987f-bd68202c147e" name="Excel::Create Workbook Reporte Salida" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="720" w="150" h="30" />
     <inputs>
@@ -225,10 +223,10 @@
     <outputs>
       <output type="text" name="Workbook Name" friendlyname="Workbook Name" stage="vOutWb" />
     </outputs>
-    <onsuccess>p3000001-0000-4000-8000-000000000018</onsuccess>
+    <onsuccess>9f14a1d1-9c40-5a9b-a565-cd3d64dbec65</onsuccess>
     <resource object="MS Excel VBO - Extended" action="Create Workbook" />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000018" name="Excel::Escribir Consolidado Nacional" type="Action">
+  <stage stageid="9f14a1d1-9c40-5a9b-a565-cd3d64dbec65" name="Excel::Escribir Consolidado Nacional" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="780" w="150" h="30" />
     <inputs>
@@ -239,10 +237,10 @@
       <input type="text" name="Cell Reference" friendlyname="Cell Reference" expr="&quot;A1&quot;" />
       <input type="flag" name="Include Column Names" friendlyname="Include Column Names" expr="True" />
     </inputs>
-    <onsuccess>p3000001-0000-4000-8000-000000000019</onsuccess>
+    <onsuccess>374a27de-f5d9-53f7-9fe8-fae7f0c0d798</onsuccess>
     <resource object="MS Excel VBO - Extended" action="Write Collection" />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000019" name="Excel::Guardar Reporte Salida" type="Action">
+  <stage stageid="374a27de-f5d9-53f7-9fe8-fae7f0c0d798" name="Excel::Guardar Reporte Salida" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="840" w="150" h="30" />
     <inputs>
@@ -253,10 +251,10 @@
     <outputs>
       <output type="text" name="New Workbook Name" friendlyname="New Workbook Name" stage="vOutWbFinal" />
     </outputs>
-    <onsuccess>p3000001-0000-4000-8000-000000000020</onsuccess>
+    <onsuccess>1a4810fe-f48f-5296-acc3-4b9181ab7196</onsuccess>
     <resource object="MS Excel VBO - Extended" action="Save Workbook As" />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000020" name="Excel::Close Reporte Salida" type="Action">
+  <stage stageid="1a4810fe-f48f-5296-acc3-4b9181ab7196" name="Excel::Close Reporte Salida" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="900" w="150" h="30" />
     <inputs>
@@ -264,105 +262,227 @@
       <input type="text" name="Workbook Name" friendlyname="Workbook Name" expr="[vOutWbFinal]" />
       <input type="flag" name="Save Data" friendlyname="Save Data" expr="False" />
     </inputs>
-    <onsuccess>p3000001-0000-4000-8000-000000000021</onsuccess>
+    <onsuccess>a59c4de2-03a1-5d8c-9f5e-e99e8a825ac1</onsuccess>
     <resource object="MS Excel VBO - Extended" action="Close Workbook" />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000021" name="Excel::Release Instance" type="Action">
+  <stage stageid="a59c4de2-03a1-5d8c-9f5e-e99e8a825ac1" name="Excel::Release Instance" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="960" w="150" h="30" />
     <inputs>
       <input type="number" name="handle" friendlyname="handle" expr="[vHandle]" />
     </inputs>
-    <onsuccess>p3000001-0000-4000-8000-000000000022</onsuccess>
+    <onsuccess>273a4368-dfee-555a-8e9c-e72cea7992ef</onsuccess>
     <resource object="MS Excel VBO - Extended" action="Release Instance" />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000022" name="End" type="End">
+  <stage stageid="273a4368-dfee-555a-8e9c-e72cea7992ef" name="End" type="End">
     <display x="15" y="1020" />
   </stage>
-  <!-- Data Items -->
-  <stage stageid="p3000001-0000-4000-8000-000000000101" name="vRutaNovedadesBUK" type="Data">
+  <stage stageid="c22ea009-1703-51ea-b748-233967444397" name="SQL::Check BUK Staging Write" type="Decision">
+    <display x="225" y="300" />
+    <decision expression="[vSuccess]" />
+    <ontrue>2498a01e-1f83-585a-81f2-8cbd7297ddbb</ontrue>
+    <onfalse>0ba4b6c3-cc5c-5df3-bbf7-f6c85cb1e64b</onfalse>
+  </stage>
+  <stage stageid="b018042c-07af-5079-ae1f-f4648369916a" name="SQL::Check SIC Staging Write" type="Decision">
+    <display x="225" y="360" />
+    <decision expression="[vSuccess]" />
+    <ontrue>26d1d778-cfd9-5699-ada5-7b9c505d2448</ontrue>
+    <onfalse>0ba4b6c3-cc5c-5df3-bbf7-f6c85cb1e64b</onfalse>
+  </stage>
+  <stage stageid="e21476f0-97e1-5f31-89cb-822a4a5d800b" name="SQL::Check Processing" type="Decision">
+    <display x="225" y="420" />
+    <decision expression="[vSuccess]" />
+    <ontrue>c717acba-10f5-592c-b872-3a3b11fa57d6</ontrue>
+    <onfalse>0ba4b6c3-cc5c-5df3-bbf7-f6c85cb1e64b</onfalse>
+  </stage>
+  <stage stageid="8defe253-9e0c-5f70-9687-fe7685d9cd36" name="SQL::Check Validation Query" type="Decision">
+    <display x="225" y="480" />
+    <decision expression="[vSuccess]" />
+    <ontrue>5c0dfd68-1bc1-5325-ac8e-6cecb2cbf239</ontrue>
+    <onfalse>0ba4b6c3-cc5c-5df3-bbf7-f6c85cb1e64b</onfalse>
+  </stage>
+  <stage stageid="bcb2beeb-1601-5a0c-96da-7cbd16829992" name="SQL::Check Audit Query" type="Decision">
+    <display x="225" y="540" />
+    <decision expression="[vSuccess]" />
+    <ontrue>30d94eb5-821d-5890-82ee-66e4991365f9</ontrue>
+    <onfalse>0ba4b6c3-cc5c-5df3-bbf7-f6c85cb1e64b</onfalse>
+  </stage>
+  <stage stageid="0e632067-a5f3-59d7-a5a2-adcb6a4fbbc8" name="SQL::Check Summary Query" type="Decision">
+    <display x="225" y="600" />
+    <decision expression="[vSuccess]" />
+    <ontrue>ca35f178-981a-58cc-8422-bdcb7e3be0a2</ontrue>
+    <onfalse>0ba4b6c3-cc5c-5df3-bbf7-f6c85cb1e64b</onfalse>
+  </stage>
+  <stage stageid="f39332b6-5c4e-56a8-9bc9-2285cefbb35f" name="SQL::Check Close" type="Decision">
+    <display x="225" y="660" />
+    <decision expression="[vSuccess]" />
+    <ontrue>c4544194-238a-567c-987f-bd68202c147e</ontrue>
+    <onfalse>0ba4b6c3-cc5c-5df3-bbf7-f6c85cb1e64b</onfalse>
+  </stage>
+  <stage stageid="0ba4b6c3-cc5c-5df3-bbf7-f6c85cb1e64b" name="SQL Failure" type="Exception">
+    <display x="405" y="600" />
+    <exception type="" detail="&quot;Data - MSSQLLocalDB failed: &quot; &amp; [vErrorMessage]" />
+  </stage>
+  <stage stageid="ed51bdcb-a6ed-5f3a-859f-d65b32264544" name="vRutaNovedadesBUK" type="Data">
     <display x="-240" y="-195" w="180" h="30" />
     <datatype>text</datatype>
     <initialvalue xml:space="preserve">E:\Users\onito\Documents\Botathon\2222\BotathonLosRayitos2\datos_demo\Reporte_BUK_Novedades_Agosto2026.xlsx</initialvalue>
     <alwaysinit />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000102" name="vRutaReporteSIC" type="Data">
+  <stage stageid="71fe2642-da5f-57de-8dc1-bc99b968e7b4" name="vRutaReporteSIC" type="Data">
     <display x="-240" y="-150" w="180" h="30" />
     <datatype>text</datatype>
     <initialvalue xml:space="preserve">E:\Users\onito\Documents\Botathon\2222\BotathonLosRayitos2\datos_demo\Reporte_SIC_Ejecucion_2026.xlsx</initialvalue>
     <alwaysinit />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000103" name="vRutaBD" type="Data">
+  <stage stageid="e3ed3d0f-25a9-527f-88c4-646dd8b2f2ca" name="vConnectionString" type="Data">
     <display x="-240" y="-105" w="180" h="30" />
     <datatype>text</datatype>
-    <initialvalue xml:space="preserve">E:\Users\onito\Documents\Botathon\2222\BotathonLosRayitos2\database\teleton_planificacion.db</initialvalue>
+    <initialvalue xml:space="preserve">Data Source=(LocalDB)\MSSQLLocalDB;Initial Catalog=TeletonPlanificacion;Integrated Security=True;Connect Timeout=30;TrustServerCertificate=True;</initialvalue>
     <alwaysinit />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000104" name="vRutaSalidaReporte" type="Data">
+  <stage stageid="deaf95be-f4f5-566c-bcf9-9c9dce41e653" name="vRutaSalidaReporte" type="Data">
     <display x="-240" y="-60" w="180" h="30" />
     <datatype>text</datatype>
     <initialvalue xml:space="preserve">E:\Users\onito\Documents\Botathon\2222\BotathonLosRayitos2\salidas\Reporte_Consolidado_Actualizado_2026.xlsx</initialvalue>
     <alwaysinit />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000105" name="vHandle" type="Data">
+  <stage stageid="1a34376a-07a4-505c-9b17-d793232c250a" name="vHandle" type="Data">
     <display x="-240" y="-15" w="120" h="30" />
     <datatype>number</datatype>
     <initialvalue>0</initialvalue>
     <alwaysinit />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000106" name="vWorkbook" type="Data">
+  <stage stageid="8cae4639-0303-56c5-91df-faf4d7843fbe" name="vWorkbook" type="Data">
     <display x="-240" y="30" w="150" h="30" />
     <datatype>text</datatype>
     <initialvalue />
     <alwaysinit />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000107" name="vOutWb" type="Data">
+  <stage stageid="4c5b1287-e7e6-5d03-b9b2-df47d966de06" name="vOutWb" type="Data">
     <display x="-240" y="75" w="150" h="30" />
     <datatype>text</datatype>
     <initialvalue />
     <alwaysinit />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000108" name="vOutWbFinal" type="Data">
+  <stage stageid="a02ef6e7-1329-5831-879b-37275e338fff" name="vOutWbFinal" type="Data">
     <display x="-240" y="120" w="150" h="30" />
     <datatype>text</datatype>
     <initialvalue />
     <alwaysinit />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000109" name="vSuccess" type="Data">
+  <stage stageid="7ffd08f0-8afc-5c51-8cc8-54f8c0716049" name="vSuccess" type="Data">
     <display x="-240" y="165" w="120" h="30" />
     <datatype>flag</datatype>
     <initialvalue>False</initialvalue>
     <alwaysinit />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000110" name="vErrorMessage" type="Data">
+  <stage stageid="ed34cec4-3a29-54ca-af54-ec59c9532fb2" name="vErrorMessage" type="Data">
     <display x="-240" y="210" w="180" h="30" />
     <datatype>text</datatype>
     <initialvalue />
     <alwaysinit />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000111" name="vRegistrosAfectados" type="Data">
+  <stage stageid="8fa93879-b36a-5d66-b9a1-e355fcbf2df5" name="vRegistrosAfectados" type="Data">
     <display x="-240" y="255" w="150" h="30" />
     <datatype>number</datatype>
     <initialvalue>0</initialvalue>
     <alwaysinit />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000112" name="vSQL_ProcesarNovedades" type="Data">
+  <stage stageid="2ce36cf5-36cb-5abe-a8df-cf14ffe52960" name="vSQL_ProcesarNovedades" type="Data">
     <display x="-240" y="300" w="180" h="30" />
     <datatype>text</datatype>
-    <initialvalue xml:space="preserve">DELETE FROM errores_validacion WHERE origen_archivo = 'Reporte_BUK_Novedades_Agosto2026.xlsx';
+    <initialvalue xml:space="preserve">DELETE FROM errores_validacion WHERE origen_archivo IN ('Reporte_BUK_Novedades_Agosto2026.xlsx', 'Reporte_SIC_Ejecucion_2026.xlsx');
+
+-- Importar/actualizar la ejecución real de SIC desde el staging de Excel.
+INSERT INTO errores_validacion (origen_archivo, persona_id, it, campo_error, valor_recibido, descripcion_error, severidad)
+SELECT 'Reporte_SIC_Ejecucion_2026.xlsx', s.PersonaId, s.IT, 'Datos SIC', s.Mes,
+       'Fila SIC descartada: profesional, instituto, mes o atenciones no son válidos.',
+       'ERROR_BLOQUEANTE'
+FROM stg_ejecucion_sic s
+WHERE TRY_CONVERT(INT, s.PersonaId) IS NULL
+   OR TRY_CONVERT(INT, s.IT) IS NULL
+   OR TRY_CONVERT(INT, s.Mes) IS NULL
+   OR TRY_CONVERT(INT, s.Mes) NOT BETWEEN 1 AND 12
+   OR TRY_CONVERT(INT, s.Ate_Real_Directa) IS NULL
+   OR TRY_CONVERT(INT, s.Ate_Real_Indirecta) IS NULL
+   OR TRY_CONVERT(INT, s.Ate_Real_Total) IS NULL
+   OR TRY_CONVERT(INT, s.Ate_Real_Directa) &lt; 0
+   OR TRY_CONVERT(INT, s.Ate_Real_Indirecta) &lt; 0
+   OR TRY_CONVERT(INT, s.Ate_Real_Total) &lt; 0;
+
+;WITH SIC AS (
+    SELECT
+        TRY_CONVERT(INT, s.PersonaId) AS persona_id,
+        TRY_CONVERT(INT, s.IT) AS it,
+        TRIM(COALESCE(s.Instituto, '')) AS instituto,
+        TRIM(COALESCE(s.Area, '')) AS area,
+        TRY_CONVERT(INT, s.Mes) AS mes,
+        TRY_CONVERT(INT, s.Ate_Real_Directa) AS ate_real_directa,
+        TRY_CONVERT(INT, s.Ate_Real_Indirecta) AS ate_real_indirecta,
+        TRY_CONVERT(INT, s.Ate_Real_Total) AS ate_real_total,
+        TRY_CONVERT(FLOAT, s.Pct_Cumplimiento_Meta) AS pct_fuente
+    FROM stg_ejecucion_sic s
+    WHERE TRY_CONVERT(INT, s.PersonaId) IS NOT NULL
+      AND TRY_CONVERT(INT, s.IT) IS NOT NULL
+      AND TRY_CONVERT(INT, s.Mes) BETWEEN 1 AND 12
+      AND TRY_CONVERT(INT, s.Ate_Real_Directa) &gt;= 0
+      AND TRY_CONVERT(INT, s.Ate_Real_Indirecta) &gt;= 0
+      AND TRY_CONVERT(INT, s.Ate_Real_Total) &gt;= 0
+), SIC_CON_META AS (
+    SELECT s.*,
+        CASE WHEN p.meta_90_total &gt; 0
+             THEN s.ate_real_total * 100.0 / p.meta_90_total
+             ELSE COALESCE(s.pct_fuente, 0.0)
+        END AS pct_cumplimiento_meta
+    FROM SIC s
+    LEFT JOIN planificacion_mensual p
+      ON p.persona_id = s.persona_id AND p.it = s.it AND p.mes = s.mes
+)
+MERGE dbo.ejecucion_sic AS destino
+USING SIC_CON_META AS fuente
+   ON destino.persona_id = fuente.persona_id
+  AND destino.it = fuente.it
+  AND destino.mes = fuente.mes
+WHEN MATCHED THEN UPDATE SET
+    destino.instituto = fuente.instituto,
+    destino.area = fuente.area,
+    destino.ate_real_directa = fuente.ate_real_directa,
+    destino.ate_real_indirecta = fuente.ate_real_indirecta,
+    destino.ate_real_total = fuente.ate_real_total,
+    destino.pct_cumplimiento_meta = fuente.pct_cumplimiento_meta,
+    destino.estado_alerta = CASE
+        WHEN fuente.pct_cumplimiento_meta &gt;= 100 THEN 'CUMPLIMIENTO_OPTIMO'
+        WHEN fuente.pct_cumplimiento_meta &gt;= 90 THEN 'EN_RIESGO'
+        ELSE 'BAJO_META_90'
+    END,
+    destino.fecha_carga = CURRENT_TIMESTAMP
+WHEN NOT MATCHED THEN INSERT (
+    persona_id, it, instituto, area, mes, ate_real_directa, ate_real_indirecta,
+    ate_real_total, pct_cumplimiento_meta, estado_alerta
+) VALUES (
+    fuente.persona_id, fuente.it, fuente.instituto, fuente.area, fuente.mes,
+    fuente.ate_real_directa, fuente.ate_real_indirecta, fuente.ate_real_total,
+    fuente.pct_cumplimiento_meta,
+    CASE
+        WHEN fuente.pct_cumplimiento_meta &gt;= 100 THEN 'CUMPLIMIENTO_OPTIMO'
+        WHEN fuente.pct_cumplimiento_meta &gt;= 90 THEN 'EN_RIESGO'
+        ELSE 'BAJO_META_90'
+    END
+);
 
 -- 1. Detectar y registrar errores bloqueantes del archivo de novedades BUK
 INSERT INTO errores_validacion (origen_archivo, persona_id, it, cargo, campo_error, valor_recibido, descripcion_error, severidad)
 SELECT 'Reporte_BUK_Novedades_Agosto2026.xlsx', PersonaId, IT, Cargo, 'Horas Semanales', "Horas Semanales",
-       'ERROR: Jornada de ' || "Horas Semanales" || ' H/S excede el máximo legal permitido (44 H/S). Registro rechazado.',
+       CONCAT('ERROR: Jornada de ', "Horas Semanales", ' H/S excede el máximo legal permitido (44 H/S). Registro rechazado.'),
        'ERROR_BLOQUEANTE'
 FROM stg_novedades_buk
-WHERE CAST(COALESCE("Horas Semanales", '0') AS REAL) &gt; 44
-   OR CAST(COALESCE("Horas Semanales", '0') AS REAL) &lt; 0;
+WHERE COALESCE(TRY_CONVERT(FLOAT, "Horas Semanales"), 0) &gt; 44
+   OR COALESCE(TRY_CONVERT(FLOAT, "Horas Semanales"), 0) &lt; 0;
 
 INSERT INTO errores_validacion (origen_archivo, persona_id, it, cargo, campo_error, valor_recibido, descripcion_error, severidad)
 SELECT 'Reporte_BUK_Novedades_Agosto2026.xlsx', s.PersonaId, s.IT, s.Cargo, 'Cargo', s.Cargo,
-       'ERROR: El cargo "' || s.Cargo || '" no existe en la matriz parametrizable Distribucion_NAC. Registro rechazado.',
+       CONCAT('ERROR: El cargo "', s.Cargo, '" no existe en la matriz parametrizable Distribucion_NAC. Registro rechazado.'),
        'ERROR_BLOQUEANTE'
 FROM stg_novedades_buk s
 LEFT JOIN distribucion_nac d ON TRIM(UPPER(s.Cargo)) = TRIM(UPPER(d.cargo))
@@ -376,16 +496,16 @@ INSERT INTO auditoria_cambios (
 )
 SELECT
     2, 'Bot Blue Prism (03_Novedades_BUK_y_Contraste_SIC)', 'ALTA_PROFESIONAL',
-    CAST(s.IT AS INTEGER), TRIM(s.Instituto), CAST(s.PersonaId AS INTEGER),
-    TRIM(s.Cargo) || ' (' || TRIM(s.Instituto) || ')',
-    'Horas Semanales (Ago-Dic)', '0 H/S (Nuevo Ingreso)', s."Horas Semanales" || ' H/S',
-    8, CAST(ROUND(CAST(s."Horas Semanales" AS REAL) * 0.65 * 60.0 / d.std_min_directa * 21.0 * 0.90, 0) AS INTEGER),
+    TRY_CONVERT(INT, s.IT), TRIM(s.Instituto), TRY_CONVERT(INT, s.PersonaId),
+    CONCAT(TRIM(s.Cargo), ' (', TRIM(s.Instituto), ')'),
+    'Horas Semanales (Ago-Dic)', '0 H/S (Nuevo Ingreso)', CONCAT(s."Horas Semanales", ' H/S'),
+    8, CAST(ROUND(CAST(s."Horas Semanales" AS FLOAT) * 0.65 * 60.0 / d.std_min_directa * 21.0 * 0.90, 0) AS INT),
     'Alta automática detectada en reporte BUK Agosto 2026 (Vigente desde 01-08-2026)', 'APROBADO'
 FROM stg_novedades_buk s
 INNER JOIN distribucion_nac d ON TRIM(UPPER(s.Cargo)) = TRIM(UPPER(d.cargo))
-LEFT JOIN dotacion_asistencial da ON CAST(s.PersonaId AS INTEGER) = da.persona_id AND CAST(s.IT AS INTEGER) = da.it
+LEFT JOIN dotacion_asistencial da ON TRY_CONVERT(INT, s.PersonaId) = da.persona_id AND TRY_CONVERT(INT, s.IT) = da.it
 WHERE da.persona_id IS NULL
-  AND CAST(s."Horas Semanales" AS REAL) &gt; 0 AND CAST(s."Horas Semanales" AS REAL) &lt;= 44;
+  AND CAST(s."Horas Semanales" AS FLOAT) &gt; 0 AND CAST(s."Horas Semanales" AS FLOAT) &lt;= 44;
 
 -- Insertar las altas nuevas en dotacion_asistencial (vigentes ago..dic, 5 meses = 21 semanas calendario)
 INSERT INTO dotacion_asistencial (
@@ -407,42 +527,42 @@ INSERT INTO dotacion_asistencial (
 )
 SELECT
     (SELECT COALESCE(MAX(orden), 471) + 1 FROM dotacion_asistencial),
-    CAST(s.IT AS INTEGER), TRIM(s.Instituto), TRIM(s."Área"), 'Nuevo',
-    '2026-08-01', '2026-12-31', '1994-06-15', CAST(s.PersonaId AS INTEGER),
-    TRIM(s.Cargo), TRIM(s.Cod_Esp), CAST(s."Centro de Costo" AS INTEGER), TRIM(s."Nombre Sub-área"),
+    TRY_CONVERT(INT, s.IT), TRIM(s.Instituto), TRIM(s."Área"), 'Nuevo',
+    '2026-08-01', '2026-12-31', '1994-06-15', TRY_CONVERT(INT, s.PersonaId),
+    TRIM(s.Cargo), TRIM(s.Cod_Esp), CAST(s."Centro de Costo" AS INT), TRIM(s."Nombre Sub-área"),
     TRIM(s."Tipo de Contrato"), TRIM(s.Tipo_Trabajador),
     '2026-08-01', '2026-12-31',
-    CAST(s."Horas Semanales" AS REAL), CAST(s."Horas Semanales" AS REAL), CAST(s."Horas Semanales" AS REAL), CAST(s."Horas Semanales" AS REAL), CAST(s."Horas Semanales" AS REAL),
-    1, CAST(s."Horas Semanales" AS REAL), CAST(s."Horas Semanales" AS REAL),
-    CASE WHEN CAST(s."Horas Semanales" AS REAL) &gt;= 40 THEN '&gt;=40' ELSE '22-40' END,
-    'Aumento', CAST(s.Ndias AS REAL), ROUND(CAST(s."Horas Semanales" AS REAL) / CAST(s.Ndias AS REAL), 1),
-    'N', 0, CAST(s."Horas Semanales" AS REAL),
-    ROUND(CAST(s."Horas Semanales" AS REAL) * 0.10, 2),
-    ROUND(CAST(s."Horas Semanales" AS REAL) * d.t1_pct_nas, 2),
+    CAST(s."Horas Semanales" AS FLOAT), CAST(s."Horas Semanales" AS FLOAT), CAST(s."Horas Semanales" AS FLOAT), CAST(s."Horas Semanales" AS FLOAT), CAST(s."Horas Semanales" AS FLOAT),
+    1, CAST(s."Horas Semanales" AS FLOAT), CAST(s."Horas Semanales" AS FLOAT),
+    CASE WHEN CAST(s."Horas Semanales" AS FLOAT) &gt;= 40 THEN '&gt;=40' ELSE '22-40' END,
+    'Aumento', CAST(s.Ndias AS FLOAT), ROUND(CAST(s."Horas Semanales" AS FLOAT) / CAST(s.Ndias AS FLOAT), 1),
+    'N', 0, CAST(s."Horas Semanales" AS FLOAT),
+    ROUND(CAST(s."Horas Semanales" AS FLOAT) * 0.10, 2),
+    ROUND(CAST(s."Horas Semanales" AS FLOAT) * d.t1_pct_nas, 2),
     d.t1_pct_nas, d.t1_pct_dir, d.t1_pct_ind,
     d.t1_pct_nas, d.t1_pct_dir, d.t1_pct_ind, (1.0 - d.t1_pct_nas),
-    CAST(s."Horas Semanales" AS REAL) * (1.0 - d.t1_pct_nas),
+    CAST(s."Horas Semanales" AS FLOAT) * (1.0 - d.t1_pct_nas),
     d.std_min_directa, d.std_min_indirecta,
-    CAST(CAST(s."Horas Semanales" AS REAL) * d.t1_pct_dir * 60.0 / d.std_min_directa AS INTEGER),
-    CAST(CAST(s."Horas Semanales" AS REAL) * d.t1_pct_ind * 60.0 / d.std_min_indirecta AS INTEGER),
-    CAST(CAST(s."Horas Semanales" AS REAL) * d.t1_pct_dir * 60.0 / d.std_min_directa AS INTEGER),
-    CAST(CAST(s."Horas Semanales" AS REAL) * d.t1_pct_ind * 60.0 / d.std_min_indirecta AS INTEGER),
-    CAST(CAST(s."Horas Semanales" AS REAL) * d.t1_pct_dir * 60.0 / d.std_min_directa AS INTEGER) + CAST(CAST(s."Horas Semanales" AS REAL) * d.t1_pct_ind * 60.0 / d.std_min_indirecta AS INTEGER),
+    CAST(CAST(s."Horas Semanales" AS FLOAT) * d.t1_pct_dir * 60.0 / d.std_min_directa AS INT),
+    CAST(CAST(s."Horas Semanales" AS FLOAT) * d.t1_pct_ind * 60.0 / d.std_min_indirecta AS INT),
+    CAST(CAST(s."Horas Semanales" AS FLOAT) * d.t1_pct_dir * 60.0 / d.std_min_directa AS INT),
+    CAST(CAST(s."Horas Semanales" AS FLOAT) * d.t1_pct_ind * 60.0 / d.std_min_indirecta AS INT),
+    CAST(CAST(s."Horas Semanales" AS FLOAT) * d.t1_pct_dir * 60.0 / d.std_min_directa AS INT) + CAST(CAST(s."Horas Semanales" AS FLOAT) * d.t1_pct_ind * 60.0 / d.std_min_indirecta AS INT),
     4.2, 4.2, 4.2, 4.2, 4.2, 21.0,
     4.0, 4.0, 4.0, 4.0, 4.0, 20.0, 100.0,
-    20 * CAST(CAST(s."Horas Semanales" AS REAL) * d.t1_pct_dir * 60.0 / d.std_min_directa AS INTEGER),
-    20 * CAST(CAST(s."Horas Semanales" AS REAL) * d.t1_pct_ind * 60.0 / d.std_min_indirecta AS INTEGER),
-    20 * (CAST(CAST(s."Horas Semanales" AS REAL) * d.t1_pct_dir * 60.0 / d.std_min_directa AS INTEGER) + CAST(CAST(s."Horas Semanales" AS REAL) * d.t1_pct_ind * 60.0 / d.std_min_indirecta AS INTEGER)),
-    CAST(20 * CAST(CAST(s."Horas Semanales" AS REAL) * d.t1_pct_dir * 60.0 / d.std_min_directa AS INTEGER) * 0.90 AS INTEGER),
-    CAST(20 * CAST(CAST(s."Horas Semanales" AS REAL) * d.t1_pct_ind * 60.0 / d.std_min_indirecta AS INTEGER) * 0.90 AS INTEGER),
-    CAST(20 * (CAST(CAST(s."Horas Semanales" AS REAL) * d.t1_pct_dir * 60.0 / d.std_min_directa AS INTEGER) + CAST(CAST(s."Horas Semanales" AS REAL) * d.t1_pct_ind * 60.0 / d.std_min_indirecta AS INTEGER)) * 0.90 AS INTEGER),
+    20 * CAST(CAST(s."Horas Semanales" AS FLOAT) * d.t1_pct_dir * 60.0 / d.std_min_directa AS INT),
+    20 * CAST(CAST(s."Horas Semanales" AS FLOAT) * d.t1_pct_ind * 60.0 / d.std_min_indirecta AS INT),
+    20 * (CAST(CAST(s."Horas Semanales" AS FLOAT) * d.t1_pct_dir * 60.0 / d.std_min_directa AS INT) + CAST(CAST(s."Horas Semanales" AS FLOAT) * d.t1_pct_ind * 60.0 / d.std_min_indirecta AS INT)),
+    CAST(20 * CAST(CAST(s."Horas Semanales" AS FLOAT) * d.t1_pct_dir * 60.0 / d.std_min_directa AS INT) * 0.90 AS INT),
+    CAST(20 * CAST(CAST(s."Horas Semanales" AS FLOAT) * d.t1_pct_ind * 60.0 / d.std_min_indirecta AS INT) * 0.90 AS INT),
+    CAST(20 * (CAST(CAST(s."Horas Semanales" AS FLOAT) * d.t1_pct_dir * 60.0 / d.std_min_directa AS INT) + CAST(CAST(s."Horas Semanales" AS FLOAT) * d.t1_pct_ind * 60.0 / d.std_min_indirecta AS INT)) * 0.90 AS INT),
     ROUND(d.t1_pct_dir * 100.0, 2),
     'Alta incorporada automáticamente por Blue Prism (Agosto 2026)', 2
 FROM stg_novedades_buk s
 INNER JOIN distribucion_nac d ON TRIM(UPPER(s.Cargo)) = TRIM(UPPER(d.cargo))
-LEFT JOIN dotacion_asistencial da ON CAST(s.PersonaId AS INTEGER) = da.persona_id AND CAST(s.IT AS INTEGER) = da.it
+LEFT JOIN dotacion_asistencial da ON TRY_CONVERT(INT, s.PersonaId) = da.persona_id AND TRY_CONVERT(INT, s.IT) = da.it
 WHERE da.persona_id IS NULL
-  AND CAST(s."Horas Semanales" AS REAL) &gt; 0 AND CAST(s."Horas Semanales" AS REAL) &lt;= 44;
+  AND CAST(s."Horas Semanales" AS FLOAT) &gt; 0 AND CAST(s."Horas Semanales" AS FLOAT) &lt;= 44;
 
 -- 3. Detectar CAMBIOS DE JORNADA y BAJAS en profesionales existentes y auditarlos
 INSERT INTO auditoria_cambios (
@@ -453,55 +573,55 @@ INSERT INTO auditoria_cambios (
 SELECT
     2, 'Bot Blue Prism (03_Novedades_BUK_y_Contraste_SIC)',
     CASE
-        WHEN CAST(s."Horas Semanales" AS REAL) = 0 THEN 'BAJA_TERMINO_CONTRATO'
-        WHEN CAST(s."Horas Semanales" AS REAL) &gt; da.hs_dic THEN 'CAMBIO_JORNADA_AUMENTO'
+        WHEN CAST(s."Horas Semanales" AS FLOAT) = 0 THEN 'BAJA_TERMINO_CONTRATO'
+        WHEN CAST(s."Horas Semanales" AS FLOAT) &gt; da.hs_dic THEN 'CAMBIO_JORNADA_AUMENTO'
         ELSE 'CAMBIO_JORNADA_DISMINUCION'
     END,
     da.it, da.instituto, da.persona_id,
-    da.cargo || ' (PersonaId ' || CAST(da.persona_id AS TEXT) || ')',
+    CONCAT(da.cargo, ' (PersonaId ', CONVERT(NVARCHAR(30), da.persona_id), ')'),
     'Horas Semanales (Ago-Dic)',
-    CAST(CAST(da.hs_dic AS INTEGER) AS TEXT) || ' H/S',
-    CAST(CAST(s."Horas Semanales" AS INTEGER) AS TEXT) || ' H/S',
+    CONCAT(CONVERT(NVARCHAR(30), CAST(da.hs_dic AS INT)), ' H/S'),
+    CONCAT(CONVERT(NVARCHAR(30), TRY_CONVERT(INT, s."Horas Semanales")), ' H/S'),
     8,
-    CAST(ROUND((CAST(s."Horas Semanales" AS REAL) - da.hs_dic) / CASE WHEN da.hs_dic &gt; 0 THEN da.hs_dic ELSE 1 END * (da.mg_tot_m8 + da.mg_tot_m9 + da.mg_tot_m10 + da.mg_tot_m11 + da.mg_tot_m12), 0) AS INTEGER),
+    CAST(ROUND((CAST(s."Horas Semanales" AS FLOAT) - da.hs_dic) / CASE WHEN da.hs_dic &gt; 0 THEN da.hs_dic ELSE 1 END * (da.mg_tot_m8 + da.mg_tot_m9 + da.mg_tot_m10 + da.mg_tot_m11 + da.mg_tot_m12), 0) AS INT),
     'Ajuste automático de planificación desde Agosto 2026 por cambio en reporte BUK', 'APROBADO'
 FROM stg_novedades_buk s
 INNER JOIN distribucion_nac d ON TRIM(UPPER(s.Cargo)) = TRIM(UPPER(d.cargo))
-INNER JOIN dotacion_asistencial da ON CAST(s.PersonaId AS INTEGER) = da.persona_id AND CAST(s.IT AS INTEGER) = da.it
-WHERE CAST(s."Horas Semanales" AS REAL) &gt;= 0 AND CAST(s."Horas Semanales" AS REAL) &lt;= 44
-  AND CAST(s."Horas Semanales" AS REAL) &lt;&gt; da.hs_dic;
+INNER JOIN dotacion_asistencial da ON TRY_CONVERT(INT, s.PersonaId) = da.persona_id AND TRY_CONVERT(INT, s.IT) = da.it
+WHERE CAST(s."Horas Semanales" AS FLOAT) &gt;= 0 AND CAST(s."Horas Semanales" AS FLOAT) &lt;= 44
+  AND CAST(s."Horas Semanales" AS FLOAT) &lt;&gt; da.hs_dic;
 
 -- 4. Ajustar planificación en dotacion_asistencial desde el mes 8 (Agosto a Diciembre) proporcionalmente
 UPDATE dotacion_asistencial
 SET
     cambio_jornada = CASE
-        WHEN (SELECT CAST(s."Horas Semanales" AS REAL) FROM stg_novedades_buk s WHERE CAST(s.PersonaId AS INTEGER) = dotacion_asistencial.persona_id AND CAST(s.IT AS INTEGER) = dotacion_asistencial.it) &gt; hs_dic THEN 'Aumento'
+        WHEN (SELECT CAST(s."Horas Semanales" AS FLOAT) FROM stg_novedades_buk s WHERE TRY_CONVERT(INT, s.PersonaId) = dotacion_asistencial.persona_id AND TRY_CONVERT(INT, s.IT) = dotacion_asistencial.it) &gt; hs_dic THEN 'Aumento'
         ELSE 'Disminución'
     END,
     plan_anual_directa = (plan_dir_m1 + plan_dir_m2 + plan_dir_m3 + plan_dir_m4 + plan_dir_m5 + plan_dir_m6 + plan_dir_m7) +
         ROUND((plan_dir_m8 + plan_dir_m9 + plan_dir_m10 + plan_dir_m11 + plan_dir_m12) *
-              ((SELECT CAST(s."Horas Semanales" AS REAL) FROM stg_novedades_buk s WHERE CAST(s.PersonaId AS INTEGER) = dotacion_asistencial.persona_id AND CAST(s.IT AS INTEGER) = dotacion_asistencial.it) / CASE WHEN hs_dic &gt; 0 THEN hs_dic ELSE 1 END), 0),
+              ((SELECT CAST(s."Horas Semanales" AS FLOAT) FROM stg_novedades_buk s WHERE TRY_CONVERT(INT, s.PersonaId) = dotacion_asistencial.persona_id AND TRY_CONVERT(INT, s.IT) = dotacion_asistencial.it) / CASE WHEN hs_dic &gt; 0 THEN hs_dic ELSE 1 END), 0),
     plan_anual_total = (plan_tot_m1 + plan_tot_m2 + plan_tot_m3 + plan_tot_m4 + plan_tot_m5 + plan_tot_m6 + plan_tot_m7) +
         ROUND((plan_tot_m8 + plan_tot_m9 + plan_tot_m10 + plan_tot_m11 + plan_tot_m12) *
-              ((SELECT CAST(s."Horas Semanales" AS REAL) FROM stg_novedades_buk s WHERE CAST(s.PersonaId AS INTEGER) = dotacion_asistencial.persona_id AND CAST(s.IT AS INTEGER) = dotacion_asistencial.it) / CASE WHEN hs_dic &gt; 0 THEN hs_dic ELSE 1 END), 0),
+              ((SELECT CAST(s."Horas Semanales" AS FLOAT) FROM stg_novedades_buk s WHERE TRY_CONVERT(INT, s.PersonaId) = dotacion_asistencial.persona_id AND TRY_CONVERT(INT, s.IT) = dotacion_asistencial.it) / CASE WHEN hs_dic &gt; 0 THEN hs_dic ELSE 1 END), 0),
     mg_anual_directa = (mg_dir_m1 + mg_dir_m2 + mg_dir_m3 + mg_dir_m4 + mg_dir_m5 + mg_dir_m6 + mg_dir_m7) +
         ROUND((mg_dir_m8 + mg_dir_m9 + mg_dir_m10 + mg_dir_m11 + mg_dir_m12) *
-              ((SELECT CAST(s."Horas Semanales" AS REAL) FROM stg_novedades_buk s WHERE CAST(s.PersonaId AS INTEGER) = dotacion_asistencial.persona_id AND CAST(s.IT AS INTEGER) = dotacion_asistencial.it) / CASE WHEN hs_dic &gt; 0 THEN hs_dic ELSE 1 END), 0),
+              ((SELECT CAST(s."Horas Semanales" AS FLOAT) FROM stg_novedades_buk s WHERE TRY_CONVERT(INT, s.PersonaId) = dotacion_asistencial.persona_id AND TRY_CONVERT(INT, s.IT) = dotacion_asistencial.it) / CASE WHEN hs_dic &gt; 0 THEN hs_dic ELSE 1 END), 0),
     mg_anual_total = (mg_tot_m1 + mg_tot_m2 + mg_tot_m3 + mg_tot_m4 + mg_tot_m5 + mg_tot_m6 + mg_tot_m7) +
         ROUND((mg_tot_m8 + mg_tot_m9 + mg_tot_m10 + mg_tot_m11 + mg_tot_m12) *
-              ((SELECT CAST(s."Horas Semanales" AS REAL) FROM stg_novedades_buk s WHERE CAST(s.PersonaId AS INTEGER) = dotacion_asistencial.persona_id AND CAST(s.IT AS INTEGER) = dotacion_asistencial.it) / CASE WHEN hs_dic &gt; 0 THEN hs_dic ELSE 1 END), 0),
-    hs_dic = (SELECT CAST(s."Horas Semanales" AS REAL) FROM stg_novedades_buk s WHERE CAST(s.PersonaId AS INTEGER) = dotacion_asistencial.persona_id AND CAST(s.IT AS INTEGER) = dotacion_asistencial.it),
-    vigencia_hs_12 = CASE WHEN (SELECT CAST(s."Horas Semanales" AS REAL) FROM stg_novedades_buk s WHERE CAST(s.PersonaId AS INTEGER) = dotacion_asistencial.persona_id AND CAST(s.IT AS INTEGER) = dotacion_asistencial.it) &gt; 0 THEN 1 ELSE 0 END,
+              ((SELECT CAST(s."Horas Semanales" AS FLOAT) FROM stg_novedades_buk s WHERE TRY_CONVERT(INT, s.PersonaId) = dotacion_asistencial.persona_id AND TRY_CONVERT(INT, s.IT) = dotacion_asistencial.it) / CASE WHEN hs_dic &gt; 0 THEN hs_dic ELSE 1 END), 0),
+    hs_dic = (SELECT CAST(s."Horas Semanales" AS FLOAT) FROM stg_novedades_buk s WHERE TRY_CONVERT(INT, s.PersonaId) = dotacion_asistencial.persona_id AND TRY_CONVERT(INT, s.IT) = dotacion_asistencial.it),
+    vigencia_hs_12 = CASE WHEN (SELECT CAST(s."Horas Semanales" AS FLOAT) FROM stg_novedades_buk s WHERE TRY_CONVERT(INT, s.PersonaId) = dotacion_asistencial.persona_id AND TRY_CONVERT(INT, s.IT) = dotacion_asistencial.it) &gt; 0 THEN 1 ELSE 0 END,
     observaciones = 'Actualizado por Bot Blue Prism (Novedades Agosto 2026)',
     version_id = 2,
     updated_at = CURRENT_TIMESTAMP
 WHERE EXISTS (
     SELECT 1 FROM stg_novedades_buk s
     INNER JOIN distribucion_nac d ON TRIM(UPPER(s.Cargo)) = TRIM(UPPER(d.cargo))
-    WHERE CAST(s.PersonaId AS INTEGER) = dotacion_asistencial.persona_id
-      AND CAST(s.IT AS INTEGER) = dotacion_asistencial.it
-      AND CAST(s."Horas Semanales" AS REAL) &gt;= 0 AND CAST(s."Horas Semanales" AS REAL) &lt;= 44
-      AND CAST(s."Horas Semanales" AS REAL) &lt;&gt; dotacion_asistencial.hs_dic
+    WHERE TRY_CONVERT(INT, s.PersonaId) = dotacion_asistencial.persona_id
+      AND TRY_CONVERT(INT, s.IT) = dotacion_asistencial.it
+      AND CAST(s."Horas Semanales" AS FLOAT) &gt;= 0 AND CAST(s."Horas Semanales" AS FLOAT) &lt;= 44
+      AND CAST(s."Horas Semanales" AS FLOAT) &lt;&gt; dotacion_asistencial.hs_dic
 );
 
 UPDATE dotacion_asistencial
@@ -510,27 +630,27 @@ SET plan_anual_indirecta = plan_anual_total - plan_anual_directa,
 WHERE version_id = 2;</initialvalue>
     <alwaysinit />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000113" name="cNovedadesBUK" type="Collection">
+  <stage stageid="79d98d7d-71c8-55f3-bc9a-97d5987b5219" name="cNovedadesBUK" type="Collection">
     <display x="240" y="-60" w="150" h="60" />
     <datatype>collection</datatype>
     <alwaysinit />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000114" name="cEjecucionSIC" type="Collection">
+  <stage stageid="6617c3ad-b8ff-57e1-857e-d05de2d1e074" name="cEjecucionSIC" type="Collection">
     <display x="240" y="120" w="150" h="60" />
     <datatype>collection</datatype>
     <alwaysinit />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000115" name="cErroresDetectados" type="Collection">
+  <stage stageid="afa02a51-9891-52f7-99c9-37e2211dd960" name="cErroresDetectados" type="Collection">
     <display x="240" y="480" w="150" h="60" />
     <datatype>collection</datatype>
     <alwaysinit />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000116" name="cCambiosAuditados" type="Collection">
+  <stage stageid="9f9e13b8-d576-54ff-b7c4-43610b7920dd" name="cCambiosAuditados" type="Collection">
     <display x="240" y="555" w="150" h="60" />
     <datatype>collection</datatype>
     <alwaysinit />
   </stage>
-  <stage stageid="p3000001-0000-4000-8000-000000000117" name="cResumenActualizado" type="Collection">
+  <stage stageid="81922e7e-4667-5215-aba5-58f03d9db83c" name="cResumenActualizado" type="Collection">
     <display x="240" y="630" w="150" h="60" />
     <datatype>collection</datatype>
     <alwaysinit />

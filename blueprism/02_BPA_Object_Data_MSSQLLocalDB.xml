@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<process name="Data - SQLite" version="1.0" preferredid="d91164ca-ea87-4f73-bad2-ee9010d382d9" bpversion="7.1.2.3518" narrative="This object provides a simplified interface for leveraging SQLite in your processes." byrefcollection="true" type="object" runmode="Background">
+<process name="Data - MSSQLLocalDB" version="1.0" preferredid="d91164ca-ea87-4f73-bad2-ee9010d382d9" bpversion="7.1.2.3518" narrative="This object provides a simplified interface for leveraging SQL Server in your processes." byrefcollection="true" type="object" runmode="Background">
         <appdef>
           <element name="Application Root">
             <id>1bac8c80-97d8-479d-ae86-71b1263aac9a</id>
@@ -136,19 +136,19 @@
             <reference>System.Data.dll</reference>
             <reference>System.Xml.dll</reference>
             <reference>System.Drawing.dll</reference>
-            <reference>System.Data.SQLite.dll</reference>
+            <reference>System.Data.dll</reference>
           </references>
           <imports>
             <import>System</import>
             <import>System.Drawing</import>
             <import>System.Data</import>
-            <import>System.Data.SQLite</import>
+            <import>System.Data.SqlClient</import>
           </imports>
           <language>csharp</language>
           <globalcode><![CDATA[]]></globalcode>
           <code><![CDATA[// Global Objects
-SQLiteConnection dbConn = null;
-SQLiteTransaction dbTran = null;]]></code>
+SqlConnection dbConn = null;
+SqlTransaction dbTran = null;]]></code>
         </stage>
         <stage stageid="e7107378-8980-461a-a473-4c9bf1e61130" name="Clean Up" type="SubSheetInfo">
           <subsheetid>b3bdad6e-d979-45db-bca3-20d21e61214f</subsheetid>
@@ -167,7 +167,7 @@ SQLiteTransaction dbTran = null;]]></code>
         </stage>
         <stage stageid="8894f1b0-5325-4ee5-8d0b-8aa2b9137508" name="Open" type="SubSheetInfo">
           <subsheetid>19235e77-62a9-4ab0-9662-b41d3b95dbc3</subsheetid>
-          <narrative>Used to open a connection to a SQLite database based on the supplied connection details.</narrative>
+          <narrative>Used to open a connection to a SQL Server database based on the supplied connection details.</narrative>
           <display x="-195" y="-105" w="150" h="90" />
         </stage>
         <stage stageid="a1acee88-0c24-41b2-951f-a7d478b0b4d0" name="Start" type="Start">
@@ -197,20 +197,16 @@ You will not be able to call this action from a business process, nor will it be
           <display x="-180" y="60" w="180" h="230" />
         </stage>
         <stage stageid="8ceee0bc-0fa4-44c8-843b-dd68964c10c7" name="Details" type="Note">
-          <narrative>Version 1.0.2
+          <narrative>Version 1.0.0
 
 This has support for 64-Bit Blue Prism (x64). In order to take advantage of this support you will need the following dependencies.
 
-System.Data.Sqlite.dll - Generally available. Try https://system.data.sqlite.org/index.html/doc/trunk/www/downloads.wiki
-
-Sqlite.Interop.dll - There are 2 versions of this dependency. One for 32-Bit (x86) and one for 64-Bit (x64) Depending on your version of Blue Prism, you will need to acquire the correct version and place it into the appropriate folder inside of the Blue Prism Automate folder.
-
-See the documentation for more details.</narrative>
+Uses the .NET Framework System.Data.SqlClient provider; no additional database DLL is required.</narrative>
           <display x="-180" y="60" w="180" h="230" />
         </stage>
         <stage stageid="93b67716-88ae-433a-af86-4a5196bbb512" name="Set Connection Details" type="SubSheetInfo">
           <subsheetid>79004f2d-6079-4fbf-a885-d58057e311de</subsheetid>
-          <narrative>Action used to initialize the connection details for the SQLite database file.</narrative>
+          <narrative>Action used to initialize the connection details for the SQL Server database.</narrative>
           <display x="-195" y="-105" w="150" h="90" />
         </stage>
         <stage stageid="76931a7e-62cc-48aa-93a3-21fdd1cd090f" name="Start" type="Start">
@@ -218,9 +214,7 @@ See the documentation for more details.</narrative>
           <loginhibit />
           <display x="15" y="-105" />
           <inputs>
-            <input type="text" name="DB File" narrative="The fully qualified path to, and name of, the SQLite database file. If no value is provided, the database will be created in-memory only." stage="DB File" />
-            <input type="flag" name="Create If Not Found" narrative="When set to 'True', a new database file will be created with the specified path and name if an existing file is not found. Default value is False." stage="Create If Not Found" />
-            <input type="text" name="Connection String" narrative="Optional: You may specify your own custom connection string. Providing your own connection string overrides any other specified values." stage="Temp Connection String" />
+            <input type="text" name="Connection String" narrative="ADO.NET connection string for SQL Server." stage="Temp Connection String" />
           </inputs>
           <onsuccess>cf2dd381-3406-4a04-868b-976520962269</onsuccess>
         </stage>
@@ -267,7 +261,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         </stage>
         <stage stageid="ec74e2df-42f8-4c4a-81dd-e8b1952dcd8d" name="Note1" type="Note">
           <loginhibit />
-          <narrative>Version: 1.0.2</narrative>
+          <narrative>Version: 1.0.0</narrative>
           <display x="15" y="-180" w="120" h="30" />
           <font family="Segoe UI" size="14" style="Bold" color="FF0000" />
         </stage>
@@ -275,9 +269,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
           <loginhibit />
           <display x="105" y="-60" w="120" h="30" />
           <datatype>text</datatype>
-          <initialvalue xml:space="preserve">Data Source=c:\D:\Development\SQLite\Chinook\Chinook.db;Version=3;
-
-</initialvalue>
+          <initialvalue xml:space="preserve">Data Source=(LocalDB)\MSSQLLocalDB;Initial Catalog=TeletonPlanificacion;Integrated Security=True;Connect Timeout=30;TrustServerCertificate=True;</initialvalue>
           <alwaysinit />
         </stage>
         <stage stageid="a71f8c1a-f21a-4847-9ad1-e84f529671aa" name="Build Connection String" type="Calculation">
@@ -286,7 +278,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
           <narrative>This expression implements a sort of IIF function. The general idea is that you have a Replace within a Replace where the inner Replace function is used to provide the value if its condition is True. The outer Replace provides the value if the condition is False.</narrative>
           <display x="105" y="75" />
           <onsuccess>c97316d0-1476-47aa-8d68-56e93e1f6bad</onsuccess>
-          <calculation expression="&quot;Data Source=&quot; &amp; Replace(Replace(Len(Trim([DB File])) &gt; 0, &quot;True&quot;, Chr(34) &amp; Trim([DB File]) &amp; Chr(34)), &quot;False&quot;, &quot;:memory:&quot;) &amp; &quot;;FailIfMissing=&quot; &amp; [Fail If Missing]" stage="Connection String" />
+          <calculation expression="&quot;Data Source=(LocalDB)\MSSQLLocalDB;Initial Catalog=TeletonPlanificacion;Integrated Security=True;Connect Timeout=30;TrustServerCertificate=True;&quot;" stage="Connection String" />
         </stage>
         <stage stageid="cf2dd381-3406-4a04-868b-976520962269" name="Connection String?" type="Decision">
           <subsheetid>79004f2d-6079-4fbf-a885-d58057e311de</subsheetid>
@@ -327,8 +319,8 @@ if ((dbConn == null) || ((dbConn.State == ConnectionState.Closed) || (dbConn.Sta
 		if ((dbConn != null) && (dbConn.State == ConnectionState.Broken))
 			dbConn.Close();
 
-		// Attempt to open the SQLite connection.
-		dbConn = new SQLiteConnection(Connection_String);
+		// Attempt to open the SQL Server connection.
+		dbConn = new SqlConnection(Connection_String);
 		dbConn.Open();
 	} 
 	catch (Exception ex)
@@ -364,7 +356,7 @@ if ((dbConn == null) || ((dbConn.State == ConnectionState.Closed) || (dbConn.Sta
         </stage>
         <stage stageid="9bfef773-f123-4197-8394-1dceec261765" name="Close" type="SubSheetInfo">
           <subsheetid>e874f978-6348-4281-851f-28c0a5a105b7</subsheetid>
-          <narrative>Used to close an existing open connection to a SQLite database.</narrative>
+          <narrative>Used to close an existing open connection to a SQL Server database.</narrative>
           <display x="-195" y="-105" w="150" h="90" />
         </stage>
         <stage stageid="9f583559-c29a-44ad-a1fe-2dc0db33b144" name="Start" type="Start">
@@ -464,7 +456,7 @@ finally
           <subsheetid>dd622381-acea-4b0b-8bfd-76cfa7666f12</subsheetid>
           <narrative>Used to manually start a transaction.
 
-Note: In SQLite, no reads or writes occur except within a transaction. Any command that accesses the database (basically, any SQL command, except a few PRAGMA statements) will automatically start a transaction if one is not already in effect. Automatically started transactions are committed when the last SQL statement finishes.
+Note: In SQL Server, no reads or writes occur except within a transaction. Any command that accesses the database (basically, any SQL command, except a few PRAGMA statements) will automatically start a transaction if one is not already in effect. Automatically started transactions are committed when the last SQL statement finishes.
 
 Manually started transactions usually persist until the next COMMIT or ROLLBACK command. A transaction will also ROLLBACK if the database is closed or if an error occurs and the ROLLBACK conflict resolution algorithm is specified. See the documentation on the ON CONFLICT clause for additional information about the ROLLBACK conflict resolution algorithm.</narrative>
           <display x="-210" y="-105" w="240" h="180" />
@@ -477,7 +469,7 @@ Manually started transactions usually persist until the next COMMIT or ROLLBACK 
         </stage>
         <stage stageid="ef7e2f4e-92fd-48c9-bce8-08b2a7841fab" name="Internal - Check Connection State" type="SubSheetInfo">
           <subsheetid>d74ef0d5-beec-4358-a007-5d1fcafcfd11</subsheetid>
-          <narrative>Internal action for checking the state of the SQLite database connection.</narrative>
+          <narrative>Internal action for checking the state of the SQL Server database connection.</narrative>
           <display x="-195" y="-105" w="150" h="90" />
         </stage>
         <stage stageid="17406786-43db-4f43-8551-8c955d42537c" name="Start" type="Start">
@@ -921,7 +913,7 @@ Records_Affected = 0;
 
 try
 {
-	using (SQLiteCommand cmd = new SQLiteCommand())
+	using (SqlCommand cmd = new SqlCommand())
 	{
 		cmd.Connection = dbConn;
 		cmd.CommandText = SQL;
@@ -1212,7 +1204,7 @@ Number_Result = 0;
 
 try
 {
-	using (SQLiteCommand cmd = new SQLiteCommand())
+	using (SqlCommand cmd = new SqlCommand())
 	{
 		cmd.Connection = dbConn;
 		cmd.CommandText = SQL;
@@ -1347,7 +1339,7 @@ Text_Result = "";
 
 try
 {
-	using (SQLiteCommand cmd = new SQLiteCommand())
+	using (SqlCommand cmd = new SqlCommand())
 	{
 		cmd.Connection = dbConn;
 		cmd.CommandText = SQL;
@@ -1474,14 +1466,14 @@ Results = null;
 
 try
 {
-	using (SQLiteCommand cmd = new SQLiteCommand())
+	using (SqlCommand cmd = new SqlCommand())
 	{
 		cmd.Connection = dbConn;
 		cmd.CommandText = SQL;
 		cmd.Transaction = dbTran; // If we're not using a manual transaction, this statement will do nothing.
 		cmd.CommandTimeout = (int)CommandTimeout;
 		
-		using (SQLiteDataAdapter adapter = new SQLiteDataAdapter())
+		using (SqlDataAdapter adapter = new SqlDataAdapter())
 		{
 			adapter.SelectCommand = cmd;
 			DataSet ds = new DataSet();
@@ -1642,7 +1634,7 @@ https://digitalexchange.blueprism.com/fileMedia/download/a9111324-3192-43ff-9166
         </stage>
               <stage stageid="b1111111-2222-4333-8444-555555555501" name="Write Collection" type="SubSheetInfo">
           <subsheetid>a9b8c7d6-e5f4-4321-8765-1029384756ab</subsheetid>
-          <narrative>Inserta masivamente una Collection de Blue Prism dentro de una tabla SQLite usando una transacción parametrizada. Si la tabla no existe o Clear Table First es True, la recrea automáticamente.</narrative>
+          <narrative>Inserta masivamente una Collection de Blue Prism dentro de una tabla SQL Server usando una transacción parametrizada. Si la tabla no existe o Clear Table First es True, la recrea automáticamente.</narrative>
           <display x="-195" y="-105" w="180" h="90" />
         </stage>
         <stage stageid="b1111111-2222-4333-8444-555555555502" name="Start" type="Start">
@@ -1650,7 +1642,7 @@ https://digitalexchange.blueprism.com/fileMedia/download/a9111324-3192-43ff-9166
           <loginhibit />
           <display x="-15" y="-105" />
           <inputs>
-            <input type="text" name="Table Name" narrative="Nombre de la tabla destino en SQLite." stage="Table Name" />
+            <input type="text" name="Table Name" narrative="Nombre de la tabla destino en SQL Server." stage="Table Name" />
             <input type="collection" name="Collection" narrative="Colección de datos a insertar." stage="Collection" />
             <input type="flag" name="Clear Table First" narrative="True para recrear/limpiar la tabla antes de insertar." stage="Clear Table First" />
           </inputs>
@@ -1696,61 +1688,63 @@ Records_Affected = 0;
 
 try
 {
-	if (Data_Collection == null || Data_Collection.Columns.Count == 0)
-	{
-		return;
-	}
+    if (Data_Collection == null || Data_Collection.Columns.Count == 0)
+        return;
 
-	string safeTable = """ + Table_Name.Replace(""", "") + """;
-	System.Collections.Generic.List<string> colDefs = new System.Collections.Generic.List<string>();
-	System.Collections.Generic.List<string> colNames = new System.Collections.Generic.List<string>();
-	System.Collections.Generic.List<string> paramNames = new System.Collections.Generic.List<string>();
+    if (string.IsNullOrWhiteSpace(Table_Name) || !System.Text.RegularExpressions.Regex.IsMatch(Table_Name, @"^[A-Za-z_][A-Za-z0-9_]*$"))
+        throw new ArgumentException("Invalid SQL Server table name.");
 
-	for (int i = 0; i < Data_Collection.Columns.Count; i++)
-	{
-		string cName = Data_Collection.Columns[i].ColumnName.Replace(""", "").Trim();
-		if (string.IsNullOrEmpty(cName)) cName = "Col" + (i + 1).ToString();
-		colDefs.Add(""" + cName + "" TEXT");
-		colNames.Add(""" + cName + """);
-		paramNames.Add("@p" + i.ToString());
-	}
+    string safeTable = "[dbo].[" + Table_Name + "]";
+    string objectName = "dbo." + Table_Name;
+    System.Collections.Generic.List<string> colDefs = new System.Collections.Generic.List<string>();
+    System.Collections.Generic.List<string> colNames = new System.Collections.Generic.List<string>();
+    System.Collections.Generic.List<string> paramNames = new System.Collections.Generic.List<string>();
 
-	using (SQLiteTransaction tran = dbConn.BeginTransaction())
-	{
-		using (SQLiteCommand cmd = new SQLiteCommand(dbConn))
-		{
-			cmd.Transaction = tran;
-			if (Clear_First)
-			{
-				cmd.CommandText = "DROP TABLE IF EXISTS " + safeTable + ";";
-				cmd.ExecuteNonQuery();
-			}
-			cmd.CommandText = "CREATE TABLE IF NOT EXISTS " + safeTable + " (" + string.Join(", ", colDefs.ToArray()) + ");";
-			cmd.ExecuteNonQuery();
+    for (int i = 0; i < Data_Collection.Columns.Count; i++)
+    {
+        string cName = Data_Collection.Columns[i].ColumnName.Trim();
+        if (string.IsNullOrEmpty(cName)) cName = "Col" + (i + 1).ToString();
+        string quotedName = "[" + cName.Replace("]", "]]" ) + "]";
+        colDefs.Add(quotedName + " NVARCHAR(4000) NULL");
+        colNames.Add(quotedName);
+        paramNames.Add("@p" + i.ToString());
+    }
 
-			cmd.CommandText = "INSERT INTO " + safeTable + " (" + string.Join(", ", colNames.ToArray()) + ") VALUES (" + string.Join(", ", paramNames.ToArray()) + ");";
-			for (int i = 0; i < Data_Collection.Columns.Count; i++)
-			{
-				cmd.Parameters.Add(new SQLiteParameter("@p" + i.ToString(), DbType.String));
-			}
+    using (SqlTransaction tran = dbConn.BeginTransaction())
+    {
+        using (SqlCommand cmd = new SqlCommand())
+        {
+            cmd.Connection = dbConn;
+            cmd.Transaction = tran;
+            if (Clear_First)
+            {
+                cmd.CommandText = "IF OBJECT_ID(N'" + objectName + "', N'U') IS NOT NULL DROP TABLE " + safeTable + ";";
+                cmd.ExecuteNonQuery();
+            }
+            cmd.CommandText = "IF OBJECT_ID(N'" + objectName + "', N'U') IS NULL CREATE TABLE " + safeTable + " (" + string.Join(", ", colDefs.ToArray()) + ");";
+            cmd.ExecuteNonQuery();
 
-			foreach (DataRow row in Data_Collection.Rows)
-			{
-				for (int i = 0; i < Data_Collection.Columns.Count; i++)
-				{
-					object val = row[i];
-					cmd.Parameters[i].Value = (val == null || val == DBNull.Value) ? "" : val.ToString();
-				}
-				Records_Affected += cmd.ExecuteNonQuery();
-			}
-		}
-		tran.Commit();
-	}
+            cmd.CommandText = "INSERT INTO " + safeTable + " (" + string.Join(", ", colNames.ToArray()) + ") VALUES (" + string.Join(", ", paramNames.ToArray()) + ");";
+            for (int i = 0; i < Data_Collection.Columns.Count; i++)
+                cmd.Parameters.Add(new SqlParameter("@p" + i.ToString(), SqlDbType.NVarChar, 4000));
+
+            foreach (DataRow row in Data_Collection.Rows)
+            {
+                for (int i = 0; i < Data_Collection.Columns.Count; i++)
+                {
+                    object val = row[i];
+                    cmd.Parameters[i].Value = (val == null || val == DBNull.Value) ? (object)DBNull.Value : val.ToString();
+                }
+                Records_Affected += cmd.ExecuteNonQuery();
+            }
+        }
+        tran.Commit();
+    }
 }
 catch (Exception ex)
 {
-	Success = false;
-	Error_Message = ex.Message;
+    Success = false;
+    Error_Message = ex.Message;
 }
 ]]></code>
         </stage>

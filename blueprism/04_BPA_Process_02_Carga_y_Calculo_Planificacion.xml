@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<process name="02_Carga_y_Calculo_Planificacion" version="1.0" bpversion="7.5.1.18099" cpeversion="10.0.136.0" narrative="Lee las hojas Distribucion_NAC, Excepciones, LOP y Dotacion_Asistencial con MS Excel VBO - Extended, las almacena en SQLite con Data - SQLite y obtiene la matriz consolidada nacional." byrefcollection="true" processrunningmessage="" disableversioning="false" preferredid="22222222-aaaa-4bbb-8ccc-000000000002">
+<process name="02_Carga_y_Calculo_Planificacion" version="1.0" bpversion="7.5.1.18099" cpeversion="10.0.136.0" narrative="Lee las hojas Distribucion_NAC, Excepciones, LOP y Dotacion_Asistencial con MS Excel VBO - Extended, las almacena en SQL Server con Data - MSSQLLocalDB y obtiene la matriz consolidada nacional." byrefcollection="true" processrunningmessage="" disableversioning="false" preferredid="22222222-aaaa-4bbb-8ccc-000000000002">
   <view>
     <camerax>0</camerax>
     <cameray>120</cameray>
@@ -7,11 +7,11 @@
   </view>
   <preconditions />
   <endpoint narrative="" />
-  <stage stageid="p2000001-0000-4000-8000-000000000001" name="Start" type="Start">
+  <stage stageid="fa1c7660-86a7-589a-a45c-7cb3ec208508" name="Start" type="Start">
     <display x="15" y="-240" />
-    <onsuccess>p2000001-0000-4000-8000-000000000002</onsuccess>
+    <onsuccess>ae95c43b-ba21-5d57-98b5-b210e7898364</onsuccess>
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000002" name="Excel::Create Instance" type="Action">
+  <stage stageid="ae95c43b-ba21-5d57-98b5-b210e7898364" name="Excel::Create Instance" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="-180" w="150" h="30" />
     <inputs>
@@ -20,10 +20,10 @@
     <outputs>
       <output type="number" name="handle" friendlyname="handle" stage="vHandle" />
     </outputs>
-    <onsuccess>p2000001-0000-4000-8000-000000000003</onsuccess>
+    <onsuccess>f88bca1a-74f4-5ed6-ba8e-bbb6367a1c9a</onsuccess>
     <resource object="MS Excel VBO - Extended" action="Create Instance" />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000003" name="Excel::Open Workbook Planificación" type="Action">
+  <stage stageid="f88bca1a-74f4-5ed6-ba8e-bbb6367a1c9a" name="Excel::Open Workbook Planificación" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="-120" w="150" h="30" />
     <inputs>
@@ -33,10 +33,10 @@
     <outputs>
       <output type="text" name="Workbook Name" friendlyname="Workbook Name" stage="vWorkbook" />
     </outputs>
-    <onsuccess>p2000001-0000-4000-8000-000000000004</onsuccess>
+    <onsuccess>9bd9579e-1fc8-5906-9994-d50c729c8e14</onsuccess>
     <resource object="MS Excel VBO - Extended" action="Open Workbook" />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000004" name="Excel::Leer Distribucion_NAC (A6:N92)" type="Action">
+  <stage stageid="9bd9579e-1fc8-5906-9994-d50c729c8e14" name="Excel::Leer Distribucion_NAC (A6:N92)" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="-60" w="150" h="30" />
     <inputs>
@@ -49,10 +49,10 @@
     <outputs>
       <output type="collection" name="Data" friendlyname="Data" stage="cDistribucionNAC" />
     </outputs>
-    <onsuccess>p2000001-0000-4000-8000-000000000005</onsuccess>
+    <onsuccess>f550e08a-10cd-5699-8fa3-a5272a892b8c</onsuccess>
     <resource object="MS Excel VBO - Extended" action="Get Worksheet Range As Collection" />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000005" name="Excel::Leer Excepciones (A2:X19)" type="Action">
+  <stage stageid="f550e08a-10cd-5699-8fa3-a5272a892b8c" name="Excel::Leer Excepciones (A2:X19)" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="0" w="150" h="30" />
     <inputs>
@@ -65,10 +65,10 @@
     <outputs>
       <output type="collection" name="Data" friendlyname="Data" stage="cExcepciones" />
     </outputs>
-    <onsuccess>p2000001-0000-4000-8000-000000000006</onsuccess>
+    <onsuccess>e911587e-496d-5056-abce-51793c17db32</onsuccess>
     <resource object="MS Excel VBO - Extended" action="Get Worksheet Range As Collection" />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000006" name="Excel::Leer LOP (A1:C17)" type="Action">
+  <stage stageid="e911587e-496d-5056-abce-51793c17db32" name="Excel::Leer LOP (A1:C17)" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="60" w="150" h="30" />
     <inputs>
@@ -81,10 +81,10 @@
     <outputs>
       <output type="collection" name="Data" friendlyname="Data" stage="cLOP" />
     </outputs>
-    <onsuccess>p2000001-0000-4000-8000-000000000007</onsuccess>
+    <onsuccess>392d6089-9eb5-5e98-972c-1d7c9121440b</onsuccess>
     <resource object="MS Excel VBO - Extended" action="Get Worksheet Range As Collection" />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000007" name="Excel::Leer Dotacion_Asistencial (A4:GW475)" type="Action">
+  <stage stageid="392d6089-9eb5-5e98-972c-1d7c9121440b" name="Excel::Leer Dotacion_Asistencial (A4:GW475)" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="120" w="150" h="30" />
     <inputs>
@@ -97,10 +97,10 @@
     <outputs>
       <output type="collection" name="Data" friendlyname="Data" stage="cDotacionAsistencial" />
     </outputs>
-    <onsuccess>p2000001-0000-4000-8000-000000000008</onsuccess>
+    <onsuccess>ed2c3e19-aea5-5d1a-8150-4fabe6804425</onsuccess>
     <resource object="MS Excel VBO - Extended" action="Get Worksheet Range As Collection" />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000008" name="Excel::Close Workbook" type="Action">
+  <stage stageid="ed2c3e19-aea5-5d1a-8150-4fabe6804425" name="Excel::Close Workbook" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="180" w="150" h="30" />
     <inputs>
@@ -108,30 +108,28 @@
       <input type="text" name="Workbook Name" friendlyname="Workbook Name" expr="[vWorkbook]" />
       <input type="flag" name="Save Data" friendlyname="Save Data" expr="False" />
     </inputs>
-    <onsuccess>p2000001-0000-4000-8000-000000000009</onsuccess>
+    <onsuccess>429c1370-4a9f-58cc-a26a-7484a084888a</onsuccess>
     <resource object="MS Excel VBO - Extended" action="Close Workbook" />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000009" name="Excel::Release Instance" type="Action">
+  <stage stageid="429c1370-4a9f-58cc-a26a-7484a084888a" name="Excel::Release Instance" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="240" w="150" h="30" />
     <inputs>
       <input type="number" name="handle" friendlyname="handle" expr="[vHandle]" />
     </inputs>
-    <onsuccess>p2000001-0000-4000-8000-000000000010</onsuccess>
+    <onsuccess>13cce268-76b0-59ea-9492-c36fc4fe9a70</onsuccess>
     <resource object="MS Excel VBO - Extended" action="Release Instance" />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000010" name="SQLite::Set Connection Details" type="Action">
+  <stage stageid="13cce268-76b0-59ea-9492-c36fc4fe9a70" name="SQL Server::Set Connection Details" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="300" w="150" h="30" />
     <inputs>
-      <input type="text" name="DB File" friendlyname="DB File" expr="[vRutaBD]" />
-      <input type="flag" name="Create If Not Found" friendlyname="Create If Not Found" expr="True" />
-      <input type="text" name="Connection String" friendlyname="Connection String" expr="&quot;&quot;" />
+      <input type="text" name="Connection String" friendlyname="Connection String" expr="[vConnectionString]" />
     </inputs>
-    <onsuccess>p2000001-0000-4000-8000-000000000011</onsuccess>
-    <resource object="Data - SQLite" action="Set Connection Details" />
+    <onsuccess>7510343e-6d20-5423-b7fb-ca53472aef03</onsuccess>
+    <resource object="Data - MSSQLLocalDB" action="Set Connection Details" />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000011" name="SQLite::Write stg_distribucion_nac" type="Action">
+  <stage stageid="7510343e-6d20-5423-b7fb-ca53472aef03" name="SQL Server::Write stg_distribucion_nac" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="360" w="150" h="30" />
     <inputs>
@@ -144,10 +142,10 @@
       <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
       <output type="number" name="Records Affected" friendlyname="Records Affected" stage="vFilasInsertadas" />
     </outputs>
-    <onsuccess>p2000001-0000-4000-8000-000000000012</onsuccess>
-    <resource object="Data - SQLite" action="Write Collection" />
+    <onsuccess>27abd3c1-d659-5c7a-87cf-0720001192ad</onsuccess>
+    <resource object="Data - MSSQLLocalDB" action="Write Collection" />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000012" name="SQLite::Write stg_excepciones" type="Action">
+  <stage stageid="a914bd53-c8d4-5477-a7ac-8e7aaf7600f9" name="SQL Server::Write stg_excepciones" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="420" w="150" h="30" />
     <inputs>
@@ -160,10 +158,10 @@
       <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
       <output type="number" name="Records Affected" friendlyname="Records Affected" stage="vFilasInsertadas" />
     </outputs>
-    <onsuccess>p2000001-0000-4000-8000-000000000013</onsuccess>
-    <resource object="Data - SQLite" action="Write Collection" />
+    <onsuccess>2dcb0df3-66e6-525c-b06a-cbff7ab0fa8e</onsuccess>
+    <resource object="Data - MSSQLLocalDB" action="Write Collection" />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000013" name="SQLite::Write stg_lop" type="Action">
+  <stage stageid="2cf5d1da-31fe-5ac0-b16d-73cf3e2488ac" name="SQL Server::Write stg_lop" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="480" w="150" h="30" />
     <inputs>
@@ -176,10 +174,10 @@
       <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
       <output type="number" name="Records Affected" friendlyname="Records Affected" stage="vFilasInsertadas" />
     </outputs>
-    <onsuccess>p2000001-0000-4000-8000-000000000014</onsuccess>
-    <resource object="Data - SQLite" action="Write Collection" />
+    <onsuccess>1bf99d37-c672-5127-ab8b-5b364d99c6c0</onsuccess>
+    <resource object="Data - MSSQLLocalDB" action="Write Collection" />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000014" name="SQLite::Write stg_dotacion_asistencial" type="Action">
+  <stage stageid="ce16f852-2e8d-5833-9cc1-c1c942346d80" name="SQL Server::Write stg_dotacion_asistencial" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="540" w="150" h="30" />
     <inputs>
@@ -192,10 +190,10 @@
       <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
       <output type="number" name="Records Affected" friendlyname="Records Affected" stage="vFilasInsertadas" />
     </outputs>
-    <onsuccess>p2000001-0000-4000-8000-000000000015</onsuccess>
-    <resource object="Data - SQLite" action="Write Collection" />
+    <onsuccess>3af84ad1-9d4d-5489-a6aa-302b1241c07a</onsuccess>
+    <resource object="Data - MSSQLLocalDB" action="Write Collection" />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000015" name="SQLite::Recalcular Indicadores y Auditar" type="Action">
+  <stage stageid="81d73114-d6e9-5efa-913d-d7c31eb5dac5" name="SQL Server::Recalcular Indicadores y Auditar" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="600" w="150" h="30" />
     <inputs>
@@ -207,14 +205,14 @@
       <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
       <output type="number" name="Records Affected" friendlyname="Records Affected" stage="vFilasInsertadas" />
     </outputs>
-    <onsuccess>p2000001-0000-4000-8000-000000000016</onsuccess>
-    <resource object="Data - SQLite" action="Execute Non Query" />
+    <onsuccess>0b82e01e-0aa8-5149-8b02-0d5ff8c3035e</onsuccess>
+    <resource object="Data - MSSQLLocalDB" action="Execute Non Query" />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000016" name="SQLite::Obtener Consolidado Nacional 17 IT" type="Action">
+  <stage stageid="56e0c027-c7b3-53c9-b009-2e932fe7fe99" name="SQL Server::Obtener Consolidado Nacional 17 IT" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="660" w="150" h="30" />
     <inputs>
-      <input type="text" name="SQL" friendlyname="SQL" expr="&quot;SELECT * FROM vw_resumen_nacional_instituto;&quot;" />
+      <input type="text" name="SQL" friendlyname="SQL" expr="&quot;SELECT * FROM dbo.vw_resumen_nacional_instituto ORDER BY IT;&quot;" />
       <input type="number" name="CommandTimeout" friendlyname="CommandTimeout" expr="30" />
     </inputs>
     <outputs>
@@ -222,69 +220,114 @@
       <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
       <output type="collection" name="Results" friendlyname="Results" stage="cResumenNacional" />
     </outputs>
-    <onsuccess>p2000001-0000-4000-8000-000000000017</onsuccess>
-    <resource object="Data - SQLite" action="Execute - Get Collection" />
+    <onsuccess>40af2077-53b2-56bd-947d-d2f715cbf216</onsuccess>
+    <resource object="Data - MSSQLLocalDB" action="Execute - Get Collection" />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000017" name="SQLite::Close" type="Action">
+  <stage stageid="845d269b-8b61-5dc2-b918-2ef4a1cab5dd" name="SQL Server::Close" type="Action">
     <loginhibit onsuccess="true" />
     <display x="15" y="720" w="150" h="30" />
     <outputs>
       <output type="flag" name="Success" friendlyname="Success" stage="vSuccess" />
       <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
     </outputs>
-    <onsuccess>p2000001-0000-4000-8000-000000000018</onsuccess>
-    <resource object="Data - SQLite" action="Close" />
+    <onsuccess>7c5d300b-cbbf-5f7c-9c2b-a426d15c6c94</onsuccess>
+    <resource object="Data - MSSQLLocalDB" action="Close" />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000018" name="End" type="End">
+  <stage stageid="f408baf6-0a3d-58a8-955a-e153ba63d6c5" name="End" type="End">
     <display x="15" y="780" />
   </stage>
-  <!-- Data Items -->
-  <stage stageid="p2000001-0000-4000-8000-000000000101" name="vRutaExcelPlan" type="Data">
+  <stage stageid="27abd3c1-d659-5c7a-87cf-0720001192ad" name="SQL::Check Distribution Write" type="Decision">
+    <display x="225" y="360" />
+    <decision expression="[vSuccess]" />
+    <ontrue>a914bd53-c8d4-5477-a7ac-8e7aaf7600f9</ontrue>
+    <onfalse>a8b666eb-3437-593e-8dea-9c669a3a3d33</onfalse>
+  </stage>
+  <stage stageid="2dcb0df3-66e6-525c-b06a-cbff7ab0fa8e" name="SQL::Check Exceptions Write" type="Decision">
+    <display x="225" y="420" />
+    <decision expression="[vSuccess]" />
+    <ontrue>2cf5d1da-31fe-5ac0-b16d-73cf3e2488ac</ontrue>
+    <onfalse>a8b666eb-3437-593e-8dea-9c669a3a3d33</onfalse>
+  </stage>
+  <stage stageid="1bf99d37-c672-5127-ab8b-5b364d99c6c0" name="SQL::Check LOP Write" type="Decision">
+    <display x="225" y="480" />
+    <decision expression="[vSuccess]" />
+    <ontrue>ce16f852-2e8d-5833-9cc1-c1c942346d80</ontrue>
+    <onfalse>a8b666eb-3437-593e-8dea-9c669a3a3d33</onfalse>
+  </stage>
+  <stage stageid="3af84ad1-9d4d-5489-a6aa-302b1241c07a" name="SQL::Check Staffing Write" type="Decision">
+    <display x="225" y="540" />
+    <decision expression="[vSuccess]" />
+    <ontrue>81d73114-d6e9-5efa-913d-d7c31eb5dac5</ontrue>
+    <onfalse>a8b666eb-3437-593e-8dea-9c669a3a3d33</onfalse>
+  </stage>
+  <stage stageid="0b82e01e-0aa8-5149-8b02-0d5ff8c3035e" name="SQL::Check Recalculation" type="Decision">
+    <display x="225" y="600" />
+    <decision expression="[vSuccess]" />
+    <ontrue>56e0c027-c7b3-53c9-b009-2e932fe7fe99</ontrue>
+    <onfalse>a8b666eb-3437-593e-8dea-9c669a3a3d33</onfalse>
+  </stage>
+  <stage stageid="40af2077-53b2-56bd-947d-d2f715cbf216" name="SQL::Check Summary Query" type="Decision">
+    <display x="225" y="660" />
+    <decision expression="[vSuccess]" />
+    <ontrue>845d269b-8b61-5dc2-b918-2ef4a1cab5dd</ontrue>
+    <onfalse>a8b666eb-3437-593e-8dea-9c669a3a3d33</onfalse>
+  </stage>
+  <stage stageid="7c5d300b-cbbf-5f7c-9c2b-a426d15c6c94" name="SQL::Check Close" type="Decision">
+    <display x="225" y="720" />
+    <decision expression="[vSuccess]" />
+    <ontrue>f408baf6-0a3d-58a8-955a-e153ba63d6c5</ontrue>
+    <onfalse>a8b666eb-3437-593e-8dea-9c669a3a3d33</onfalse>
+  </stage>
+  <stage stageid="a8b666eb-3437-593e-8dea-9c669a3a3d33" name="SQL Failure" type="Exception">
+    <display x="405" y="540" />
+    <exception type="" detail="&quot;Data - MSSQLLocalDB failed: &quot; &amp; [vErrorMessage]" />
+  </stage>
+  <stage stageid="d78605aa-e0a6-51d3-88f9-77da55ec7042" name="vRutaExcelPlan" type="Data">
     <display x="-240" y="-195" w="180" h="30" />
     <datatype>text</datatype>
     <initialvalue xml:space="preserve">E:\Users\onito\Documents\Botathon\2222\BotathonLosRayitos2\Solicitud\Nac - Planificación Asistencial x mes.xlsx</initialvalue>
     <alwaysinit />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000102" name="vRutaBD" type="Data">
+  <stage stageid="0c0a6f94-a3fb-5f39-92e6-22414120d02e" name="vConnectionString" type="Data">
     <display x="-240" y="-150" w="180" h="30" />
     <datatype>text</datatype>
-    <initialvalue xml:space="preserve">E:\Users\onito\Documents\Botathon\2222\BotathonLosRayitos2\database\teleton_planificacion.db</initialvalue>
+    <initialvalue xml:space="preserve">Data Source=(LocalDB)\MSSQLLocalDB;Initial Catalog=TeletonPlanificacion;Integrated Security=True;Connect Timeout=30;TrustServerCertificate=True;</initialvalue>
     <alwaysinit />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000103" name="vHandle" type="Data">
+  <stage stageid="51a16f18-264b-54f6-8bfa-da4c9b5260f0" name="vHandle" type="Data">
     <display x="-240" y="-105" w="120" h="30" />
     <datatype>number</datatype>
     <initialvalue>0</initialvalue>
     <alwaysinit />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000104" name="vWorkbook" type="Data">
+  <stage stageid="be9fdc9b-e46a-5bff-9c77-a2b9d54f7274" name="vWorkbook" type="Data">
     <display x="-240" y="-60" w="150" h="30" />
     <datatype>text</datatype>
     <initialvalue />
     <alwaysinit />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000105" name="vSuccess" type="Data">
+  <stage stageid="2c9c7d63-35fc-5c9a-bd3d-0697008760b7" name="vSuccess" type="Data">
     <display x="-240" y="-15" w="120" h="30" />
     <datatype>flag</datatype>
     <initialvalue>False</initialvalue>
     <alwaysinit />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000106" name="vErrorMessage" type="Data">
+  <stage stageid="df037305-5893-52a5-8e9b-d20e439497b4" name="vErrorMessage" type="Data">
     <display x="-240" y="30" w="180" h="30" />
     <datatype>text</datatype>
     <initialvalue />
     <alwaysinit />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000107" name="vFilasInsertadas" type="Data">
+  <stage stageid="5b0412e8-8f18-53a4-b881-548e5b82191a" name="vFilasInsertadas" type="Data">
     <display x="-240" y="75" w="150" h="30" />
     <datatype>number</datatype>
     <initialvalue>0</initialvalue>
     <alwaysinit />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000108" name="vSQL_Recalcular" type="Data">
+  <stage stageid="f0390fc1-00dc-5e13-a491-6eaa9006e362" name="vSQL_Recalcular" type="Data">
     <display x="-240" y="120" w="180" h="30" />
     <datatype>text</datatype>
-    <initialvalue xml:space="preserve">-- Recalcular % FOJA y Metas de Gestión según parámetros globales vigentes en SQLite
+    <initialvalue xml:space="preserve">-- Recalcular % FOJA y Metas de Gestión según parámetros globales vigentes en SQL Server
 UPDATE dotacion_asistencial
 SET
     foja_pct = CASE WHEN hs_dic &gt; 0 THEN ROUND(pct_directo_final_p2 * 100.0, 2) ELSE 0.0 END,
@@ -298,33 +341,33 @@ INSERT INTO auditoria_cambios (
     1, 'Bot Blue Prism (02_Carga_y_Calculo_Planificacion)', 'SINCRONIZACION_PLANIFICACION',
     'Dotación Asistencial + Excepciones + LOP + Distribucion_NAC',
     'Recálculo Nacional 17 Institutos', 'Planilla Excel',
-    (SELECT CAST(COUNT(*) AS TEXT) || ' filas sincronizadas en SQLite' FROM dotacion_asistencial),
-    1, (SELECT CAST(SUM(mg_anual_total) AS INTEGER) FROM dotacion_asistencial),
-    'Lectura de hojas vía MS Excel VBO - Extended y persistencia en Data - SQLite', 'APROBADO'
+    (SELECT CONCAT(CONVERT(NVARCHAR(30), COUNT(*)), N' filas sincronizadas en SQL Server') FROM dotacion_asistencial),
+    1, (SELECT CAST(SUM(mg_anual_total) AS INT) FROM dotacion_asistencial),
+    'Lectura de hojas vía MS Excel VBO - Extended y persistencia en Data - MSSQLLocalDB', 'APROBADO'
 );</initialvalue>
     <alwaysinit />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000109" name="cDistribucionNAC" type="Collection">
+  <stage stageid="a79d64b4-1d27-541b-aa93-ade54a6a9fd5" name="cDistribucionNAC" type="Collection">
     <display x="240" y="-60" w="150" h="60" />
     <datatype>collection</datatype>
     <alwaysinit />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000110" name="cExcepciones" type="Collection">
+  <stage stageid="a95ca9af-38f4-51c5-85b0-622ed90776c3" name="cExcepciones" type="Collection">
     <display x="240" y="15" w="150" h="60" />
     <datatype>collection</datatype>
     <alwaysinit />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000111" name="cLOP" type="Collection">
+  <stage stageid="ba7ee90c-2c3d-5d30-9bfc-9089e834fee4" name="cLOP" type="Collection">
     <display x="240" y="90" w="150" h="60" />
     <datatype>collection</datatype>
     <alwaysinit />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000112" name="cDotacionAsistencial" type="Collection">
+  <stage stageid="a27933b4-9e5b-56ef-89c2-ea6f43b7f720" name="cDotacionAsistencial" type="Collection">
     <display x="240" y="165" w="150" h="60" />
     <datatype>collection</datatype>
     <alwaysinit />
   </stage>
-  <stage stageid="p2000001-0000-4000-8000-000000000113" name="cResumenNacional" type="Collection">
+  <stage stageid="001a4b34-cb9c-52f4-857e-5abcdc986848" name="cResumenNacional" type="Collection">
     <display x="240" y="660" w="150" h="60" />
     <datatype>collection</datatype>
     <alwaysinit />
