@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<process name="01_Carga_Base_Contratos_BUK" version="1.0" bpversion="7.5.1.18099" cpeversion="10.0.136.0" narrative="Lee la hoja Dotacion_2026 de Nac - Base contratos x mes.xlsx usando MS Excel VBO - Extended, valida reglas de negocio e inserta en SQLite usando Data - SQLite." byrefcollection="true" processrunningmessage="" disableversioning="false" preferredid="11111111-aaaa-4bbb-8ccc-000000000001">
+  <view>
+    <camerax>0</camerax>
+    <cameray>60</cameray>
+    <zoom version="2">1.25</zoom>
+  </view>
+  <preconditions />
+  <endpoint narrative="" />
+  <stage stageid="p1000001-0000-4000-8000-000000000001" name="Start" type="Start">
+    <display x="15" y="-240" />
+    <onsuccess>p1000001-0000-4000-8000-000000000002</onsuccess>
+  </stage>
+  <stage stageid="p1000001-0000-4000-8000-000000000002" name="Excel::Create Instance" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="-180" w="150" h="30" />
+    <inputs>
+      <input type="flag" name="Enable Events" friendlyname="Enable Events" expr="False" />
+    </inputs>
+    <outputs>
+      <output type="number" name="handle" friendlyname="handle" stage="vHandle" />
+    </outputs>
+    <onsuccess>p1000001-0000-4000-8000-000000000003</onsuccess>
+    <resource object="MS Excel VBO - Extended" action="Create Instance" />
+  </stage>
+  <stage stageid="p1000001-0000-4000-8000-000000000003" name="Excel::Open Workbook BUK" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="-120" w="150" h="30" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" expr="[vHandle]" />
+      <input type="text" name="File name" friendlyname="File name" expr="[vRutaExcelBUK]" />
+    </inputs>
+    <outputs>
+      <output type="text" name="Workbook Name" friendlyname="Workbook Name" stage="vWorkbook" />
+    </outputs>
+    <onsuccess>p1000001-0000-4000-8000-000000000004</onsuccess>
+    <resource object="MS Excel VBO - Extended" action="Open Workbook" />
+  </stage>
+  <stage stageid="p1000001-0000-4000-8000-000000000004" name="Excel::Leer Dotacion_2026 (A2:S3125)" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="-60" w="150" h="30" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" expr="[vHandle]" />
+      <input type="text" name="Workbook Name" friendlyname="Workbook Name" expr="[vWorkbook]" />
+      <input type="text" name="Worksheet Name" friendlyname="Worksheet Name" expr="[vHojaBUK]" />
+      <input type="text" name="StartCell" friendlyname="StartCell" expr="[vCeldaIni]" />
+      <input type="text" name="EndCell" friendlyname="EndCell" expr="[vCeldaFin]" />
+    </inputs>
+    <outputs>
+      <output type="collection" name="Data" friendlyname="Data" stage="cContratosBUK" />
+    </outputs>
+    <onsuccess>p1000001-0000-4000-8000-000000000005</onsuccess>
+    <resource object="MS Excel VBO - Extended" action="Get Worksheet Range As Collection" />
+  </stage>
+  <stage stageid="p1000001-0000-4000-8000-000000000005" name="Excel::Close Workbook" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="0" w="150" h="30" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" expr="[vHandle]" />
+      <input type="text" name="Workbook Name" friendlyname="Workbook Name" expr="[vWorkbook]" />
+      <input type="flag" name="Save Data" friendlyname="Save Data" expr="False" />
+    </inputs>
+    <onsuccess>p1000001-0000-4000-8000-000000000006</onsuccess>
+    <resource object="MS Excel VBO - Extended" action="Close Workbook" />
+  </stage>
+  <stage stageid="p1000001-0000-4000-8000-000000000006" name="Excel::Release Instance" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="60" w="150" h="30" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" expr="[vHandle]" />
+    </inputs>
+    <onsuccess>p1000001-0000-4000-8000-000000000007</onsuccess>
+    <resource object="MS Excel VBO - Extended" action="Release Instance" />
+  </stage>
+  <stage stageid="p1000001-0000-4000-8000-000000000007" name="SQLite::Set Connection Details" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="120" w="150" h="30" />
+    <inputs>
+      <input type="text" name="DB File" friendlyname="DB File" expr="[vRutaBD]" />
+      <input type="flag" name="Create If Not Found" friendlyname="Create If Not Found" expr="True" />
+      <input type="text" name="Connection String" friendlyname="Connection String" expr="&quot;&quot;" />
+    </inputs>
+    <onsuccess>p1000001-0000-4000-8000-000000000008</onsuccess>
+    <resource object="Data - SQLite" action="Set Connection Details" />
+  </stage>
+  <stage stageid="p1000001-0000-4000-8000-000000000008" name="SQLite::Write Collection (stg_contratos_buk)" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="180" w="150" h="30" />
+    <inputs>
+      <input type="text" name="Table Name" friendlyname="Table Name" expr="&quot;stg_contratos_buk&quot;" />
+      <input type="collection" name="Collection" friendlyname="Collection" expr="[cContratosBUK]" />
+      <input type="flag" name="Clear Table First" friendlyname="Clear Table First" expr="True" />
+    </inputs>
+    <outputs>
+      <output type="flag" name="Success" friendlyname="Success" stage="vSuccess" />
+      <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
+      <output type="number" name="Records Affected" friendlyname="Records Affected" stage="vFilasStaging" />
+    </outputs>
+    <onsuccess>p1000001-0000-4000-8000-000000000009</onsuccess>
+    <resource object="Data - SQLite" action="Write Collection" />
+  </stage>
+  <stage stageid="p1000001-0000-4000-8000-000000000009" name="SQLite::Validar e Insertar Contratos BUK" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="240" w="150" h="30" />
+    <inputs>
+      <input type="text" name="SQL" friendlyname="SQL" expr="[vSQL_Validar_Insertar]" />
+      <input type="number" name="CommandTimeout" friendlyname="CommandTimeout" expr="60" />
+    </inputs>
+    <outputs>
+      <output type="flag" name="Success" friendlyname="Success" stage="vSuccess" />
+      <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
+      <output type="number" name="Records Affected" friendlyname="Records Affected" stage="vRegistrosAfectados" />
+    </outputs>
+    <onsuccess>p1000001-0000-4000-8000-000000000010</onsuccess>
+    <resource object="Data - SQLite" action="Execute Non Query" />
+  </stage>
+  <stage stageid="p1000001-0000-4000-8000-000000000010" name="SQLite::Obtener Resumen por Instituto" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="300" w="150" h="30" />
+    <inputs>
+      <input type="text" name="SQL" friendlyname="SQL" expr="&quot;SELECT it, instituto, COUNT(DISTINCT persona_id) AS Profesionales, COUNT(*) AS Registros_Mes, SUM(horas_semanales) AS Total_Horas_Mes FROM contratos_buk GROUP BY it, instituto ORDER BY it;&quot;" />
+      <input type="number" name="CommandTimeout" friendlyname="CommandTimeout" expr="30" />
+    </inputs>
+    <outputs>
+      <output type="flag" name="Success" friendlyname="Success" stage="vSuccess" />
+      <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
+      <output type="collection" name="Results" friendlyname="Results" stage="cResumenContratosIT" />
+    </outputs>
+    <onsuccess>p1000001-0000-4000-8000-000000000011</onsuccess>
+    <resource object="Data - SQLite" action="Execute - Get Collection" />
+  </stage>
+  <stage stageid="p1000001-0000-4000-8000-000000000011" name="SQLite::Close" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="360" w="150" h="30" />
+    <outputs>
+      <output type="flag" name="Success" friendlyname="Success" stage="vSuccess" />
+      <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
+    </outputs>
+    <onsuccess>p1000001-0000-4000-8000-000000000012</onsuccess>
+    <resource object="Data - SQLite" action="Close" />
+  </stage>
+  <stage stageid="p1000001-0000-4000-8000-000000000012" name="End" type="End">
+    <display x="15" y="420" />
+  </stage>
+  <!-- Data Items -->
+  <stage stageid="p1000001-0000-4000-8000-000000000101" name="vRutaExcelBUK" type="Data">
+    <display x="-240" y="-195" w="180" h="30" />
+    <datatype>text</datatype>
+    <initialvalue xml:space="preserve">E:\Users\onito\Documents\Botathon\2222\BotathonLosRayitos2\Solicitud\Nac - Base contratos x mes.xlsx</initialvalue>
+    <alwaysinit />
+  </stage>
+  <stage stageid="p1000001-0000-4000-8000-000000000102" name="vRutaBD" type="Data">
+    <display x="-240" y="-150" w="180" h="30" />
+    <datatype>text</datatype>
+    <initialvalue xml:space="preserve">E:\Users\onito\Documents\Botathon\2222\BotathonLosRayitos2\database\teleton_planificacion.db</initialvalue>
+    <alwaysinit />
+  </stage>
+  <stage stageid="p1000001-0000-4000-8000-000000000103" name="vHojaBUK" type="Data">
+    <display x="-240" y="-105" w="150" h="30" />
+    <datatype>text</datatype>
+    <initialvalue xml:space="preserve">Dotacion_2026</initialvalue>
+    <alwaysinit />
+  </stage>
+  <stage stageid="p1000001-0000-4000-8000-000000000104" name="vCeldaIni" type="Data">
+    <display x="-240" y="-60" w="120" h="30" />
+    <datatype>text</datatype>
+    <initialvalue xml:space="preserve">A2</initialvalue>
+    <alwaysinit />
+  </stage>
+  <stage stageid="p1000001-0000-4000-8000-000000000105" name="vCeldaFin" type="Data">
+    <display x="-240" y="-15" w="120" h="30" />
+    <datatype>text</datatype>
+    <initialvalue xml:space="preserve">S3125</initialvalue>
+    <alwaysinit />
+  </stage>
+  <stage stageid="p1000001-0000-4000-8000-000000000106" name="vHandle" type="Data">
+    <display x="-240" y="30" w="120" h="30" />
+    <datatype>number</datatype>
+    <initialvalue>0</initialvalue>
+    <alwaysinit />
+  </stage>
+  <stage stageid="p1000001-0000-4000-8000-000000000107" name="vWorkbook" type="Data">
+    <display x="-240" y="75" w="150" h="30" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <alwaysinit />
+  </stage>
+  <stage stageid="p1000001-0000-4000-8000-000000000108" name="vSuccess" type="Data">
+    <display x="-240" y="120" w="120" h="30" />
+    <datatype>flag</datatype>
+    <initialvalue>False</initialvalue>
+    <alwaysinit />
+  </stage>
+  <stage stageid="p1000001-0000-4000-8000-000000000109" name="vErrorMessage" type="Data">
+    <display x="-240" y="165" w="180" h="30" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <alwaysinit />
+  </stage>
+  <stage stageid="p1000001-0000-4000-8000-000000000110" name="vFilasStaging" type="Data">
+    <display x="-240" y="210" w="150" h="30" />
+    <datatype>number</datatype>
+    <initialvalue>0</initialvalue>
+    <alwaysinit />
+  </stage>
+  <stage stageid="p1000001-0000-4000-8000-000000000111" name="vRegistrosAfectados" type="Data">
+    <display x="-240" y="255" w="150" h="30" />
+    <datatype>number</datatype>
+    <initialvalue>0</initialvalue>
+    <alwaysinit />
+  </stage>
+  <stage stageid="p1000001-0000-4000-8000-000000000112" name="vSQL_Validar_Insertar" type="Data">
+    <display x="-240" y="300" w="180" h="30" />
+    <datatype>text</datatype>
+    <initialvalue xml:space="preserve">DELETE FROM errores_validacion WHERE origen_archivo = 'Nac - Base contratos x mes.xlsx';
+
+-- 1. Detectar errores de horas fuera de rango (&lt;= 0 o &gt; 44)
+INSERT INTO errores_validacion (origen_archivo, persona_id, it, cargo, campo_error, valor_recibido, descripcion_error)
+SELECT 'Nac - Base contratos x mes.xlsx', PersonaId, IT, Cargo, 'Horas Semanales', "Horas Semanales",
+       'Horas semanales fuera del rango legal permitido (debe estar entre 1 y 44 horas).'
+FROM stg_contratos_buk
+WHERE CAST(COALESCE("Horas Semanales", '0') AS REAL) &lt;= 0
+   OR CAST(COALESCE("Horas Semanales", '0') AS REAL) &gt; 44;
+
+-- 2. Detectar cargos que no existen en el catálogo Distribucion_NAC
+INSERT INTO errores_validacion (origen_archivo, persona_id, it, cargo, campo_error, valor_recibido, descripcion_error)
+SELECT 'Nac - Base contratos x mes.xlsx', s.PersonaId, s.IT, s.Cargo, 'Cargo', s.Cargo,
+       'Cargo no homologado en matriz parametrizable Distribucion_NAC.'
+FROM stg_contratos_buk s
+LEFT JOIN distribucion_nac d ON TRIM(UPPER(s.Cargo)) = TRIM(UPPER(d.cargo))
+WHERE d.cargo IS NULL AND TRIM(COALESCE(s.Cargo, '')) &lt;&gt; '';
+
+-- 3. Insertar/Actualizar registros válidos en contratos_buk
+INSERT OR REPLACE INTO contratos_buk (
+    it, instituto, persona_id, area_buk, nombre_subarea, centro_costo,
+    fecha_nacimiento, periodo_serial, periodo_fecha, mes, tipo_contrato,
+    tipo_trab_anterior, fecha_ingreso, fecha_termino, horas_semanales,
+    cargo, tipo_trabajador, dias_jornada, reg_sic, cod_esp, ndias, origen_carga
+)
+SELECT
+    CAST(s.IT AS INTEGER),
+    TRIM(s.Instituto),
+    CAST(s.PersonaId AS INTEGER),
+    TRIM(s."Área"),
+    TRIM(s."Nombre Sub-área"),
+    CAST(COALESCE(s."Centro de Costo", '0') AS INTEGER),
+    s."Fecha de Nacimiento",
+    CAST( COALESCE(s.Periodo, '0') AS INTEGER),
+    s.Periodo,
+    CASE
+        WHEN s.Periodo LIKE '2026-%' THEN CAST(SUBSTR(s.Periodo, 6, 2) AS INTEGER)
+        WHEN CAST(s.Periodo AS INTEGER) = 46023 THEN 1
+        WHEN CAST(s.Periodo AS INTEGER) = 46054 THEN 2
+        WHEN CAST(s.Periodo AS INTEGER) = 46082 THEN 3
+        WHEN CAST(s.Periodo AS INTEGER) = 46113 THEN 4
+        WHEN CAST(s.Periodo AS INTEGER) = 46143 THEN 5
+        WHEN CAST(s.Periodo AS INTEGER) = 46174 THEN 6
+        WHEN CAST(s.Periodo AS INTEGER) = 46204 THEN 7
+        WHEN CAST(s.Periodo AS INTEGER) = 46235 THEN 8
+        ELSE 1
+    END,
+    TRIM(s."Tipo de Contrato"),
+    TRIM(s.Tipo_Trab_161225),
+    s."Fecha Ingreso Compañía",
+    s."Fecha Término",
+    CAST(s."Horas Semanales" AS REAL),
+    TRIM(s.Cargo),
+    TRIM(s.Tipo_Trabajador),
+    TRIM(s."Días de la Jornada"),
+    TRIM(s.Reg_SIC),
+    TRIM(s.Cod_Esp),
+    CAST(COALESCE(s.Ndias, '5') AS REAL),
+    'BLUEPRISM_BUK'
+FROM stg_contratos_buk s
+INNER JOIN distribucion_nac d ON TRIM(UPPER(s.Cargo)) = TRIM(UPPER(d.cargo))
+WHERE CAST(COALESCE(s."Horas Semanales", '0') AS REAL) &gt; 0
+  AND CAST(COALESCE(s."Horas Semanales", '0') AS REAL) &lt;= 44;
+
+-- 4. Registrar evento en bitácora de auditoría
+INSERT INTO auditoria_cambios (
+    version_id, actor, tipo_evento, entidad_afectada, campo_modificado,
+    valor_anterior, valor_nuevo, mes_inicio_vigencia, impacto_atenciones_anual,
+    justificacion, estado_aprobacion
+) VALUES (
+    1, 'Bot Blue Prism (01_Carga_Base_Contratos_BUK)', 'INGESTA_BUK', 'contratos_buk',
+    'Carga Masiva Mensual BUK', 'Staging Excel',
+    (SELECT CAST(COUNT(*) AS TEXT) || ' contratos validados' FROM contratos_buk),
+    1, 0, 'Ingesta automatizada vía MS Excel VBO - Extended y Data - SQLite', 'APROBADO'
+);</initialvalue>
+    <alwaysinit />
+  </stage>
+  <stage stageid="p1000001-0000-4000-8000-000000000113" name="cContratosBUK" type="Collection">
+    <display x="240" y="-60" w="150" h="60" />
+    <datatype>collection</datatype>
+    <alwaysinit />
+  </stage>
+  <stage stageid="p1000001-0000-4000-8000-000000000114" name="cResumenContratosIT" type="Collection">
+    <display x="240" y="300" w="150" h="60" />
+    <datatype>collection</datatype>
+    <alwaysinit />
+  </stage>
+</process>

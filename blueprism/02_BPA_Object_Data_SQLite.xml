@@ -1,0 +1,1820 @@
+<?xml version="1.0" encoding="utf-8"?>
+<process name="Data - SQLite" version="1.0" preferredid="d91164ca-ea87-4f73-bad2-ee9010d382d9" bpversion="7.1.2.3518" narrative="This object provides a simplified interface for leveraging SQLite in your processes." byrefcollection="true" type="object" runmode="Background">
+        <appdef>
+          <element name="Application Root">
+            <id>1bac8c80-97d8-479d-ae86-71b1263aac9a</id>
+            <type>Application</type>
+            <basetype>Application</basetype>
+            <datatype>unknown</datatype>
+            <diagnose>False</diagnose>
+          </element>
+        </appdef>
+        <view>
+          <camerax>41</camerax>
+          <cameray>0</cameray>
+          <zoom version="2">1.25</zoom>
+        </view>
+        <preconditions />
+        <endpoint narrative="" />
+        <subsheet subsheetid="b3bdad6e-d979-45db-bca3-20d21e61214f" type="CleanUp" published="True">
+          <name>Clean Up</name>
+          <view>
+            <camerax>0</camerax>
+            <cameray>0</cameray>
+            <zoom version="2">1.25</zoom>
+          </view>
+        </subsheet>
+        <subsheet subsheetid="79004f2d-6079-4fbf-a885-d58057e311de" type="Normal" published="True">
+          <name>Set Connection Details</name>
+          <view>
+            <camerax>0</camerax>
+            <cameray>0</cameray>
+            <zoom version="2">1.25</zoom>
+          </view>
+        </subsheet>
+        <subsheet subsheetid="19235e77-62a9-4ab0-9662-b41d3b95dbc3" type="Normal" published="True">
+          <name>Open</name>
+          <view>
+            <camerax>0</camerax>
+            <cameray>0</cameray>
+            <zoom version="2">1.25</zoom>
+          </view>
+        </subsheet>
+        <subsheet subsheetid="e874f978-6348-4281-851f-28c0a5a105b7" type="Normal" published="True">
+          <name>Close</name>
+          <view>
+            <camerax>0</camerax>
+            <cameray>105</cameray>
+            <zoom version="2">1.25</zoom>
+          </view>
+        </subsheet>
+        <subsheet subsheetid="dd622381-acea-4b0b-8bfd-76cfa7666f12" type="Normal" published="True">
+          <name>Begin Transaction</name>
+          <view>
+            <camerax>0</camerax>
+            <cameray>0</cameray>
+            <zoom version="2">1.25</zoom>
+          </view>
+        </subsheet>
+        <subsheet subsheetid="b07b4f70-e0e1-4592-8e50-050e3eaeb74e" type="Normal" published="True">
+          <name>Commit Transaction</name>
+          <view>
+            <camerax>0</camerax>
+            <cameray>0</cameray>
+            <zoom version="2">1.25</zoom>
+          </view>
+        </subsheet>
+        <subsheet subsheetid="6b8e7185-d796-4ec7-87da-de7b6a4b26d5" type="Normal" published="True">
+          <name>Rollback Transaction</name>
+          <view>
+            <camerax>0</camerax>
+            <cameray>0</cameray>
+            <zoom version="2">1.25</zoom>
+          </view>
+        </subsheet>
+        <subsheet subsheetid="d2502fb5-425b-4a8e-be47-423c5fabc8d6" type="Normal" published="True">
+          <name>Execute Non Query</name>
+          <view>
+            <camerax>0</camerax>
+            <cameray>0</cameray>
+            <zoom version="2">1.25</zoom>
+          </view>
+        </subsheet>
+        <subsheet subsheetid="0f2e0c6f-faa5-412d-9ea7-2de2fd21c176" type="Normal" published="True">
+          <name>Execute - Get Number</name>
+          <view>
+            <camerax>0</camerax>
+            <cameray>0</cameray>
+            <zoom version="2">1.25</zoom>
+          </view>
+        </subsheet>
+        <subsheet subsheetid="e5f86cd8-388c-48ce-8c8d-365dd5fca151" type="Normal" published="True">
+          <name>Execute - Get Text</name>
+          <view>
+            <camerax>0</camerax>
+            <cameray>0</cameray>
+            <zoom version="2">1.25</zoom>
+          </view>
+        </subsheet>
+        <subsheet subsheetid="38fd1b6b-f869-4fe3-b664-07e95f8a66ba" type="Normal" published="True">
+          <name>Execute - Get Collection</name>
+          <view>
+            <camerax>0</camerax>
+            <cameray>21</cameray>
+            <zoom version="2">1.25</zoom>
+          </view>
+        </subsheet>
+        <subsheet subsheetid="d74ef0d5-beec-4358-a007-5d1fcafcfd11" type="Normal" published="False">
+          <name>Internal - Check Connection State</name>
+          <view>
+            <camerax>0</camerax>
+            <cameray>0</cameray>
+            <zoom version="2">1.25</zoom>
+          </view>
+        </subsheet>
+        <subsheet subsheetid="a9b8c7d6-e5f4-4321-8765-1029384756ab" type="Normal" published="True">
+          <name>Write Collection</name>
+          <view>
+            <camerax>0</camerax>
+            <cameray>0</cameray>
+            <zoom version="2">1.25</zoom>
+          </view>
+        </subsheet>
+        <stage stageid="0a98c539-548b-4472-85cb-206f0768d500" name="Start" type="Start">
+          <loginhibit />
+          <display x="15" y="-105" />
+          <onsuccess>a0c8442d-2f1e-42c6-8112-3ff1bc772380</onsuccess>
+        </stage>
+        <stage stageid="a0c8442d-2f1e-42c6-8112-3ff1bc772380" name="End" type="End">
+          <loginhibit />
+          <display x="15" y="90" />
+        </stage>
+        <stage stageid="d9d69b5b-e431-457a-95b5-f07acb2998ab" name="Stage1" type="ProcessInfo">
+          <display x="-180" y="-105" w="180" h="90" />
+          <references>
+            <reference>System.dll</reference>
+            <reference>System.Data.dll</reference>
+            <reference>System.Xml.dll</reference>
+            <reference>System.Drawing.dll</reference>
+            <reference>System.Data.SQLite.dll</reference>
+          </references>
+          <imports>
+            <import>System</import>
+            <import>System.Drawing</import>
+            <import>System.Data</import>
+            <import>System.Data.SQLite</import>
+          </imports>
+          <language>csharp</language>
+          <globalcode><![CDATA[]]></globalcode>
+          <code><![CDATA[// Global Objects
+SQLiteConnection dbConn = null;
+SQLiteTransaction dbTran = null;]]></code>
+        </stage>
+        <stage stageid="e7107378-8980-461a-a473-4c9bf1e61130" name="Clean Up" type="SubSheetInfo">
+          <subsheetid>b3bdad6e-d979-45db-bca3-20d21e61214f</subsheetid>
+          <display x="-195" y="-105" w="150" h="90" />
+        </stage>
+        <stage stageid="2610fa1a-a5aa-4718-88af-c56393c83a0e" name="Start" type="Start">
+          <subsheetid>b3bdad6e-d979-45db-bca3-20d21e61214f</subsheetid>
+          <loginhibit />
+          <display x="15" y="-105" />
+          <onsuccess>1a10254b-9611-4c58-974f-aadfe613939a</onsuccess>
+        </stage>
+        <stage stageid="1b2e621d-4546-4b42-839a-2ecbf59bee48" name="End" type="End">
+          <subsheetid>b3bdad6e-d979-45db-bca3-20d21e61214f</subsheetid>
+          <loginhibit />
+          <display x="15" y="15" />
+        </stage>
+        <stage stageid="8894f1b0-5325-4ee5-8d0b-8aa2b9137508" name="Open" type="SubSheetInfo">
+          <subsheetid>19235e77-62a9-4ab0-9662-b41d3b95dbc3</subsheetid>
+          <narrative>Used to open a connection to a SQLite database based on the supplied connection details.</narrative>
+          <display x="-195" y="-105" w="150" h="90" />
+        </stage>
+        <stage stageid="a1acee88-0c24-41b2-951f-a7d478b0b4d0" name="Start" type="Start">
+          <subsheetid>19235e77-62a9-4ab0-9662-b41d3b95dbc3</subsheetid>
+          <loginhibit />
+          <display x="15" y="-105" />
+          <onsuccess>14562df4-62f5-4b3b-8231-55508547d46e</onsuccess>
+        </stage>
+        <stage stageid="28623c20-7d4a-45c1-90cf-c063c760e607" name="End" type="End">
+          <subsheetid>19235e77-62a9-4ab0-9662-b41d3b95dbc3</subsheetid>
+          <loginhibit />
+          <display x="15" y="15" />
+          <outputs>
+            <output type="flag" name="Success" narrative="Flag indicating success or failure of the action." stage="Success" />
+            <output type="text" name="Error Message" narrative="If an error was encountered, this will contain additional details." stage="Error Message" />
+          </outputs>
+        </stage>
+        <stage stageid="a9323560-a7a6-4a2d-a254-6bcd844a055a" name="" type="Note">
+          <subsheetid>b3bdad6e-d979-45db-bca3-20d21e61214f</subsheetid>
+          <narrative>Clean Up Page
+
+This is an optional page where you might choose to perform some finalisation (or "cleanup") tasks as your business object is closed down.
+
+The cleanup action will be called automatically immediately after closing your business object at the end of a business process.
+
+You will not be able to call this action from a business process, nor will it be called at any other time than before the disposal of the business object.</narrative>
+          <display x="-180" y="60" w="180" h="230" />
+        </stage>
+        <stage stageid="8ceee0bc-0fa4-44c8-843b-dd68964c10c7" name="Details" type="Note">
+          <narrative>Version 1.0.2
+
+This has support for 64-Bit Blue Prism (x64). In order to take advantage of this support you will need the following dependencies.
+
+System.Data.Sqlite.dll - Generally available. Try https://system.data.sqlite.org/index.html/doc/trunk/www/downloads.wiki
+
+Sqlite.Interop.dll - There are 2 versions of this dependency. One for 32-Bit (x86) and one for 64-Bit (x64) Depending on your version of Blue Prism, you will need to acquire the correct version and place it into the appropriate folder inside of the Blue Prism Automate folder.
+
+See the documentation for more details.</narrative>
+          <display x="-180" y="60" w="180" h="230" />
+        </stage>
+        <stage stageid="93b67716-88ae-433a-af86-4a5196bbb512" name="Set Connection Details" type="SubSheetInfo">
+          <subsheetid>79004f2d-6079-4fbf-a885-d58057e311de</subsheetid>
+          <narrative>Action used to initialize the connection details for the SQLite database file.</narrative>
+          <display x="-195" y="-105" w="150" h="90" />
+        </stage>
+        <stage stageid="76931a7e-62cc-48aa-93a3-21fdd1cd090f" name="Start" type="Start">
+          <subsheetid>79004f2d-6079-4fbf-a885-d58057e311de</subsheetid>
+          <loginhibit />
+          <display x="15" y="-105" />
+          <inputs>
+            <input type="text" name="DB File" narrative="The fully qualified path to, and name of, the SQLite database file. If no value is provided, the database will be created in-memory only." stage="DB File" />
+            <input type="flag" name="Create If Not Found" narrative="When set to 'True', a new database file will be created with the specified path and name if an existing file is not found. Default value is False." stage="Create If Not Found" />
+            <input type="text" name="Connection String" narrative="Optional: You may specify your own custom connection string. Providing your own connection string overrides any other specified values." stage="Temp Connection String" />
+          </inputs>
+          <onsuccess>cf2dd381-3406-4a04-868b-976520962269</onsuccess>
+        </stage>
+        <stage stageid="c97316d0-1476-47aa-8d68-56e93e1f6bad" name="End" type="End">
+          <subsheetid>79004f2d-6079-4fbf-a885-d58057e311de</subsheetid>
+          <loginhibit />
+          <display x="15" y="75" />
+        </stage>
+        <stage stageid="22c459a5-86de-480d-aa9d-3c7f7b24dc9f" name="DB File" type="Data">
+          <subsheetid>79004f2d-6079-4fbf-a885-d58057e311de</subsheetid>
+          <display x="-195" y="-15" w="120" h="30" />
+          <datatype>text</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="26fe87ac-981a-4fc6-a1b9-cd5740bfe8c0" name="Input" type="Block">
+          <subsheetid>79004f2d-6079-4fbf-a885-d58057e311de</subsheetid>
+          <loginhibit />
+          <display x="-270" y="-45" w="150" h="150" />
+          <font family="Segoe UI" size="10" style="Regular" color="FF99CC" />
+        </stage>
+        <stage stageid="c9c80bff-96fb-4ef0-84a7-865b033a25f7" name="Create If Not Found" type="Data">
+          <subsheetid>79004f2d-6079-4fbf-a885-d58057e311de</subsheetid>
+          <display x="-195" y="15" w="120" h="30" />
+          <datatype>flag</datatype>
+          <initialvalue>False</initialvalue>
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="ad59ec10-e0bd-430a-9521-5fc23641e6c5" name="Note2" type="Note">
+          <narrative>‘The MIT License’
+
+© 2022 Blue Prism Limited
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE
+</narrative>
+          <display x="330" y="-15" w="300" h="270" />
+          <font family="Segoe UI" size="10" style="Regular" color="0000FF" />
+        </stage>
+        <stage stageid="ec74e2df-42f8-4c4a-81dd-e8b1952dcd8d" name="Note1" type="Note">
+          <loginhibit />
+          <narrative>Version: 1.0.2</narrative>
+          <display x="15" y="-180" w="120" h="30" />
+          <font family="Segoe UI" size="14" style="Bold" color="FF0000" />
+        </stage>
+        <stage stageid="74f9a8fd-90cf-4069-a2ce-7528c8ddaa7c" name="Connection String" type="Data">
+          <loginhibit />
+          <display x="105" y="-60" w="120" h="30" />
+          <datatype>text</datatype>
+          <initialvalue xml:space="preserve">Data Source=c:\D:\Development\SQLite\Chinook\Chinook.db;Version=3;
+
+</initialvalue>
+          <alwaysinit />
+        </stage>
+        <stage stageid="a71f8c1a-f21a-4847-9ad1-e84f529671aa" name="Build Connection String" type="Calculation">
+          <subsheetid>79004f2d-6079-4fbf-a885-d58057e311de</subsheetid>
+          <loginhibit />
+          <narrative>This expression implements a sort of IIF function. The general idea is that you have a Replace within a Replace where the inner Replace function is used to provide the value if its condition is True. The outer Replace provides the value if the condition is False.</narrative>
+          <display x="105" y="75" />
+          <onsuccess>c97316d0-1476-47aa-8d68-56e93e1f6bad</onsuccess>
+          <calculation expression="&quot;Data Source=&quot; &amp; Replace(Replace(Len(Trim([DB File])) &gt; 0, &quot;True&quot;, Chr(34) &amp; Trim([DB File]) &amp; Chr(34)), &quot;False&quot;, &quot;:memory:&quot;) &amp; &quot;;FailIfMissing=&quot; &amp; [Fail If Missing]" stage="Connection String" />
+        </stage>
+        <stage stageid="cf2dd381-3406-4a04-868b-976520962269" name="Connection String?" type="Decision">
+          <subsheetid>79004f2d-6079-4fbf-a885-d58057e311de</subsheetid>
+          <loginhibit />
+          <display x="15" y="-45" />
+          <decision expression="Trim([Temp Connection String]) &lt;&gt; &quot;&quot;" />
+          <ontrue>65ddea44-6c11-4ab6-b4a7-9c770d3483c2</ontrue>
+          <onfalse>a6fac81b-78c1-4b2f-a7b7-dda0221b650d</onfalse>
+        </stage>
+        <stage stageid="d9ef1ca3-4f2a-4340-a22b-db49a4ab4b21" name="Note3" type="Note">
+          <subsheetid>79004f2d-6079-4fbf-a885-d58057e311de</subsheetid>
+          <loginhibit />
+          <narrative>If the user provided their own custom connection string, it has been saved to the global Connection String data item.</narrative>
+          <display x="135" y="-120" w="120" h="60" />
+          <font family="Segoe UI" size="10" style="Regular" color="0000FF" />
+        </stage>
+        <stage stageid="14562df4-62f5-4b3b-8231-55508547d46e" name="Open Connection" type="Code">
+          <subsheetid>19235e77-62a9-4ab0-9662-b41d3b95dbc3</subsheetid>
+          <loginhibit />
+          <display x="15" y="-45" />
+          <inputs>
+            <input type="text" name="Connection String" expr="[Connection String]" />
+          </inputs>
+          <outputs>
+            <output type="flag" name="Success" stage="Success" />
+            <output type="text" name="Error Message" stage="Error Message" />
+          </outputs>
+          <onsuccess>28623c20-7d4a-45c1-90cf-c063c760e607</onsuccess>
+          <code><![CDATA[Success = true;
+Error_Message = "";
+
+// Check the status of the connection to ensure it hasn't been opened already.
+if ((dbConn == null) || ((dbConn.State == ConnectionState.Closed) || (dbConn.State == ConnectionState.Broken)))
+{		
+	try
+	{
+		// If the connection state is 'Broken', we need to close it before re-opening it.
+		if ((dbConn != null) && (dbConn.State == ConnectionState.Broken))
+			dbConn.Close();
+
+		// Attempt to open the SQLite connection.
+		dbConn = new SQLiteConnection(Connection_String);
+		dbConn.Open();
+	} 
+	catch (Exception ex)
+	{
+		Success = false;
+		Error_Message = ex.Message;
+	}
+}
+
+]]></code>
+        </stage>
+        <stage stageid="ab5b84a0-5432-47bd-b680-09eda1a40cff" name="Success" type="Data">
+          <subsheetid>19235e77-62a9-4ab0-9662-b41d3b95dbc3</subsheetid>
+          <display x="-195" y="-15" w="120" h="30" />
+          <datatype>flag</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="30481fbb-d895-4a2a-bfa8-da657207db46" name="Error Message" type="Data">
+          <subsheetid>19235e77-62a9-4ab0-9662-b41d3b95dbc3</subsheetid>
+          <display x="-195" y="15" w="120" h="30" />
+          <datatype>text</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="011b0fce-04d2-414b-850a-ff291831d9f1" name="Output" type="Block">
+          <subsheetid>19235e77-62a9-4ab0-9662-b41d3b95dbc3</subsheetid>
+          <loginhibit />
+          <display x="-270" y="-45" w="150" h="90" />
+          <font family="Segoe UI" size="10" style="Regular" color="FFFF99" />
+        </stage>
+        <stage stageid="9bfef773-f123-4197-8394-1dceec261765" name="Close" type="SubSheetInfo">
+          <subsheetid>e874f978-6348-4281-851f-28c0a5a105b7</subsheetid>
+          <narrative>Used to close an existing open connection to a SQLite database.</narrative>
+          <display x="-195" y="-105" w="150" h="90" />
+        </stage>
+        <stage stageid="9f583559-c29a-44ad-a1fe-2dc0db33b144" name="Start" type="Start">
+          <subsheetid>e874f978-6348-4281-851f-28c0a5a105b7</subsheetid>
+          <loginhibit />
+          <display x="15" y="-105" />
+          <onsuccess>a440599d-4db7-43ad-97b7-000e973e5a97</onsuccess>
+        </stage>
+        <stage stageid="7cecaa5b-9fee-4155-a94c-7c35594fc8d6" name="Close Connection" type="Code">
+          <subsheetid>e874f978-6348-4281-851f-28c0a5a105b7</subsheetid>
+          <loginhibit />
+          <display x="15" y="150" w="90" h="30" />
+          <onsuccess>fed0f59f-ad2c-4931-a2de-3bbe1dba8c10</onsuccess>
+          <code><![CDATA[try
+{
+	if (dbConn != null)
+	{
+		dbConn.Close();
+		dbConn.Dispose();
+	}
+}
+finally
+{
+	dbConn = null;
+}
+]]></code>
+        </stage>
+        <stage stageid="a3eef326-9215-4fe0-8088-59a53e3db13e" name="In Transaction" type="Data">
+          <loginhibit />
+          <display x="105" y="-30" w="120" h="30" />
+          <datatype>flag</datatype>
+          <initialvalue>False</initialvalue>
+        </stage>
+        <stage stageid="807b54be-2be9-4bea-9b42-61f88174fe10" name="Closing" type="Data">
+          <loginhibit />
+          <narrative>Flag indicating that the connection wrapped by this VBO is currently in the process of closing</narrative>
+          <display x="105" y="0" w="120" h="30" />
+          <datatype>flag</datatype>
+          <initialvalue>False</initialvalue>
+          <alwaysinit />
+        </stage>
+        <stage stageid="d58275e2-f870-412a-91ec-876c8316748d" name="In A Transaction?" type="Decision">
+          <subsheetid>e874f978-6348-4281-851f-28c0a5a105b7</subsheetid>
+          <loginhibit />
+          <display x="15" y="30" w="90" h="30" />
+          <decision expression="[In Transaction]" />
+          <ontrue>4b936748-00c0-48f5-81a7-6f5c342e03af</ontrue>
+          <onfalse>7cbc076a-f575-4f97-96c6-4ccd93920d30</onfalse>
+        </stage>
+        <stage stageid="7cbc076a-f575-4f97-96c6-4ccd93920d30" name="anchor3" type="Anchor">
+          <subsheetid>e874f978-6348-4281-851f-28c0a5a105b7</subsheetid>
+          <loginhibit />
+          <display x="-60" y="30" w="10" h="10" />
+          <onsuccess>517f22da-095a-4b44-a44a-d25cab891ba1</onsuccess>
+        </stage>
+        <stage stageid="9b4ad844-bc02-4ac4-bc80-116ffe55123e" name="Closing:=True" type="Calculation">
+          <subsheetid>e874f978-6348-4281-851f-28c0a5a105b7</subsheetid>
+          <loginhibit />
+          <display x="15" y="-15" w="90" h="30" />
+          <onsuccess>d58275e2-f870-412a-91ec-876c8316748d</onsuccess>
+          <calculation expression="True" stage="Closing" />
+        </stage>
+        <stage stageid="a440599d-4db7-43ad-97b7-000e973e5a97" name="Already Closing?" type="Decision">
+          <subsheetid>e874f978-6348-4281-851f-28c0a5a105b7</subsheetid>
+          <loginhibit />
+          <display x="15" y="-60" w="90" h="30" />
+          <decision expression="[Closing]" />
+          <ontrue>af9d9dc2-688e-47d7-a0ba-a616b118985d</ontrue>
+          <onfalse>9b4ad844-bc02-4ac4-bc80-116ffe55123e</onfalse>
+        </stage>
+        <stage stageid="517f22da-095a-4b44-a44a-d25cab891ba1" name="anchor4" type="Anchor">
+          <subsheetid>e874f978-6348-4281-851f-28c0a5a105b7</subsheetid>
+          <loginhibit />
+          <display x="-60" y="150" w="10" h="10" />
+          <onsuccess>7cecaa5b-9fee-4155-a94c-7c35594fc8d6</onsuccess>
+        </stage>
+        <stage stageid="fed0f59f-ad2c-4931-a2de-3bbe1dba8c10" name="Closing:=False" type="Calculation">
+          <subsheetid>e874f978-6348-4281-851f-28c0a5a105b7</subsheetid>
+          <loginhibit />
+          <display x="15" y="195" w="90" h="30" />
+          <onsuccess>fdceb0b8-7ce8-4052-9368-1db09f5db2b3</onsuccess>
+          <calculation expression="False" stage="Closing" />
+        </stage>
+        <stage stageid="af9d9dc2-688e-47d7-a0ba-a616b118985d" name="Anchor1" type="Anchor">
+          <subsheetid>e874f978-6348-4281-851f-28c0a5a105b7</subsheetid>
+          <loginhibit />
+          <display x="180" y="-60" w="10" h="10" />
+          <onsuccess>2d0c4820-3372-4605-b7e3-f2dd8e36bff9</onsuccess>
+        </stage>
+        <stage stageid="2d0c4820-3372-4605-b7e3-f2dd8e36bff9" name="Anchor2" type="Anchor">
+          <subsheetid>e874f978-6348-4281-851f-28c0a5a105b7</subsheetid>
+          <loginhibit />
+          <display x="180" y="240" w="10" h="10" />
+          <onsuccess>fdceb0b8-7ce8-4052-9368-1db09f5db2b3</onsuccess>
+        </stage>
+        <stage stageid="45dc0cd4-7c27-4d4c-938a-bb0a1bf36fcd" name="Begin Transaction" type="SubSheetInfo">
+          <subsheetid>dd622381-acea-4b0b-8bfd-76cfa7666f12</subsheetid>
+          <narrative>Used to manually start a transaction.
+
+Note: In SQLite, no reads or writes occur except within a transaction. Any command that accesses the database (basically, any SQL command, except a few PRAGMA statements) will automatically start a transaction if one is not already in effect. Automatically started transactions are committed when the last SQL statement finishes.
+
+Manually started transactions usually persist until the next COMMIT or ROLLBACK command. A transaction will also ROLLBACK if the database is closed or if an error occurs and the ROLLBACK conflict resolution algorithm is specified. See the documentation on the ON CONFLICT clause for additional information about the ROLLBACK conflict resolution algorithm.</narrative>
+          <display x="-210" y="-105" w="240" h="180" />
+        </stage>
+        <stage stageid="571c25ba-35dc-45e4-aa1e-a01402645be9" name="Start" type="Start">
+          <subsheetid>dd622381-acea-4b0b-8bfd-76cfa7666f12</subsheetid>
+          <loginhibit />
+          <display x="15" y="-105" />
+          <onsuccess>a52a7036-5a43-4058-97d6-e76a15f2596e</onsuccess>
+        </stage>
+        <stage stageid="ef7e2f4e-92fd-48c9-bce8-08b2a7841fab" name="Internal - Check Connection State" type="SubSheetInfo">
+          <subsheetid>d74ef0d5-beec-4358-a007-5d1fcafcfd11</subsheetid>
+          <narrative>Internal action for checking the state of the SQLite database connection.</narrative>
+          <display x="-195" y="-105" w="150" h="90" />
+        </stage>
+        <stage stageid="17406786-43db-4f43-8551-8c955d42537c" name="Start" type="Start">
+          <subsheetid>d74ef0d5-beec-4358-a007-5d1fcafcfd11</subsheetid>
+          <loginhibit />
+          <display x="15" y="-105" />
+          <onsuccess>f6a50670-9b98-4719-b1b0-8d97dd5c3269</onsuccess>
+        </stage>
+        <stage stageid="084f42d5-a1a6-4e01-8a73-54847995e89a" name="End" type="End">
+          <subsheetid>d74ef0d5-beec-4358-a007-5d1fcafcfd11</subsheetid>
+          <loginhibit />
+          <display x="15" y="15" />
+          <outputs>
+            <output type="flag" name="Is Open" narrative="Flag indicating if the database connection is currently open." stage="Is Open" />
+          </outputs>
+        </stage>
+        <stage stageid="24ff9a44-894f-4c13-809e-f14cbe101a76" name="Is Open" type="Data">
+          <subsheetid>d74ef0d5-beec-4358-a007-5d1fcafcfd11</subsheetid>
+          <display x="-195" y="-15" w="120" h="30" />
+          <datatype>flag</datatype>
+          <initialvalue>False</initialvalue>
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="f6a50670-9b98-4719-b1b0-8d97dd5c3269" name="Check Connection State" type="Code">
+          <subsheetid>d74ef0d5-beec-4358-a007-5d1fcafcfd11</subsheetid>
+          <loginhibit />
+          <display x="15" y="-45" w="120" h="30" />
+          <outputs>
+            <output type="flag" name="isOpen" stage="Is Open" />
+          </outputs>
+          <onsuccess>084f42d5-a1a6-4e01-8a73-54847995e89a</onsuccess>
+          <code><![CDATA[isOpen = false;
+
+if ((dbConn != null) && (dbConn.State == ConnectionState.Open))
+	isOpen = true;]]></code>
+        </stage>
+        <stage stageid="33c718c6-ce2a-41a4-999f-23606a75270a" name="Output" type="Block">
+          <subsheetid>d74ef0d5-beec-4358-a007-5d1fcafcfd11</subsheetid>
+          <loginhibit />
+          <display x="-270" y="-45" w="150" h="60" />
+          <font family="Segoe UI" size="10" style="Regular" color="FFFF99" />
+        </stage>
+        <stage stageid="2a628c57-6b3a-4cbb-9fc2-e22f290228c2" name="Begin Transaction" type="Code">
+          <subsheetid>dd622381-acea-4b0b-8bfd-76cfa7666f12</subsheetid>
+          <loginhibit />
+          <display x="15" y="120" w="120" h="30" />
+          <outputs>
+            <output type="flag" name="Success" stage="Success" />
+            <output type="text" name="Error Message" stage="Error Message" />
+          </outputs>
+          <onsuccess>6868e451-ade4-426b-9b84-8fcc545cf877</onsuccess>
+          <code><![CDATA[// Assume success.
+Success = true;
+Error_Message = "";
+
+try
+{
+	dbTran = dbConn.BeginTransaction();
+}
+catch (Exception ex)
+{
+	Success = false;
+	Error_Message = ex.Message;
+}
+]]></code>
+        </stage>
+        <stage stageid="1ba9ed0e-b9b8-4cbc-94a8-0fe192186ff3" name="In Transaction" type="Calculation">
+          <subsheetid>dd622381-acea-4b0b-8bfd-76cfa7666f12</subsheetid>
+          <loginhibit />
+          <display x="15" y="165" w="90" h="30" />
+          <onsuccess>2cadd707-1912-474a-a823-2ade32f44d5b</onsuccess>
+          <calculation expression="True" stage="In Transaction" />
+        </stage>
+        <stage stageid="f9a5d245-8c84-427c-8157-f965ac29cbad" name="Success" type="Data">
+          <subsheetid>dd622381-acea-4b0b-8bfd-76cfa7666f12</subsheetid>
+          <loginhibit />
+          <display x="-210" y="120" w="120" h="30" />
+          <datatype>flag</datatype>
+          <initialvalue>False</initialvalue>
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="e93cac3b-2fce-46f2-9706-f5a8f38b15c4" name="Error Message" type="Data">
+          <subsheetid>dd622381-acea-4b0b-8bfd-76cfa7666f12</subsheetid>
+          <loginhibit />
+          <display x="-210" y="150" w="120" h="30" />
+          <datatype>text</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="9c3f05ff-8e08-4fa9-820c-c6e618a16807" name="Is Open?" type="Decision">
+          <subsheetid>dd622381-acea-4b0b-8bfd-76cfa7666f12</subsheetid>
+          <loginhibit />
+          <display x="15" y="30" />
+          <decision expression="[Is Open]" />
+          <ontrue>95770932-4d5d-4217-9951-59084257bdd4</ontrue>
+          <onfalse>4045de34-7d36-4d80-8683-a31022589b7f</onfalse>
+        </stage>
+        <stage stageid="91181f99-92b7-4bc2-bd1f-f7e23551d240" name="Check Connection State" type="SubSheet">
+          <subsheetid>dd622381-acea-4b0b-8bfd-76cfa7666f12</subsheetid>
+          <loginhibit />
+          <display x="15" y="-15" w="120" h="30" />
+          <outputs>
+            <output type="flag" name="Is Open" friendlyname="Is Open" narrative="Flag indicating if the database connection is currently open." stage="Is Open" />
+          </outputs>
+          <onsuccess>9c3f05ff-8e08-4fa9-820c-c6e618a16807</onsuccess>
+          <processid>d74ef0d5-beec-4358-a007-5d1fcafcfd11</processid>
+        </stage>
+        <stage stageid="95770932-4d5d-4217-9951-59084257bdd4" name="anchor5" type="Anchor">
+          <subsheetid>dd622381-acea-4b0b-8bfd-76cfa7666f12</subsheetid>
+          <loginhibit />
+          <display x="-60" y="30" w="10" h="10" />
+          <onsuccess>fb22720b-d1c3-436a-b171-453726d860e5</onsuccess>
+        </stage>
+        <stage stageid="fb22720b-d1c3-436a-b171-453726d860e5" name="anchor6" type="Anchor">
+          <subsheetid>dd622381-acea-4b0b-8bfd-76cfa7666f12</subsheetid>
+          <loginhibit />
+          <display x="-60" y="120" w="10" h="10" />
+          <onsuccess>2a628c57-6b3a-4cbb-9fc2-e22f290228c2</onsuccess>
+        </stage>
+        <stage stageid="4045de34-7d36-4d80-8683-a31022589b7f" name="Open" type="SubSheet">
+          <subsheetid>dd622381-acea-4b0b-8bfd-76cfa7666f12</subsheetid>
+          <loginhibit />
+          <display x="15" y="75" />
+          <outputs>
+            <output type="flag" name="Success" friendlyname="Success" narrative="Flag indicating success or failure of the action." stage="Success" />
+            <output type="text" name="Error Message" friendlyname="Error Message" narrative="If an error was encountered, this will contain additional details." stage="Error Message" />
+          </outputs>
+          <onsuccess>48b05ac1-6f63-4745-a360-7adaea6c02c4</onsuccess>
+          <processid>19235e77-62a9-4ab0-9662-b41d3b95dbc3</processid>
+        </stage>
+        <stage stageid="48b05ac1-6f63-4745-a360-7adaea6c02c4" name="Success?" type="Decision">
+          <subsheetid>dd622381-acea-4b0b-8bfd-76cfa7666f12</subsheetid>
+          <loginhibit />
+          <display x="120" y="75" />
+          <decision expression="[Success]" />
+          <ontrue>2a628c57-6b3a-4cbb-9fc2-e22f290228c2</ontrue>
+          <onfalse>852375ea-d4e9-4372-ac62-cbcf7b43a1a3</onfalse>
+        </stage>
+        <stage stageid="852375ea-d4e9-4372-ac62-cbcf7b43a1a3" name="anchor5" type="Anchor">
+          <subsheetid>dd622381-acea-4b0b-8bfd-76cfa7666f12</subsheetid>
+          <loginhibit />
+          <display x="180" y="75" w="10" h="10" />
+          <onsuccess>8d909529-0576-47b8-be43-00534115b1b0</onsuccess>
+        </stage>
+        <stage stageid="0f6afc58-2e40-4ce1-8ebb-a484628d433b" name="anchor6" type="Anchor">
+          <subsheetid>dd622381-acea-4b0b-8bfd-76cfa7666f12</subsheetid>
+          <loginhibit />
+          <display x="180" y="210" w="10" h="10" />
+          <onsuccess>2cadd707-1912-474a-a823-2ade32f44d5b</onsuccess>
+        </stage>
+        <stage stageid="a52a7036-5a43-4058-97d6-e76a15f2596e" name="In Transaction?" type="Decision">
+          <subsheetid>dd622381-acea-4b0b-8bfd-76cfa7666f12</subsheetid>
+          <loginhibit />
+          <display x="15" y="-60" w="90" h="30" />
+          <decision expression="[In Transaction]" />
+          <ontrue>0ef750b0-3d0f-4352-973c-8390f5dc9d40</ontrue>
+          <onfalse>91181f99-92b7-4bc2-bd1f-f7e23551d240</onfalse>
+        </stage>
+        <stage stageid="0ef750b0-3d0f-4352-973c-8390f5dc9d40" name="Transaction Already Open Error" type="Calculation">
+          <subsheetid>dd622381-acea-4b0b-8bfd-76cfa7666f12</subsheetid>
+          <loginhibit />
+          <display x="180" y="-60" w="90" h="30" />
+          <onsuccess>852375ea-d4e9-4372-ac62-cbcf7b43a1a3</onsuccess>
+          <calculation expression="&quot;A transaction is already open for this connection. You must commit or rollback the existing trnasaction before creating a new one.&quot;" stage="Error Message" />
+        </stage>
+        <stage stageid="6868e451-ade4-426b-9b84-8fcc545cf877" name="Success?" type="Decision">
+          <subsheetid>dd622381-acea-4b0b-8bfd-76cfa7666f12</subsheetid>
+          <loginhibit />
+          <display x="120" y="120" />
+          <decision expression="[Success]" />
+          <ontrue>1ba9ed0e-b9b8-4cbc-94a8-0fe192186ff3</ontrue>
+          <onfalse>8d909529-0576-47b8-be43-00534115b1b0</onfalse>
+        </stage>
+        <stage stageid="8d909529-0576-47b8-be43-00534115b1b0" name="anchor5" type="Anchor">
+          <subsheetid>dd622381-acea-4b0b-8bfd-76cfa7666f12</subsheetid>
+          <loginhibit />
+          <display x="180" y="120" w="10" h="10" />
+          <onsuccess>0f6afc58-2e40-4ce1-8ebb-a484628d433b</onsuccess>
+        </stage>
+        <stage stageid="2cadd707-1912-474a-a823-2ade32f44d5b" name="End" type="End">
+          <subsheetid>dd622381-acea-4b0b-8bfd-76cfa7666f12</subsheetid>
+          <loginhibit />
+          <display x="15" y="210" />
+          <outputs>
+            <output type="flag" name="Success" narrative="Flag indicating success (True) or failure (False) of the action." stage="Success" />
+            <output type="text" name="Error Message" narrative="If an error is encountered, additional information can be found here." stage="Error Message" />
+          </outputs>
+        </stage>
+        <stage stageid="a32bb7cf-7b68-4e6e-836b-14ebbdca242e" name="Is Open" type="Data">
+          <subsheetid>dd622381-acea-4b0b-8bfd-76cfa7666f12</subsheetid>
+          <display x="-210" y="45" w="120" h="30" />
+          <datatype>flag</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="e93634ec-8f16-4882-b8a3-6191f4812389" name="Local Data" type="Block">
+          <subsheetid>dd622381-acea-4b0b-8bfd-76cfa7666f12</subsheetid>
+          <loginhibit />
+          <display x="-285" y="15" w="150" h="60" />
+          <font family="Segoe UI" size="10" style="Regular" color="FFCC99" />
+        </stage>
+        <stage stageid="023bcda4-872d-462d-ab0b-4f14dccbd863" name="Output" type="Block">
+          <subsheetid>dd622381-acea-4b0b-8bfd-76cfa7666f12</subsheetid>
+          <loginhibit />
+          <display x="-285" y="90" w="150" h="90" />
+          <font family="Segoe UI" size="10" style="Regular" color="FFFF99" />
+        </stage>
+        <stage stageid="a3bb0968-2b13-42ed-95fd-c2e27713201d" name="Commit Transaction" type="SubSheetInfo">
+          <subsheetid>b07b4f70-e0e1-4592-8e50-050e3eaeb74e</subsheetid>
+          <narrative>Used to commit any changes made, inside a manual transaction, to the database.</narrative>
+          <display x="-180" y="-105" w="150" h="90" />
+        </stage>
+        <stage stageid="0f2679fe-2075-444c-8f1e-9b2e8fbd1122" name="Start" type="Start">
+          <subsheetid>b07b4f70-e0e1-4592-8e50-050e3eaeb74e</subsheetid>
+          <loginhibit />
+          <display x="15" y="-105" />
+          <onsuccess>404f1f48-3273-4bcc-afc2-67e3f82d043f</onsuccess>
+        </stage>
+        <stage stageid="e1d0809e-094c-4416-84b0-a02ecd0cb5f9" name="Commit Transaction" type="Code">
+          <subsheetid>b07b4f70-e0e1-4592-8e50-050e3eaeb74e</subsheetid>
+          <loginhibit />
+          <display x="15" y="-15" w="120" h="30" />
+          <outputs>
+            <output type="flag" name="Success" stage="Success" />
+            <output type="text" name="Error Message" stage="Error Message" />
+          </outputs>
+          <onsuccess>44213ee0-95ec-433f-8ef4-9554e67ffbaa</onsuccess>
+          <code><![CDATA[// Assume success
+Success = true;
+Error_Message = "";
+
+try
+{
+	dbTran.Commit();
+	dbTran.Dispose();
+	dbTran = null;
+}
+catch (Exception ex)
+{
+	Success = false;
+	Error_Message = ex.Message;
+}
+]]></code>
+        </stage>
+        <stage stageid="44213ee0-95ec-433f-8ef4-9554e67ffbaa" name="Not In Transaction" type="Calculation">
+          <subsheetid>b07b4f70-e0e1-4592-8e50-050e3eaeb74e</subsheetid>
+          <loginhibit />
+          <display x="15" y="30" w="90" h="30" />
+          <onsuccess>ced093bf-f9e5-4d07-8192-432ecff7df26</onsuccess>
+          <calculation expression="False" stage="In Transaction" />
+        </stage>
+        <stage stageid="ad4154ff-51ed-4e8b-8b6f-edfcdcc4fa3e" name="Success" type="Data">
+          <subsheetid>b07b4f70-e0e1-4592-8e50-050e3eaeb74e</subsheetid>
+          <loginhibit />
+          <display x="-180" y="-15" w="120" h="30" />
+          <datatype>flag</datatype>
+          <initialvalue>False</initialvalue>
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="9da3427e-3ef7-4a53-86ed-c1a1000366a2" name="Error Message" type="Data">
+          <subsheetid>b07b4f70-e0e1-4592-8e50-050e3eaeb74e</subsheetid>
+          <loginhibit />
+          <display x="-180" y="15" w="120" h="30" />
+          <datatype>text</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="404f1f48-3273-4bcc-afc2-67e3f82d043f" name="In Transaction?" type="Decision">
+          <subsheetid>b07b4f70-e0e1-4592-8e50-050e3eaeb74e</subsheetid>
+          <loginhibit />
+          <display x="15" y="-60" w="90" h="30" />
+          <decision expression="[In Transaction]" />
+          <ontrue>e1d0809e-094c-4416-84b0-a02ecd0cb5f9</ontrue>
+          <onfalse>70fb3b66-aa20-4a10-ab07-0b9941be260c</onfalse>
+        </stage>
+        <stage stageid="70fb3b66-aa20-4a10-ab07-0b9941be260c" name="Error Message" type="Calculation">
+          <subsheetid>b07b4f70-e0e1-4592-8e50-050e3eaeb74e</subsheetid>
+          <loginhibit />
+          <display x="120" y="-60" />
+          <onsuccess>6c79c6f9-0c70-44aa-8b42-21c468397734</onsuccess>
+          <calculation expression="&quot;There is no open transaction to commit.&quot;" stage="Error Message" />
+        </stage>
+        <stage stageid="6c79c6f9-0c70-44aa-8b42-21c468397734" name="anchor7" type="Anchor">
+          <subsheetid>b07b4f70-e0e1-4592-8e50-050e3eaeb74e</subsheetid>
+          <loginhibit />
+          <display x="120" y="75" w="10" h="10" />
+          <onsuccess>ced093bf-f9e5-4d07-8192-432ecff7df26</onsuccess>
+        </stage>
+        <stage stageid="ced093bf-f9e5-4d07-8192-432ecff7df26" name="End" type="End">
+          <subsheetid>b07b4f70-e0e1-4592-8e50-050e3eaeb74e</subsheetid>
+          <loginhibit />
+          <display x="15" y="75" />
+          <outputs>
+            <output type="flag" name="Success" narrative="Flag indicating success (True) or failure (False)" stage="Success" />
+            <output type="text" name="Error Message" narrative="Error message giving detail regarding why this action failed" stage="Error Message" />
+          </outputs>
+        </stage>
+        <stage stageid="a67087c9-1c5d-441b-89c7-d208febf6583" name="Output" type="Block">
+          <subsheetid>b07b4f70-e0e1-4592-8e50-050e3eaeb74e</subsheetid>
+          <loginhibit />
+          <display x="-255" y="-45" w="150" h="90" />
+          <font family="Segoe UI" size="10" style="Regular" color="FFFF99" />
+        </stage>
+        <stage stageid="acac11c7-35e8-459b-b02f-9c2cbf4709d6" name="Rollback Transaction" type="SubSheetInfo">
+          <subsheetid>6b8e7185-d796-4ec7-87da-de7b6a4b26d5</subsheetid>
+          <narrative>Used to rollback any changes made to the database inside a manual transaction.</narrative>
+          <display x="-195" y="-105" w="150" h="90" />
+        </stage>
+        <stage stageid="68126097-c878-4c76-a076-5e4261f6f0bd" name="Start" type="Start">
+          <subsheetid>6b8e7185-d796-4ec7-87da-de7b6a4b26d5</subsheetid>
+          <loginhibit />
+          <display x="0" y="-105" />
+          <onsuccess>e49b1f83-f1e8-4343-9029-c52692cd415b</onsuccess>
+        </stage>
+        <stage stageid="8d25052c-c6f9-4e54-8bec-a0ecdc9f6238" name="Rollback Transaction" type="Code">
+          <subsheetid>6b8e7185-d796-4ec7-87da-de7b6a4b26d5</subsheetid>
+          <loginhibit />
+          <display x="0" y="-15" w="120" h="30" />
+          <outputs>
+            <output type="flag" name="Success" stage="Success" />
+            <output type="text" name="Error Message" stage="Error Message" />
+          </outputs>
+          <onsuccess>549aece2-d7ac-4851-8e6b-6c8b372d5f56</onsuccess>
+          <code><![CDATA[// Assume success
+Success = true;
+Error_Message = "";
+
+try
+{
+	dbTran.Rollback();
+	dbTran.Dispose();
+	dbTran = null;
+}
+catch (Exception ex)
+{
+	Success = false;
+	Error_Message = ex.Message;
+}
+]]></code>
+        </stage>
+        <stage stageid="549aece2-d7ac-4851-8e6b-6c8b372d5f56" name="Not In Transaction" type="Calculation">
+          <subsheetid>6b8e7185-d796-4ec7-87da-de7b6a4b26d5</subsheetid>
+          <loginhibit />
+          <display x="0" y="30" w="90" h="30" />
+          <onsuccess>48f104f6-7b98-4c15-bf40-bcb9531ad5f1</onsuccess>
+          <calculation expression="False" stage="In Transaction" />
+        </stage>
+        <stage stageid="c3aaebf7-4e97-474f-a5af-88cbfc3563ef" name="Success" type="Data">
+          <subsheetid>6b8e7185-d796-4ec7-87da-de7b6a4b26d5</subsheetid>
+          <loginhibit />
+          <display x="-195" y="-15" w="120" h="30" />
+          <datatype>flag</datatype>
+          <initialvalue>False</initialvalue>
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="afe418c2-ca49-4ebd-8002-d3a347bdae08" name="Error Message" type="Data">
+          <subsheetid>6b8e7185-d796-4ec7-87da-de7b6a4b26d5</subsheetid>
+          <loginhibit />
+          <display x="-195" y="15" w="120" h="30" />
+          <datatype>text</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="e49b1f83-f1e8-4343-9029-c52692cd415b" name="In Transaction?" type="Decision">
+          <subsheetid>6b8e7185-d796-4ec7-87da-de7b6a4b26d5</subsheetid>
+          <loginhibit />
+          <display x="0" y="-60" w="90" h="30" />
+          <decision expression="[In Transaction]" />
+          <ontrue>8d25052c-c6f9-4e54-8bec-a0ecdc9f6238</ontrue>
+          <onfalse>3babc627-1ed3-475f-acc4-37369a6a5060</onfalse>
+        </stage>
+        <stage stageid="3babc627-1ed3-475f-acc4-37369a6a5060" name="Error Message" type="Calculation">
+          <subsheetid>6b8e7185-d796-4ec7-87da-de7b6a4b26d5</subsheetid>
+          <loginhibit />
+          <display x="105" y="-60" />
+          <onsuccess>cc9e2c28-b982-4598-a516-36407951e68a</onsuccess>
+          <calculation expression="&quot;There is no open transaction to rollback.&quot;" stage="Error Message" />
+        </stage>
+        <stage stageid="cc9e2c28-b982-4598-a516-36407951e68a" name="anchor7" type="Anchor">
+          <subsheetid>6b8e7185-d796-4ec7-87da-de7b6a4b26d5</subsheetid>
+          <loginhibit />
+          <display x="105" y="75" w="10" h="10" />
+          <onsuccess>48f104f6-7b98-4c15-bf40-bcb9531ad5f1</onsuccess>
+        </stage>
+        <stage stageid="48f104f6-7b98-4c15-bf40-bcb9531ad5f1" name="End" type="End">
+          <subsheetid>6b8e7185-d796-4ec7-87da-de7b6a4b26d5</subsheetid>
+          <loginhibit />
+          <display x="0" y="75" />
+          <outputs>
+            <output type="flag" name="Success" narrative="Flag indicating success (True) or failure (False)" stage="Success" />
+            <output type="text" name="Error Message" narrative="Error message giving detail regarding why this action failed" stage="Error Message" />
+          </outputs>
+        </stage>
+        <stage stageid="eb8c9fa7-f6e8-4d5d-9159-1419385eb6d1" name="Output" type="Block">
+          <subsheetid>6b8e7185-d796-4ec7-87da-de7b6a4b26d5</subsheetid>
+          <loginhibit />
+          <display x="-270" y="-45" w="150" h="90" />
+          <font family="Segoe UI" size="10" style="Regular" color="FFFF99" />
+        </stage>
+        <stage stageid="49b6d2f2-ec38-4a04-8c40-3eb511d5f4d3" name="Execute Non Query" type="SubSheetInfo">
+          <subsheetid>d2502fb5-425b-4a8e-be47-423c5fabc8d6</subsheetid>
+          <narrative>Used to execute a SQL statement, or multiple combined statements, on the database in a non-query fashion. The only expected value that may be returned is the count of records inserted/updated/affected in the database. </narrative>
+          <display x="-195" y="-105" w="180" h="90" />
+        </stage>
+        <stage stageid="af9f1dce-3e1e-4775-ae61-6f90460202e0" name="Start" type="Start">
+          <subsheetid>d2502fb5-425b-4a8e-be47-423c5fabc8d6</subsheetid>
+          <loginhibit />
+          <display x="-15" y="-105" />
+          <inputs>
+            <input type="text" name="SQL" narrative="The SQL statement(s) to perform on the database." stage="SQL" />
+            <input type="number" name="CommandTimeout" narrative="The timeout value for a command." stage="CommandTimeout" />
+          </inputs>
+          <onsuccess>5e38d368-2761-4557-8472-3983b874d3a0</onsuccess>
+        </stage>
+        <stage stageid="82018aee-2155-435c-b54e-1f93ce32b129" name="Execute Non Query" type="Code">
+          <subsheetid>d2502fb5-425b-4a8e-be47-423c5fabc8d6</subsheetid>
+          <loginhibit />
+          <display x="-15" y="30" />
+          <inputs>
+            <input type="text" name="SQL" expr="[SQL]" />
+            <input type="number" name="CommandTimeout" expr="[CommandTimeout]" />
+          </inputs>
+          <outputs>
+            <output type="flag" name="Success" stage="Success" />
+            <output type="text" name="Error Message" stage="Error Message" />
+            <output type="number" name="Records Affected" stage="Records Affected" />
+          </outputs>
+          <onsuccess>116af117-70c4-44ef-bcd2-295c26b22a8e</onsuccess>
+          <code><![CDATA[// Assume success.
+Success = true;
+Error_Message = "";
+Records_Affected = 0;
+
+try
+{
+	using (SQLiteCommand cmd = new SQLiteCommand())
+	{
+		cmd.Connection = dbConn;
+		cmd.CommandText = SQL;
+		cmd.Transaction = dbTran; // If we're not using a manual transaction, this statement will do nothing.
+		cmd.CommandTimeout = (int)CommandTimeout;
+		Records_Affected = cmd.ExecuteNonQuery();
+	}
+}
+catch (Exception ex)
+{
+	Success = false;
+	Error_Message = ex.Message;
+}
+]]></code>
+        </stage>
+        <stage stageid="5e38d368-2761-4557-8472-3983b874d3a0" name="Open" type="SubSheet">
+          <subsheetid>d2502fb5-425b-4a8e-be47-423c5fabc8d6</subsheetid>
+          <loginhibit />
+          <display x="-15" y="-60" />
+          <outputs>
+            <output type="flag" name="Success" friendlyname="Success" narrative="Flag indicating success or failure of the action." stage="Success" />
+            <output type="text" name="Error Message" friendlyname="Error Message" narrative="If an error was encountered, this will contain additional details." stage="Error Message" />
+          </outputs>
+          <onsuccess>ea4c95c6-5aea-4dce-8e6d-2cf420ca063d</onsuccess>
+          <processid>19235e77-62a9-4ab0-9662-b41d3b95dbc3</processid>
+        </stage>
+        <stage stageid="ea4c95c6-5aea-4dce-8e6d-2cf420ca063d" name="Success?" type="Decision">
+          <subsheetid>d2502fb5-425b-4a8e-be47-423c5fabc8d6</subsheetid>
+          <loginhibit />
+          <display x="-15" y="-15" />
+          <decision expression="[Success]" />
+          <ontrue>82018aee-2155-435c-b54e-1f93ce32b129</ontrue>
+          <onfalse>fbdd7b3b-91cd-4649-950a-dbbab686c1d9</onfalse>
+        </stage>
+        <stage stageid="e2615779-0b5f-41fa-b140-d6158a9bef5c" name="anchor1" type="Anchor">
+          <subsheetid>d2502fb5-425b-4a8e-be47-423c5fabc8d6</subsheetid>
+          <loginhibit />
+          <display x="60" y="75" w="10" h="10" />
+          <onsuccess>116af117-70c4-44ef-bcd2-295c26b22a8e</onsuccess>
+        </stage>
+        <stage stageid="e175685f-19ee-4d2d-8ab9-1aa9f496b440" name="Success" type="Data">
+          <subsheetid>d2502fb5-425b-4a8e-be47-423c5fabc8d6</subsheetid>
+          <loginhibit />
+          <display x="-195" y="120" w="120" h="30" />
+          <datatype>flag</datatype>
+          <initialvalue>False</initialvalue>
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="0e30b520-8ad4-4b6c-a7e1-0d6716da1c93" name="Error Message" type="Data">
+          <subsheetid>d2502fb5-425b-4a8e-be47-423c5fabc8d6</subsheetid>
+          <loginhibit />
+          <display x="-195" y="150" w="120" h="30" />
+          <datatype>text</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="fbdd7b3b-91cd-4649-950a-dbbab686c1d9" name="anchor8" type="Anchor">
+          <subsheetid>d2502fb5-425b-4a8e-be47-423c5fabc8d6</subsheetid>
+          <loginhibit />
+          <display x="60" y="-15" w="10" h="10" />
+          <onsuccess>e2615779-0b5f-41fa-b140-d6158a9bef5c</onsuccess>
+        </stage>
+        <stage stageid="cc461231-a724-451a-b387-efa4e457166c" name="SQL" type="Data">
+          <subsheetid>d2502fb5-425b-4a8e-be47-423c5fabc8d6</subsheetid>
+          <loginhibit />
+          <display x="-195" y="-15" w="120" h="30" />
+          <datatype>text</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="116af117-70c4-44ef-bcd2-295c26b22a8e" name="End" type="End">
+          <subsheetid>d2502fb5-425b-4a8e-be47-423c5fabc8d6</subsheetid>
+          <loginhibit />
+          <display x="-15" y="75" />
+          <outputs>
+            <output type="flag" name="Success" narrative="Flag indicating success (True) or failure (False)" stage="Success" />
+            <output type="text" name="Error Message" narrative="Error message giving detail regarding why this action failed" stage="Error Message" />
+            <output type="number" name="Records Affected" narrative="The count of records inserted/updated/affected by the specified SQL statement." stage="Records Affected" />
+          </outputs>
+        </stage>
+        <stage stageid="1ab1d718-7cdb-4bf9-87e1-93e5863d090d" name="Input" type="Block">
+          <subsheetid>d2502fb5-425b-4a8e-be47-423c5fabc8d6</subsheetid>
+          <loginhibit />
+          <display x="-270" y="-45" w="150" h="105" />
+          <font family="Segoe UI" size="10" style="Regular" color="FF99CC" />
+        </stage>
+        <stage stageid="fe476ac6-a2da-4342-9efb-b1423b13995f" name="Output" type="Block">
+          <subsheetid>d2502fb5-425b-4a8e-be47-423c5fabc8d6</subsheetid>
+          <loginhibit />
+          <display x="-270" y="90" w="150" h="120" />
+          <font family="Segoe UI" size="10" style="Regular" color="FFFF99" />
+        </stage>
+        <stage stageid="60380526-20e0-4daa-bb6c-b30b99c3256a" name="Records Affected" type="Data">
+          <subsheetid>d2502fb5-425b-4a8e-be47-423c5fabc8d6</subsheetid>
+          <display x="-195" y="180" w="120" h="30" />
+          <datatype>number</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="4b936748-00c0-48f5-81a7-6f5c342e03af" name="Rollback Transaction" type="SubSheet">
+          <subsheetid>e874f978-6348-4281-851f-28c0a5a105b7</subsheetid>
+          <loginhibit />
+          <display x="15" y="90" w="90" h="30" />
+          <outputs>
+            <output type="flag" name="Success" friendlyname="Success" narrative="Flag indicating success (True) or failure (False)" stage="Success" />
+            <output type="text" name="Error Message" friendlyname="Error Message" narrative="Error message giving detail regarding why this action failed" stage="Error Message" />
+          </outputs>
+          <onsuccess>7cecaa5b-9fee-4155-a94c-7c35594fc8d6</onsuccess>
+          <processid>6b8e7185-d796-4ec7-87da-de7b6a4b26d5</processid>
+        </stage>
+        <stage stageid="eb414405-c399-4bea-afd6-2f55bfbc1e2d" name="Block1" type="Block">
+          <subsheetid>e874f978-6348-4281-851f-28c0a5a105b7</subsheetid>
+          <loginhibit />
+          <display x="-45" y="60" w="195" h="60" />
+          <font family="Segoe UI" size="10" style="Regular" color="7FB2E5" />
+        </stage>
+        <stage stageid="f51fc98b-90aa-4db5-91e2-feb8d6884403" name="Ignore" type="Recover">
+          <subsheetid>e874f978-6348-4281-851f-28c0a5a105b7</subsheetid>
+          <loginhibit />
+          <display x="105" y="90" />
+          <onsuccess>3513842d-8daf-4525-a9ba-fdfc4883d422</onsuccess>
+        </stage>
+        <stage stageid="3513842d-8daf-4525-a9ba-fdfc4883d422" name="Resume1" type="Resume">
+          <subsheetid>e874f978-6348-4281-851f-28c0a5a105b7</subsheetid>
+          <loginhibit />
+          <display x="105" y="150" />
+          <onsuccess>7cecaa5b-9fee-4155-a94c-7c35594fc8d6</onsuccess>
+        </stage>
+        <stage stageid="1a10254b-9611-4c58-974f-aadfe613939a" name="Close" type="SubSheet">
+          <subsheetid>b3bdad6e-d979-45db-bca3-20d21e61214f</subsheetid>
+          <loginhibit />
+          <display x="15" y="-45" />
+          <outputs>
+            <output type="flag" name="Success" friendlyname="Success" narrative="Flag indicating success (True) or failure (False)" stage="Success" />
+            <output type="text" name="Error Message" friendlyname="Error Message" narrative="Error message giving detail regarding why this action failed" stage="Error Message" />
+          </outputs>
+          <onsuccess>1b2e621d-4546-4b42-839a-2ecbf59bee48</onsuccess>
+          <processid>e874f978-6348-4281-851f-28c0a5a105b7</processid>
+        </stage>
+        <stage stageid="4bf8d263-bb42-4144-9ff3-18b56d44e44a" name="Success" type="Data">
+          <subsheetid>e874f978-6348-4281-851f-28c0a5a105b7</subsheetid>
+          <display x="-195" y="-15" w="120" h="30" />
+          <datatype>flag</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="cb5ce772-7be8-470b-a389-f99a177f7351" name="Error Message" type="Data">
+          <subsheetid>e874f978-6348-4281-851f-28c0a5a105b7</subsheetid>
+          <display x="-195" y="15" w="120" h="30" />
+          <datatype>text</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="fdceb0b8-7ce8-4052-9368-1db09f5db2b3" name="End" type="End">
+          <subsheetid>e874f978-6348-4281-851f-28c0a5a105b7</subsheetid>
+          <loginhibit />
+          <display x="15" y="240" />
+          <outputs>
+            <output type="flag" name="Success" narrative="Flag indicating success (True) or failure (False)" stage="Success" />
+            <output type="text" name="Error Message" narrative="Error message giving detail regarding why this action failed" stage="Error Message" />
+          </outputs>
+        </stage>
+        <stage stageid="14c55494-e2c3-4bdb-929b-95f7d59aa79d" name="Output" type="Block">
+          <subsheetid>e874f978-6348-4281-851f-28c0a5a105b7</subsheetid>
+          <loginhibit />
+          <display x="-270" y="-45" w="150" h="90" />
+          <font family="Segoe UI" size="10" style="Regular" color="FFFF99" />
+        </stage>
+        <stage stageid="5792273d-2493-42a4-abd7-f812f7fcf36e" name="Success" type="Data">
+          <subsheetid>b3bdad6e-d979-45db-bca3-20d21e61214f</subsheetid>
+          <display x="150" y="-45" w="120" h="30" />
+          <datatype>flag</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="234d29aa-8c46-4108-ad2d-22ec0f16c709" name="Error Message" type="Data">
+          <subsheetid>b3bdad6e-d979-45db-bca3-20d21e61214f</subsheetid>
+          <display x="150" y="-15" w="120" h="30" />
+          <datatype>text</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="5d836ceb-70f2-49e2-8b10-c95513b206e3" name="Note4" type="Note">
+          <subsheetid>d74ef0d5-beec-4358-a007-5d1fcafcfd11</subsheetid>
+          <loginhibit />
+          <narrative>This is an internal action. It is not meant to be published.</narrative>
+          <display x="15" y="-195" w="120" h="60" />
+          <font family="Segoe UI" size="10" style="Bold" color="FF0000" />
+        </stage>
+        <stage stageid="e9e442ad-2c58-4543-8744-fd4748fee667" name="Execute - Get Number" type="SubSheetInfo">
+          <subsheetid>0f2e0c6f-faa5-412d-9ea7-2de2fd21c176</subsheetid>
+          <narrative>Used to execute a SQL query that returns a numeric value.</narrative>
+          <display x="-195" y="-105" w="150" h="90" />
+        </stage>
+        <stage stageid="7b5e17fc-345a-4106-b524-d46f79ee9063" name="Execute - Get Text" type="SubSheetInfo">
+          <subsheetid>e5f86cd8-388c-48ce-8c8d-365dd5fca151</subsheetid>
+          <narrative>Used to execute a SQL query that returns a text value.</narrative>
+          <display x="-195" y="-105" w="150" h="90" />
+        </stage>
+        <stage stageid="5b19ec30-822a-456a-91f3-ba5791d453c9" name="Execute - Get Collection" type="SubSheetInfo">
+          <subsheetid>38fd1b6b-f869-4fe3-b664-07e95f8a66ba</subsheetid>
+          <narrative>Used to execute a SQL query that returns a Collection.</narrative>
+          <display x="-195" y="-105" w="150" h="90" />
+        </stage>
+        <stage stageid="6c9de820-c9fd-4ac1-b282-22601d3152be" name="Success" type="Data">
+          <subsheetid>0f2e0c6f-faa5-412d-9ea7-2de2fd21c176</subsheetid>
+          <loginhibit />
+          <display x="-195" y="105" w="120" h="30" />
+          <datatype>flag</datatype>
+          <initialvalue>False</initialvalue>
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="50a295fe-02ba-45cd-8acf-2697d8beb3c3" name="Error Message" type="Data">
+          <subsheetid>0f2e0c6f-faa5-412d-9ea7-2de2fd21c176</subsheetid>
+          <loginhibit />
+          <display x="-195" y="135" w="120" h="30" />
+          <datatype>text</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="7890214f-c07b-49af-bcb5-a31b2ac452da" name="SQL" type="Data">
+          <subsheetid>0f2e0c6f-faa5-412d-9ea7-2de2fd21c176</subsheetid>
+          <loginhibit />
+          <display x="-195" y="-15" w="120" h="30" />
+          <datatype>text</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="2c5a29b7-6e47-4e77-b0bd-bc37fa7a25c8" name="Input" type="Block">
+          <subsheetid>0f2e0c6f-faa5-412d-9ea7-2de2fd21c176</subsheetid>
+          <loginhibit />
+          <display x="-270" y="-45" w="150" h="105" />
+          <font family="Segoe UI" size="10" style="Regular" color="FF99CC" />
+        </stage>
+        <stage stageid="60fa7655-1f06-4606-9340-56b90332f2a0" name="Output" type="Block">
+          <subsheetid>0f2e0c6f-faa5-412d-9ea7-2de2fd21c176</subsheetid>
+          <loginhibit />
+          <display x="-270" y="75" w="150" h="120" />
+          <font family="Segoe UI" size="10" style="Regular" color="FFFF99" />
+        </stage>
+        <stage stageid="76a310b3-186b-4ee2-a80b-d2c49027ad35" name="Number Result" type="Data">
+          <subsheetid>0f2e0c6f-faa5-412d-9ea7-2de2fd21c176</subsheetid>
+          <display x="-195" y="165" w="120" h="30" />
+          <datatype>number</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="2631a5aa-c70d-43bf-86df-81415d471f6d" name="Start" type="Start">
+          <subsheetid>0f2e0c6f-faa5-412d-9ea7-2de2fd21c176</subsheetid>
+          <loginhibit />
+          <display x="-15" y="-90" />
+          <inputs>
+            <input type="text" name="SQL" narrative="The SQL statement(s) to perform on the database." stage="SQL" />
+            <input type="number" name="CommandTimeout" narrative="The timeout value, in seconds, by which the command must be executed." stage="CommandTimeout" />
+          </inputs>
+          <onsuccess>3ee1213e-9b88-4187-aa65-124202ffdc7d</onsuccess>
+        </stage>
+        <stage stageid="3982abe7-7628-4a53-bca5-ae3063129ac0" name="Execute Scalar - Number" type="Code">
+          <subsheetid>0f2e0c6f-faa5-412d-9ea7-2de2fd21c176</subsheetid>
+          <loginhibit />
+          <display x="-15" y="45" w="120" h="30" />
+          <inputs>
+            <input type="text" name="SQL" expr="[SQL]" />
+            <input type="number" name="CommandTimeout" expr="[CommandTimeout]" />
+          </inputs>
+          <outputs>
+            <output type="flag" name="Success" stage="Success" />
+            <output type="text" name="Error Message" stage="Error Message" />
+            <output type="number" name="Number Result" stage="Number Result" />
+          </outputs>
+          <onsuccess>28662fd2-756c-4de6-b22d-bb7319c3f318</onsuccess>
+          <code><![CDATA[// Assume success.
+Success = true;
+Error_Message = "";
+Number_Result = 0;
+
+try
+{
+	using (SQLiteCommand cmd = new SQLiteCommand())
+	{
+		cmd.Connection = dbConn;
+		cmd.CommandText = SQL;
+		cmd.Transaction = dbTran; // If we're not using a manual transaction, this statement will do nothing.
+		cmd.CommandTimeout = (int)CommandTimeout;
+		Number_Result = (decimal)cmd.ExecuteScalar();
+	}
+}
+catch (Exception ex)
+{
+	Success = false;
+	Error_Message = ex.Message;
+}
+]]></code>
+        </stage>
+        <stage stageid="3ee1213e-9b88-4187-aa65-124202ffdc7d" name="Open" type="SubSheet">
+          <subsheetid>0f2e0c6f-faa5-412d-9ea7-2de2fd21c176</subsheetid>
+          <loginhibit />
+          <display x="-15" y="-45" />
+          <outputs>
+            <output type="flag" name="Success" friendlyname="Success" narrative="Flag indicating success or failure of the action." stage="Success" />
+            <output type="text" name="Error Message" friendlyname="Error Message" narrative="If an error was encountered, this will contain additional details." stage="Error Message" />
+          </outputs>
+          <onsuccess>22da9790-9bf2-4f72-8a4a-96cf74966624</onsuccess>
+          <processid>19235e77-62a9-4ab0-9662-b41d3b95dbc3</processid>
+        </stage>
+        <stage stageid="22da9790-9bf2-4f72-8a4a-96cf74966624" name="Success?" type="Decision">
+          <subsheetid>0f2e0c6f-faa5-412d-9ea7-2de2fd21c176</subsheetid>
+          <loginhibit />
+          <display x="-15" y="0" />
+          <decision expression="[Success]" />
+          <ontrue>3982abe7-7628-4a53-bca5-ae3063129ac0</ontrue>
+          <onfalse>b4450694-5cc0-4ab4-a390-4f20ae40270b</onfalse>
+        </stage>
+        <stage stageid="c399b8a6-8563-4488-8435-0b82911e1eee" name="anchor1" type="Anchor">
+          <subsheetid>0f2e0c6f-faa5-412d-9ea7-2de2fd21c176</subsheetid>
+          <loginhibit />
+          <display x="60" y="90" w="10" h="10" />
+          <onsuccess>28662fd2-756c-4de6-b22d-bb7319c3f318</onsuccess>
+        </stage>
+        <stage stageid="b4450694-5cc0-4ab4-a390-4f20ae40270b" name="anchor8" type="Anchor">
+          <subsheetid>0f2e0c6f-faa5-412d-9ea7-2de2fd21c176</subsheetid>
+          <loginhibit />
+          <display x="60" y="0" w="10" h="10" />
+          <onsuccess>c399b8a6-8563-4488-8435-0b82911e1eee</onsuccess>
+        </stage>
+        <stage stageid="28662fd2-756c-4de6-b22d-bb7319c3f318" name="End" type="End">
+          <subsheetid>0f2e0c6f-faa5-412d-9ea7-2de2fd21c176</subsheetid>
+          <loginhibit />
+          <display x="-15" y="90" />
+          <outputs>
+            <output type="flag" name="Success" narrative="Flag indicating success (True) or failure (False)" stage="Success" />
+            <output type="text" name="Error Message" narrative="Error message giving detail regarding why this action failed" stage="Error Message" />
+            <output type="number" name="Number Result" narrative="The numeric value returned by the SQL query." stage="Number Result" />
+          </outputs>
+        </stage>
+        <stage stageid="2e94945c-7173-4dea-ac37-c71b8cac9307" name="Success" type="Data">
+          <subsheetid>e5f86cd8-388c-48ce-8c8d-365dd5fca151</subsheetid>
+          <loginhibit />
+          <display x="-195" y="120" w="120" h="30" />
+          <datatype>flag</datatype>
+          <initialvalue>False</initialvalue>
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="645b9373-9fa3-4717-bf79-fc65c9f75a19" name="Error Message" type="Data">
+          <subsheetid>e5f86cd8-388c-48ce-8c8d-365dd5fca151</subsheetid>
+          <loginhibit />
+          <display x="-195" y="150" w="120" h="30" />
+          <datatype>text</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="8bc4d156-f4ba-404d-b502-08066d5987cf" name="SQL" type="Data">
+          <subsheetid>e5f86cd8-388c-48ce-8c8d-365dd5fca151</subsheetid>
+          <loginhibit />
+          <display x="-195" y="-15" w="120" h="30" />
+          <datatype>text</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="684440b7-236b-4cb2-97f0-9026e1442b8a" name="Input" type="Block">
+          <subsheetid>e5f86cd8-388c-48ce-8c8d-365dd5fca151</subsheetid>
+          <loginhibit />
+          <display x="-270" y="-45" w="150" h="105" />
+          <font family="Segoe UI" size="10" style="Regular" color="FF99CC" />
+        </stage>
+        <stage stageid="a04c5c9d-4f1b-4e12-9d56-edcd8dd5f763" name="Output" type="Block">
+          <subsheetid>e5f86cd8-388c-48ce-8c8d-365dd5fca151</subsheetid>
+          <loginhibit />
+          <display x="-270" y="90" w="150" h="120" />
+          <font family="Segoe UI" size="10" style="Regular" color="FFFF99" />
+        </stage>
+        <stage stageid="a98656f0-bdbc-4d1d-a402-b6394604f9ad" name="Text Result" type="Data">
+          <subsheetid>e5f86cd8-388c-48ce-8c8d-365dd5fca151</subsheetid>
+          <display x="-195" y="180" w="120" h="30" />
+          <datatype>text</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="40dc90bc-41c2-4b38-9c74-56bf5c7770a7" name="Start" type="Start">
+          <subsheetid>e5f86cd8-388c-48ce-8c8d-365dd5fca151</subsheetid>
+          <loginhibit />
+          <display x="-15" y="-90" />
+          <inputs>
+            <input type="text" name="SQL" narrative="The SQL statement(s) to perform on the database." stage="SQL" />
+            <input type="number" name="CommandTimeout" narrative="The timeout value, in seconds, for the command to be executed within." stage="CommandTimeout" />
+          </inputs>
+          <onsuccess>2c183a60-e293-4639-8d91-a67f361dc8bb</onsuccess>
+        </stage>
+        <stage stageid="00a84ae9-3086-467a-ab6f-7cdde29fb5a4" name="Execute Scalar - Text" type="Code">
+          <subsheetid>e5f86cd8-388c-48ce-8c8d-365dd5fca151</subsheetid>
+          <loginhibit />
+          <display x="-15" y="45" w="120" h="30" />
+          <inputs>
+            <input type="text" name="SQL" expr="[SQL]" />
+            <input type="number" name="CommandTimeout" expr="[CommandTimeout]" />
+          </inputs>
+          <outputs>
+            <output type="flag" name="Success" stage="Success" />
+            <output type="text" name="Error Message" stage="Error Message" />
+            <output type="text" name="Text Result" stage="Text Result" />
+          </outputs>
+          <onsuccess>268c1b3c-d316-49ed-a9d7-9ed0b9642761</onsuccess>
+          <code><![CDATA[// Assume success.
+Success = true;
+Error_Message = "";
+Text_Result = "";
+
+try
+{
+	using (SQLiteCommand cmd = new SQLiteCommand())
+	{
+		cmd.Connection = dbConn;
+		cmd.CommandText = SQL;
+		cmd.Transaction = dbTran; // If we're not using a manual transaction, this statement will do nothing.
+		cmd.CommandTimeout = (int)CommandTimeout;
+		Text_Result = cmd.ExecuteScalar().ToString();
+	}
+}
+catch (Exception ex)
+{
+	Success = false;
+	Error_Message = ex.Message;
+}
+]]></code>
+        </stage>
+        <stage stageid="2c183a60-e293-4639-8d91-a67f361dc8bb" name="Open" type="SubSheet">
+          <subsheetid>e5f86cd8-388c-48ce-8c8d-365dd5fca151</subsheetid>
+          <loginhibit />
+          <display x="-15" y="-45" />
+          <outputs>
+            <output type="flag" name="Success" friendlyname="Success" narrative="Flag indicating success or failure of the action." stage="Success" />
+            <output type="text" name="Error Message" friendlyname="Error Message" narrative="If an error was encountered, this will contain additional details." stage="Error Message" />
+          </outputs>
+          <onsuccess>c386d99b-5d28-4be1-8efc-36e50c0b9a24</onsuccess>
+          <processid>19235e77-62a9-4ab0-9662-b41d3b95dbc3</processid>
+        </stage>
+        <stage stageid="c386d99b-5d28-4be1-8efc-36e50c0b9a24" name="Success?" type="Decision">
+          <subsheetid>e5f86cd8-388c-48ce-8c8d-365dd5fca151</subsheetid>
+          <loginhibit />
+          <display x="-15" y="0" />
+          <decision expression="[Success]" />
+          <ontrue>00a84ae9-3086-467a-ab6f-7cdde29fb5a4</ontrue>
+          <onfalse>620ac6a5-9050-4a7c-bbaf-5274892d3678</onfalse>
+        </stage>
+        <stage stageid="d9aa39ba-44c6-46a7-8a56-ca6734858b7e" name="anchor1" type="Anchor">
+          <subsheetid>e5f86cd8-388c-48ce-8c8d-365dd5fca151</subsheetid>
+          <loginhibit />
+          <display x="60" y="90" w="10" h="10" />
+          <onsuccess>268c1b3c-d316-49ed-a9d7-9ed0b9642761</onsuccess>
+        </stage>
+        <stage stageid="620ac6a5-9050-4a7c-bbaf-5274892d3678" name="anchor8" type="Anchor">
+          <subsheetid>e5f86cd8-388c-48ce-8c8d-365dd5fca151</subsheetid>
+          <loginhibit />
+          <display x="60" y="0" w="10" h="10" />
+          <onsuccess>d9aa39ba-44c6-46a7-8a56-ca6734858b7e</onsuccess>
+        </stage>
+        <stage stageid="268c1b3c-d316-49ed-a9d7-9ed0b9642761" name="End" type="End">
+          <subsheetid>e5f86cd8-388c-48ce-8c8d-365dd5fca151</subsheetid>
+          <loginhibit />
+          <display x="-15" y="90" />
+          <outputs>
+            <output type="flag" name="Success" narrative="Flag indicating success (True) or failure (False)" stage="Success" />
+            <output type="text" name="Error Message" narrative="Error message giving detail regarding why this action failed" stage="Error Message" />
+            <output type="text" name="Text Result" narrative="The text value returned by the SQL query." stage="Text Result" />
+          </outputs>
+        </stage>
+        <stage stageid="3b6afeb8-0a56-482a-8114-dd9f28410876" name="Success" type="Data">
+          <subsheetid>38fd1b6b-f869-4fe3-b664-07e95f8a66ba</subsheetid>
+          <loginhibit />
+          <display x="-195" y="105" w="120" h="30" />
+          <datatype>flag</datatype>
+          <initialvalue>False</initialvalue>
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="5a9635ea-1624-455f-95a9-127ebd896861" name="Error Message" type="Data">
+          <subsheetid>38fd1b6b-f869-4fe3-b664-07e95f8a66ba</subsheetid>
+          <loginhibit />
+          <display x="-195" y="135" w="120" h="30" />
+          <datatype>text</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="12a7bb97-d3f9-409e-863f-1dcd9ce5cee4" name="SQL" type="Data">
+          <subsheetid>38fd1b6b-f869-4fe3-b664-07e95f8a66ba</subsheetid>
+          <loginhibit />
+          <display x="-195" y="-15" w="120" h="30" />
+          <datatype>text</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="67dcd1a1-c549-4293-9aea-bb31c79c2f9f" name="Input" type="Block">
+          <subsheetid>38fd1b6b-f869-4fe3-b664-07e95f8a66ba</subsheetid>
+          <loginhibit />
+          <display x="-270" y="-45" w="150" h="105" />
+          <font family="Segoe UI" size="10" style="Regular" color="FF99CC" />
+        </stage>
+        <stage stageid="9de21472-8449-4f26-adf0-964ebc9a68cc" name="Output" type="Block">
+          <subsheetid>38fd1b6b-f869-4fe3-b664-07e95f8a66ba</subsheetid>
+          <loginhibit />
+          <display x="-270" y="75" w="150" h="120" />
+          <font family="Segoe UI" size="10" style="Regular" color="FFFF99" />
+        </stage>
+        <stage stageid="c9ed5bf0-7b59-474b-8680-bd6988d63825" name="Start" type="Start">
+          <subsheetid>38fd1b6b-f869-4fe3-b664-07e95f8a66ba</subsheetid>
+          <loginhibit />
+          <display x="-15" y="-90" />
+          <inputs>
+            <input type="text" name="SQL" narrative="The SQL statement(s) to perform on the database." stage="SQL" />
+            <input type="number" name="CommandTimeout" narrative="The timeout value, in seconds, by which the command must execute." stage="CommandTimeout" />
+          </inputs>
+          <onsuccess>8adb9716-108e-46da-8c1e-844e341ab08b</onsuccess>
+        </stage>
+        <stage stageid="db7aed20-cb85-4ed9-8c4f-72bcf30d371a" name="Execute Scalar - Collection" type="Code">
+          <subsheetid>38fd1b6b-f869-4fe3-b664-07e95f8a66ba</subsheetid>
+          <loginhibit />
+          <display x="-15" y="45" w="150" h="30" />
+          <inputs>
+            <input type="text" name="SQL" expr="[SQL]" />
+            <input type="number" name="CommandTimeout" expr="[CommandTimeout]" />
+          </inputs>
+          <outputs>
+            <output type="flag" name="Success" stage="Success" />
+            <output type="text" name="Error Message" stage="Error Message" />
+            <output type="collection" name="Results" stage="Results" />
+          </outputs>
+          <onsuccess>31e2296c-689c-4205-8569-2fd062501b97</onsuccess>
+          <code><![CDATA[// Assume success.
+Success = true;
+Error_Message = "";
+Results = null;
+
+try
+{
+	using (SQLiteCommand cmd = new SQLiteCommand())
+	{
+		cmd.Connection = dbConn;
+		cmd.CommandText = SQL;
+		cmd.Transaction = dbTran; // If we're not using a manual transaction, this statement will do nothing.
+		cmd.CommandTimeout = (int)CommandTimeout;
+		
+		using (SQLiteDataAdapter adapter = new SQLiteDataAdapter())
+		{
+			adapter.SelectCommand = cmd;
+			DataSet ds = new DataSet();
+			adapter.Fill(ds);
+			Results = ds.Tables[0];
+		}
+	}
+}
+catch (Exception ex)
+{
+	Success = false;
+	Error_Message = ex.Message;
+}
+]]></code>
+        </stage>
+        <stage stageid="8adb9716-108e-46da-8c1e-844e341ab08b" name="Open" type="SubSheet">
+          <subsheetid>38fd1b6b-f869-4fe3-b664-07e95f8a66ba</subsheetid>
+          <loginhibit />
+          <display x="-15" y="-45" />
+          <outputs>
+            <output type="flag" name="Success" friendlyname="Success" narrative="Flag indicating success or failure of the action." stage="Success" />
+            <output type="text" name="Error Message" friendlyname="Error Message" narrative="If an error was encountered, this will contain additional details." stage="Error Message" />
+          </outputs>
+          <onsuccess>58309e31-97da-4cd0-9b76-96987d8225be</onsuccess>
+          <processid>19235e77-62a9-4ab0-9662-b41d3b95dbc3</processid>
+        </stage>
+        <stage stageid="58309e31-97da-4cd0-9b76-96987d8225be" name="Success?" type="Decision">
+          <subsheetid>38fd1b6b-f869-4fe3-b664-07e95f8a66ba</subsheetid>
+          <loginhibit />
+          <display x="-15" y="0" />
+          <decision expression="[Success]" />
+          <ontrue>db7aed20-cb85-4ed9-8c4f-72bcf30d371a</ontrue>
+          <onfalse>116b7fa6-96b0-47c9-af5a-7935e4a6ae18</onfalse>
+        </stage>
+        <stage stageid="cf4d99b7-d145-48c7-8ed6-11e9c6ca89c6" name="anchor1" type="Anchor">
+          <subsheetid>38fd1b6b-f869-4fe3-b664-07e95f8a66ba</subsheetid>
+          <loginhibit />
+          <display x="75" y="90" w="10" h="10" />
+          <onsuccess>31e2296c-689c-4205-8569-2fd062501b97</onsuccess>
+        </stage>
+        <stage stageid="116b7fa6-96b0-47c9-af5a-7935e4a6ae18" name="anchor8" type="Anchor">
+          <subsheetid>38fd1b6b-f869-4fe3-b664-07e95f8a66ba</subsheetid>
+          <loginhibit />
+          <display x="75" y="0" w="10" h="10" />
+          <onsuccess>cf4d99b7-d145-48c7-8ed6-11e9c6ca89c6</onsuccess>
+        </stage>
+        <stage stageid="31e2296c-689c-4205-8569-2fd062501b97" name="End" type="End">
+          <subsheetid>38fd1b6b-f869-4fe3-b664-07e95f8a66ba</subsheetid>
+          <loginhibit />
+          <display x="-15" y="90" />
+          <outputs>
+            <output type="flag" name="Success" narrative="Flag indicating success (True) or failure (False)" stage="Success" />
+            <output type="text" name="Error Message" narrative="Error message giving detail regarding why this action failed" stage="Error Message" />
+            <output type="collection" name="Results" narrative="The Collection returned by the SQL query." stage="Results" />
+          </outputs>
+        </stage>
+        <stage stageid="667d2f74-5984-4cd5-b046-1896bbbae555" name="Results" type="Collection">
+          <subsheetid>38fd1b6b-f869-4fe3-b664-07e95f8a66ba</subsheetid>
+          <loginhibit />
+          <display x="-195" y="165" w="120" h="30" />
+          <datatype>collection</datatype>
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="b6a24e66-b6bb-4688-ada5-bdbb5f4f0a1e" name="Temp Connection String" type="Data">
+          <subsheetid>79004f2d-6079-4fbf-a885-d58057e311de</subsheetid>
+          <loginhibit />
+          <display x="-195" y="45" w="120" h="30" />
+          <datatype>text</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="65ddea44-6c11-4ab6-b4a7-9c770d3483c2" name="Set Connection String" type="Calculation">
+          <subsheetid>79004f2d-6079-4fbf-a885-d58057e311de</subsheetid>
+          <loginhibit />
+          <display x="15" y="15" />
+          <onsuccess>c97316d0-1476-47aa-8d68-56e93e1f6bad</onsuccess>
+          <calculation expression="[Temp Connection String]" stage="Connection String" />
+        </stage>
+        <stage stageid="a6fac81b-78c1-4b2f-a7b7-dda0221b650d" name="Create If Found?" type="Decision">
+          <subsheetid>79004f2d-6079-4fbf-a885-d58057e311de</subsheetid>
+          <loginhibit />
+          <display x="105" y="-45" />
+          <decision expression="[Create If Not Found]" />
+          <ontrue>c036bdbe-248a-45ff-b4b6-11ba8858ef08</ontrue>
+          <onfalse>9e49bff8-bdd3-4bb8-88d8-6af6ddc9992b</onfalse>
+        </stage>
+        <stage stageid="e7340d62-4c6d-4734-9724-bd12d8e7ad4c" name="Fail If Missing" type="Data">
+          <subsheetid>79004f2d-6079-4fbf-a885-d58057e311de</subsheetid>
+          <loginhibit />
+          <display x="-195" y="75" w="120" h="30" />
+          <datatype>flag</datatype>
+          <initialvalue>False</initialvalue>
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="c036bdbe-248a-45ff-b4b6-11ba8858ef08" name="Fail If Missing = False" type="Calculation">
+          <subsheetid>79004f2d-6079-4fbf-a885-d58057e311de</subsheetid>
+          <loginhibit />
+          <display x="105" y="15" />
+          <onsuccess>a71f8c1a-f21a-4847-9ad1-e84f529671aa</onsuccess>
+          <calculation expression="False" stage="Fail If Missing" />
+        </stage>
+        <stage stageid="9e49bff8-bdd3-4bb8-88d8-6af6ddc9992b" name="Fail If Missing = True" type="Calculation">
+          <subsheetid>79004f2d-6079-4fbf-a885-d58057e311de</subsheetid>
+          <loginhibit />
+          <display x="195" y="-45" />
+          <onsuccess>33407a8d-2ef2-4621-a829-38c39747eccd</onsuccess>
+          <calculation expression="True" stage="Fail If Missing" />
+        </stage>
+        <stage stageid="33407a8d-2ef2-4621-a829-38c39747eccd" name="Anchor3" type="Anchor">
+          <subsheetid>79004f2d-6079-4fbf-a885-d58057e311de</subsheetid>
+          <loginhibit />
+          <display x="195" y="75" w="10" h="10" />
+          <onsuccess>a71f8c1a-f21a-4847-9ad1-e84f529671aa</onsuccess>
+        </stage>
+        <stage stageid="69a9042d-eca9-4b08-8314-9d2a12401e87" name="CommandTimeout" type="Data">
+          <subsheetid>d2502fb5-425b-4a8e-be47-423c5fabc8d6</subsheetid>
+          <loginhibit />
+          <display x="-195" y="30" w="120" h="30" />
+          <datatype>number</datatype>
+          <initialvalue>30</initialvalue>
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="a552fa77-4fe3-4bd4-a34e-a09da57b26bf" name="CommandTimeout" type="Data">
+          <subsheetid>0f2e0c6f-faa5-412d-9ea7-2de2fd21c176</subsheetid>
+          <display x="-195" y="30" w="120" h="30" />
+          <datatype>number</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="51a0a1ae-2868-4a83-acc6-b0f3ebd07b65" name="CommandTimeout" type="Data">
+          <subsheetid>e5f86cd8-388c-48ce-8c8d-365dd5fca151</subsheetid>
+          <display x="-195" y="30" w="120" h="30" />
+          <datatype>number</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="a80a6536-cf25-4594-a77b-8a15cadf201e" name="CommandTimeout" type="Data">
+          <subsheetid>38fd1b6b-f869-4fe3-b664-07e95f8a66ba</subsheetid>
+          <display x="-195" y="30" w="120" h="30" />
+          <datatype>number</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="72c8c4a7-e6dc-4eb3-933c-f74454545dd2" name="Blue Prism Limited Copyright Note" type="Note" xmlns="">
+          <loginhibit />
+          <narrative>© 2023 Blue Prism Limited
+Licensed under the Blue Prism Asset License and Support Terms
+https://digitalexchange.blueprism.com/fileMedia/download/a9111324-3192-43ff-9166-566620ca1182</narrative>
+          <display x="-510" y="-45" w="450" h="210" />
+          <font family="Segoe UI" size="10" style="Bold" color="000000" />
+        </stage>
+              <stage stageid="b1111111-2222-4333-8444-555555555501" name="Write Collection" type="SubSheetInfo">
+          <subsheetid>a9b8c7d6-e5f4-4321-8765-1029384756ab</subsheetid>
+          <narrative>Inserta masivamente una Collection de Blue Prism dentro de una tabla SQLite usando una transacción parametrizada. Si la tabla no existe o Clear Table First es True, la recrea automáticamente.</narrative>
+          <display x="-195" y="-105" w="180" h="90" />
+        </stage>
+        <stage stageid="b1111111-2222-4333-8444-555555555502" name="Start" type="Start">
+          <subsheetid>a9b8c7d6-e5f4-4321-8765-1029384756ab</subsheetid>
+          <loginhibit />
+          <display x="-15" y="-105" />
+          <inputs>
+            <input type="text" name="Table Name" narrative="Nombre de la tabla destino en SQLite." stage="Table Name" />
+            <input type="collection" name="Collection" narrative="Colección de datos a insertar." stage="Collection" />
+            <input type="flag" name="Clear Table First" narrative="True para recrear/limpiar la tabla antes de insertar." stage="Clear Table First" />
+          </inputs>
+          <onsuccess>b1111111-2222-4333-8444-555555555503</onsuccess>
+        </stage>
+        <stage stageid="b1111111-2222-4333-8444-555555555503" name="Open" type="SubSheet">
+          <subsheetid>a9b8c7d6-e5f4-4321-8765-1029384756ab</subsheetid>
+          <loginhibit />
+          <display x="-15" y="-60" />
+          <outputs>
+            <output type="flag" name="Success" friendlyname="Success" stage="Success" />
+            <output type="text" name="Error Message" friendlyname="Error Message" stage="Error Message" />
+          </outputs>
+          <onsuccess>b1111111-2222-4333-8444-555555555504</onsuccess>
+          <processid>19235e77-62a9-4ab0-9662-b41d3b95dbc3</processid>
+        </stage>
+        <stage stageid="b1111111-2222-4333-8444-555555555504" name="Success?" type="Decision">
+          <subsheetid>a9b8c7d6-e5f4-4321-8765-1029384756ab</subsheetid>
+          <loginhibit />
+          <display x="-15" y="-15" />
+          <decision expression="[Success]" />
+          <ontrue>b1111111-2222-4333-8444-555555555505</ontrue>
+          <onfalse>b1111111-2222-4333-8444-555555555506</onfalse>
+        </stage>
+        <stage stageid="b1111111-2222-4333-8444-555555555505" name="Bulk Insert Collection" type="Code">
+          <subsheetid>a9b8c7d6-e5f4-4321-8765-1029384756ab</subsheetid>
+          <loginhibit />
+          <display x="-15" y="30" w="150" h="30" />
+          <inputs>
+            <input type="text" name="Table_Name" expr="[Table Name]" />
+            <input type="collection" name="Data_Collection" expr="[Collection]" />
+            <input type="flag" name="Clear_First" expr="[Clear Table First]" />
+          </inputs>
+          <outputs>
+            <output type="flag" name="Success" stage="Success" />
+            <output type="text" name="Error Message" stage="Error Message" />
+            <output type="number" name="Records Affected" stage="Records Affected" />
+          </outputs>
+          <onsuccess>b1111111-2222-4333-8444-555555555506</onsuccess>
+          <code><![CDATA[Success = true;
+Error_Message = "";
+Records_Affected = 0;
+
+try
+{
+	if (Data_Collection == null || Data_Collection.Columns.Count == 0)
+	{
+		return;
+	}
+
+	string safeTable = """ + Table_Name.Replace(""", "") + """;
+	System.Collections.Generic.List<string> colDefs = new System.Collections.Generic.List<string>();
+	System.Collections.Generic.List<string> colNames = new System.Collections.Generic.List<string>();
+	System.Collections.Generic.List<string> paramNames = new System.Collections.Generic.List<string>();
+
+	for (int i = 0; i < Data_Collection.Columns.Count; i++)
+	{
+		string cName = Data_Collection.Columns[i].ColumnName.Replace(""", "").Trim();
+		if (string.IsNullOrEmpty(cName)) cName = "Col" + (i + 1).ToString();
+		colDefs.Add(""" + cName + "" TEXT");
+		colNames.Add(""" + cName + """);
+		paramNames.Add("@p" + i.ToString());
+	}
+
+	using (SQLiteTransaction tran = dbConn.BeginTransaction())
+	{
+		using (SQLiteCommand cmd = new SQLiteCommand(dbConn))
+		{
+			cmd.Transaction = tran;
+			if (Clear_First)
+			{
+				cmd.CommandText = "DROP TABLE IF EXISTS " + safeTable + ";";
+				cmd.ExecuteNonQuery();
+			}
+			cmd.CommandText = "CREATE TABLE IF NOT EXISTS " + safeTable + " (" + string.Join(", ", colDefs.ToArray()) + ");";
+			cmd.ExecuteNonQuery();
+
+			cmd.CommandText = "INSERT INTO " + safeTable + " (" + string.Join(", ", colNames.ToArray()) + ") VALUES (" + string.Join(", ", paramNames.ToArray()) + ");";
+			for (int i = 0; i < Data_Collection.Columns.Count; i++)
+			{
+				cmd.Parameters.Add(new SQLiteParameter("@p" + i.ToString(), DbType.String));
+			}
+
+			foreach (DataRow row in Data_Collection.Rows)
+			{
+				for (int i = 0; i < Data_Collection.Columns.Count; i++)
+				{
+					object val = row[i];
+					cmd.Parameters[i].Value = (val == null || val == DBNull.Value) ? "" : val.ToString();
+				}
+				Records_Affected += cmd.ExecuteNonQuery();
+			}
+		}
+		tran.Commit();
+	}
+}
+catch (Exception ex)
+{
+	Success = false;
+	Error_Message = ex.Message;
+}
+]]></code>
+        </stage>
+        <stage stageid="b1111111-2222-4333-8444-555555555506" name="End" type="End">
+          <subsheetid>a9b8c7d6-e5f4-4321-8765-1029384756ab</subsheetid>
+          <loginhibit />
+          <display x="-15" y="90" />
+          <outputs>
+            <output type="flag" name="Success" narrative="Flag indicating success (True) or failure (False)" stage="Success" />
+            <output type="text" name="Error Message" narrative="Error message giving detail regarding why this action failed" stage="Error Message" />
+            <output type="number" name="Records Affected" narrative="The count of records inserted." stage="Records Affected" />
+          </outputs>
+        </stage>
+        <stage stageid="b1111111-2222-4333-8444-555555555507" name="Table Name" type="Data">
+          <subsheetid>a9b8c7d6-e5f4-4321-8765-1029384756ab</subsheetid>
+          <loginhibit />
+          <display x="-195" y="-15" w="120" h="30" />
+          <datatype>text</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="b1111111-2222-4333-8444-555555555508" name="Collection" type="Collection">
+          <subsheetid>a9b8c7d6-e5f4-4321-8765-1029384756ab</subsheetid>
+          <loginhibit />
+          <display x="-195" y="15" w="120" h="30" />
+          <datatype>collection</datatype>
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="b1111111-2222-4333-8444-555555555509" name="Clear Table First" type="Data">
+          <subsheetid>a9b8c7d6-e5f4-4321-8765-1029384756ab</subsheetid>
+          <loginhibit />
+          <display x="-195" y="45" w="120" h="30" />
+          <datatype>flag</datatype>
+          <initialvalue>True</initialvalue>
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="b1111111-2222-4333-8444-555555555510" name="Success" type="Data">
+          <subsheetid>a9b8c7d6-e5f4-4321-8765-1029384756ab</subsheetid>
+          <loginhibit />
+          <display x="-195" y="105" w="120" h="30" />
+          <datatype>flag</datatype>
+          <initialvalue>False</initialvalue>
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="b1111111-2222-4333-8444-555555555511" name="Error Message" type="Data">
+          <subsheetid>a9b8c7d6-e5f4-4321-8765-1029384756ab</subsheetid>
+          <loginhibit />
+          <display x="-195" y="135" w="120" h="30" />
+          <datatype>text</datatype>
+          <initialvalue />
+          <private />
+          <alwaysinit />
+        </stage>
+        <stage stageid="b1111111-2222-4333-8444-555555555512" name="Records Affected" type="Data">
+          <subsheetid>a9b8c7d6-e5f4-4321-8765-1029384756ab</subsheetid>
+          <loginhibit />
+          <display x="-195" y="165" w="120" h="30" />
+          <datatype>number</datatype>
+          <initialvalue>0</initialvalue>
+          <private />
+          <alwaysinit />
+        </stage>
+      </process>

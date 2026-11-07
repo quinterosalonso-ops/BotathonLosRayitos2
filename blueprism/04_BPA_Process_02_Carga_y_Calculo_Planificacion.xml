@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<process name="02_Carga_y_Calculo_Planificacion" version="1.0" bpversion="7.5.1.18099" cpeversion="10.0.136.0" narrative="Lee las hojas Distribucion_NAC, Excepciones, LOP y Dotacion_Asistencial con MS Excel VBO - Extended, las almacena en SQLite con Data - SQLite y obtiene la matriz consolidada nacional." byrefcollection="true" processrunningmessage="" disableversioning="false" preferredid="22222222-aaaa-4bbb-8ccc-000000000002">
+  <view>
+    <camerax>0</camerax>
+    <cameray>120</cameray>
+    <zoom version="2">1.25</zoom>
+  </view>
+  <preconditions />
+  <endpoint narrative="" />
+  <stage stageid="p2000001-0000-4000-8000-000000000001" name="Start" type="Start">
+    <display x="15" y="-240" />
+    <onsuccess>p2000001-0000-4000-8000-000000000002</onsuccess>
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000002" name="Excel::Create Instance" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="-180" w="150" h="30" />
+    <inputs>
+      <input type="flag" name="Enable Events" friendlyname="Enable Events" expr="False" />
+    </inputs>
+    <outputs>
+      <output type="number" name="handle" friendlyname="handle" stage="vHandle" />
+    </outputs>
+    <onsuccess>p2000001-0000-4000-8000-000000000003</onsuccess>
+    <resource object="MS Excel VBO - Extended" action="Create Instance" />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000003" name="Excel::Open Workbook Planificación" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="-120" w="150" h="30" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" expr="[vHandle]" />
+      <input type="text" name="File name" friendlyname="File name" expr="[vRutaExcelPlan]" />
+    </inputs>
+    <outputs>
+      <output type="text" name="Workbook Name" friendlyname="Workbook Name" stage="vWorkbook" />
+    </outputs>
+    <onsuccess>p2000001-0000-4000-8000-000000000004</onsuccess>
+    <resource object="MS Excel VBO - Extended" action="Open Workbook" />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000004" name="Excel::Leer Distribucion_NAC (A6:N92)" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="-60" w="150" h="30" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" expr="[vHandle]" />
+      <input type="text" name="Workbook Name" friendlyname="Workbook Name" expr="[vWorkbook]" />
+      <input type="text" name="Worksheet Name" friendlyname="Worksheet Name" expr="&quot;Distribucion_NAC&quot;" />
+      <input type="text" name="StartCell" friendlyname="StartCell" expr="&quot;A6&quot;" />
+      <input type="text" name="EndCell" friendlyname="EndCell" expr="&quot;N92&quot;" />
+    </inputs>
+    <outputs>
+      <output type="collection" name="Data" friendlyname="Data" stage="cDistribucionNAC" />
+    </outputs>
+    <onsuccess>p2000001-0000-4000-8000-000000000005</onsuccess>
+    <resource object="MS Excel VBO - Extended" action="Get Worksheet Range As Collection" />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000005" name="Excel::Leer Excepciones (A2:X19)" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="0" w="150" h="30" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" expr="[vHandle]" />
+      <input type="text" name="Workbook Name" friendlyname="Workbook Name" expr="[vWorkbook]" />
+      <input type="text" name="Worksheet Name" friendlyname="Worksheet Name" expr="&quot;Excepciones&quot;" />
+      <input type="text" name="StartCell" friendlyname="StartCell" expr="&quot;A2&quot;" />
+      <input type="text" name="EndCell" friendlyname="EndCell" expr="&quot;X19&quot;" />
+    </inputs>
+    <outputs>
+      <output type="collection" name="Data" friendlyname="Data" stage="cExcepciones" />
+    </outputs>
+    <onsuccess>p2000001-0000-4000-8000-000000000006</onsuccess>
+    <resource object="MS Excel VBO - Extended" action="Get Worksheet Range As Collection" />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000006" name="Excel::Leer LOP (A1:C17)" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="60" w="150" h="30" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" expr="[vHandle]" />
+      <input type="text" name="Workbook Name" friendlyname="Workbook Name" expr="[vWorkbook]" />
+      <input type="text" name="Worksheet Name" friendlyname="Worksheet Name" expr="&quot;LOP&quot;" />
+      <input type="text" name="StartCell" friendlyname="StartCell" expr="&quot;A1&quot;" />
+      <input type="text" name="EndCell" friendlyname="EndCell" expr="&quot;C17&quot;" />
+    </inputs>
+    <outputs>
+      <output type="collection" name="Data" friendlyname="Data" stage="cLOP" />
+    </outputs>
+    <onsuccess>p2000001-0000-4000-8000-000000000007</onsuccess>
+    <resource object="MS Excel VBO - Extended" action="Get Worksheet Range As Collection" />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000007" name="Excel::Leer Dotacion_Asistencial (A4:GW475)" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="120" w="150" h="30" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" expr="[vHandle]" />
+      <input type="text" name="Workbook Name" friendlyname="Workbook Name" expr="[vWorkbook]" />
+      <input type="text" name="Worksheet Name" friendlyname="Worksheet Name" expr="&quot;Dotacion_Asistencial&quot;" />
+      <input type="text" name="StartCell" friendlyname="StartCell" expr="&quot;A4&quot;" />
+      <input type="text" name="EndCell" friendlyname="EndCell" expr="&quot;GW475&quot;" />
+    </inputs>
+    <outputs>
+      <output type="collection" name="Data" friendlyname="Data" stage="cDotacionAsistencial" />
+    </outputs>
+    <onsuccess>p2000001-0000-4000-8000-000000000008</onsuccess>
+    <resource object="MS Excel VBO - Extended" action="Get Worksheet Range As Collection" />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000008" name="Excel::Close Workbook" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="180" w="150" h="30" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" expr="[vHandle]" />
+      <input type="text" name="Workbook Name" friendlyname="Workbook Name" expr="[vWorkbook]" />
+      <input type="flag" name="Save Data" friendlyname="Save Data" expr="False" />
+    </inputs>
+    <onsuccess>p2000001-0000-4000-8000-000000000009</onsuccess>
+    <resource object="MS Excel VBO - Extended" action="Close Workbook" />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000009" name="Excel::Release Instance" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="240" w="150" h="30" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" expr="[vHandle]" />
+    </inputs>
+    <onsuccess>p2000001-0000-4000-8000-000000000010</onsuccess>
+    <resource object="MS Excel VBO - Extended" action="Release Instance" />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000010" name="SQLite::Set Connection Details" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="300" w="150" h="30" />
+    <inputs>
+      <input type="text" name="DB File" friendlyname="DB File" expr="[vRutaBD]" />
+      <input type="flag" name="Create If Not Found" friendlyname="Create If Not Found" expr="True" />
+      <input type="text" name="Connection String" friendlyname="Connection String" expr="&quot;&quot;" />
+    </inputs>
+    <onsuccess>p2000001-0000-4000-8000-000000000011</onsuccess>
+    <resource object="Data - SQLite" action="Set Connection Details" />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000011" name="SQLite::Write stg_distribucion_nac" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="360" w="150" h="30" />
+    <inputs>
+      <input type="text" name="Table Name" friendlyname="Table Name" expr="&quot;stg_distribucion_nac&quot;" />
+      <input type="collection" name="Collection" friendlyname="Collection" expr="[cDistribucionNAC]" />
+      <input type="flag" name="Clear Table First" friendlyname="Clear Table First" expr="True" />
+    </inputs>
+    <outputs>
+      <output type="flag" name="Success" friendlyname="Success" stage="vSuccess" />
+      <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
+      <output type="number" name="Records Affected" friendlyname="Records Affected" stage="vFilasInsertadas" />
+    </outputs>
+    <onsuccess>p2000001-0000-4000-8000-000000000012</onsuccess>
+    <resource object="Data - SQLite" action="Write Collection" />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000012" name="SQLite::Write stg_excepciones" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="420" w="150" h="30" />
+    <inputs>
+      <input type="text" name="Table Name" friendlyname="Table Name" expr="&quot;stg_excepciones&quot;" />
+      <input type="collection" name="Collection" friendlyname="Collection" expr="[cExcepciones]" />
+      <input type="flag" name="Clear Table First" friendlyname="Clear Table First" expr="True" />
+    </inputs>
+    <outputs>
+      <output type="flag" name="Success" friendlyname="Success" stage="vSuccess" />
+      <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
+      <output type="number" name="Records Affected" friendlyname="Records Affected" stage="vFilasInsertadas" />
+    </outputs>
+    <onsuccess>p2000001-0000-4000-8000-000000000013</onsuccess>
+    <resource object="Data - SQLite" action="Write Collection" />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000013" name="SQLite::Write stg_lop" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="480" w="150" h="30" />
+    <inputs>
+      <input type="text" name="Table Name" friendlyname="Table Name" expr="&quot;stg_lop&quot;" />
+      <input type="collection" name="Collection" friendlyname="Collection" expr="[cLOP]" />
+      <input type="flag" name="Clear Table First" friendlyname="Clear Table First" expr="True" />
+    </inputs>
+    <outputs>
+      <output type="flag" name="Success" friendlyname="Success" stage="vSuccess" />
+      <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
+      <output type="number" name="Records Affected" friendlyname="Records Affected" stage="vFilasInsertadas" />
+    </outputs>
+    <onsuccess>p2000001-0000-4000-8000-000000000014</onsuccess>
+    <resource object="Data - SQLite" action="Write Collection" />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000014" name="SQLite::Write stg_dotacion_asistencial" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="540" w="150" h="30" />
+    <inputs>
+      <input type="text" name="Table Name" friendlyname="Table Name" expr="&quot;stg_dotacion_asistencial&quot;" />
+      <input type="collection" name="Collection" friendlyname="Collection" expr="[cDotacionAsistencial]" />
+      <input type="flag" name="Clear Table First" friendlyname="Clear Table First" expr="True" />
+    </inputs>
+    <outputs>
+      <output type="flag" name="Success" friendlyname="Success" stage="vSuccess" />
+      <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
+      <output type="number" name="Records Affected" friendlyname="Records Affected" stage="vFilasInsertadas" />
+    </outputs>
+    <onsuccess>p2000001-0000-4000-8000-000000000015</onsuccess>
+    <resource object="Data - SQLite" action="Write Collection" />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000015" name="SQLite::Recalcular Indicadores y Auditar" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="600" w="150" h="30" />
+    <inputs>
+      <input type="text" name="SQL" friendlyname="SQL" expr="[vSQL_Recalcular]" />
+      <input type="number" name="CommandTimeout" friendlyname="CommandTimeout" expr="60" />
+    </inputs>
+    <outputs>
+      <output type="flag" name="Success" friendlyname="Success" stage="vSuccess" />
+      <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
+      <output type="number" name="Records Affected" friendlyname="Records Affected" stage="vFilasInsertadas" />
+    </outputs>
+    <onsuccess>p2000001-0000-4000-8000-000000000016</onsuccess>
+    <resource object="Data - SQLite" action="Execute Non Query" />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000016" name="SQLite::Obtener Consolidado Nacional 17 IT" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="660" w="150" h="30" />
+    <inputs>
+      <input type="text" name="SQL" friendlyname="SQL" expr="&quot;SELECT * FROM vw_resumen_nacional_instituto;&quot;" />
+      <input type="number" name="CommandTimeout" friendlyname="CommandTimeout" expr="30" />
+    </inputs>
+    <outputs>
+      <output type="flag" name="Success" friendlyname="Success" stage="vSuccess" />
+      <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
+      <output type="collection" name="Results" friendlyname="Results" stage="cResumenNacional" />
+    </outputs>
+    <onsuccess>p2000001-0000-4000-8000-000000000017</onsuccess>
+    <resource object="Data - SQLite" action="Execute - Get Collection" />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000017" name="SQLite::Close" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="720" w="150" h="30" />
+    <outputs>
+      <output type="flag" name="Success" friendlyname="Success" stage="vSuccess" />
+      <output type="text" name="Error Message" friendlyname="Error Message" stage="vErrorMessage" />
+    </outputs>
+    <onsuccess>p2000001-0000-4000-8000-000000000018</onsuccess>
+    <resource object="Data - SQLite" action="Close" />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000018" name="End" type="End">
+    <display x="15" y="780" />
+  </stage>
+  <!-- Data Items -->
+  <stage stageid="p2000001-0000-4000-8000-000000000101" name="vRutaExcelPlan" type="Data">
+    <display x="-240" y="-195" w="180" h="30" />
+    <datatype>text</datatype>
+    <initialvalue xml:space="preserve">E:\Users\onito\Documents\Botathon\2222\BotathonLosRayitos2\Solicitud\Nac - Planificación Asistencial x mes.xlsx</initialvalue>
+    <alwaysinit />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000102" name="vRutaBD" type="Data">
+    <display x="-240" y="-150" w="180" h="30" />
+    <datatype>text</datatype>
+    <initialvalue xml:space="preserve">E:\Users\onito\Documents\Botathon\2222\BotathonLosRayitos2\database\teleton_planificacion.db</initialvalue>
+    <alwaysinit />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000103" name="vHandle" type="Data">
+    <display x="-240" y="-105" w="120" h="30" />
+    <datatype>number</datatype>
+    <initialvalue>0</initialvalue>
+    <alwaysinit />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000104" name="vWorkbook" type="Data">
+    <display x="-240" y="-60" w="150" h="30" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <alwaysinit />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000105" name="vSuccess" type="Data">
+    <display x="-240" y="-15" w="120" h="30" />
+    <datatype>flag</datatype>
+    <initialvalue>False</initialvalue>
+    <alwaysinit />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000106" name="vErrorMessage" type="Data">
+    <display x="-240" y="30" w="180" h="30" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <alwaysinit />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000107" name="vFilasInsertadas" type="Data">
+    <display x="-240" y="75" w="150" h="30" />
+    <datatype>number</datatype>
+    <initialvalue>0</initialvalue>
+    <alwaysinit />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000108" name="vSQL_Recalcular" type="Data">
+    <display x="-240" y="120" w="180" h="30" />
+    <datatype>text</datatype>
+    <initialvalue xml:space="preserve">-- Recalcular % FOJA y Metas de Gestión según parámetros globales vigentes en SQLite
+UPDATE dotacion_asistencial
+SET
+    foja_pct = CASE WHEN hs_dic &gt; 0 THEN ROUND(pct_directo_final_p2 * 100.0, 2) ELSE 0.0 END,
+    updated_at = CURRENT_TIMESTAMP;
+
+INSERT INTO auditoria_cambios (
+    version_id, actor, tipo_evento, entidad_afectada, campo_modificado,
+    valor_anterior, valor_nuevo, mes_inicio_vigencia, impacto_atenciones_anual,
+    justificacion, estado_aprobacion
+) VALUES (
+    1, 'Bot Blue Prism (02_Carga_y_Calculo_Planificacion)', 'SINCRONIZACION_PLANIFICACION',
+    'Dotación Asistencial + Excepciones + LOP + Distribucion_NAC',
+    'Recálculo Nacional 17 Institutos', 'Planilla Excel',
+    (SELECT CAST(COUNT(*) AS TEXT) || ' filas sincronizadas en SQLite' FROM dotacion_asistencial),
+    1, (SELECT CAST(SUM(mg_anual_total) AS INTEGER) FROM dotacion_asistencial),
+    'Lectura de hojas vía MS Excel VBO - Extended y persistencia en Data - SQLite', 'APROBADO'
+);</initialvalue>
+    <alwaysinit />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000109" name="cDistribucionNAC" type="Collection">
+    <display x="240" y="-60" w="150" h="60" />
+    <datatype>collection</datatype>
+    <alwaysinit />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000110" name="cExcepciones" type="Collection">
+    <display x="240" y="15" w="150" h="60" />
+    <datatype>collection</datatype>
+    <alwaysinit />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000111" name="cLOP" type="Collection">
+    <display x="240" y="90" w="150" h="60" />
+    <datatype>collection</datatype>
+    <alwaysinit />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000112" name="cDotacionAsistencial" type="Collection">
+    <display x="240" y="165" w="150" h="60" />
+    <datatype>collection</datatype>
+    <alwaysinit />
+  </stage>
+  <stage stageid="p2000001-0000-4000-8000-000000000113" name="cResumenNacional" type="Collection">
+    <display x="240" y="660" w="150" h="60" />
+    <datatype>collection</datatype>
+    <alwaysinit />
+  </stage>
+</process>
