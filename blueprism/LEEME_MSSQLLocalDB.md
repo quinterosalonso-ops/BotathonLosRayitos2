@@ -29,3 +29,29 @@ Si una versión anterior del proceso termina con `Data - MSSQLLocalDB failed:` y
 LocalDB es una instancia local por usuario de Windows. La identidad que ejecuta el runtime de Blue Prism debe tener instalada/iniciada su propia instancia y acceso integrado; una instancia LocalDB de una sesión interactiva no necesariamente estará disponible para un runtime con otra cuenta. Para ejecución desatendida como servicio o varios usuarios, conviene SQL Server Express/Developer en lugar de LocalDB.
 
 `Data - MSSQLLocalDB` usa `System.Data.SqlClient` de .NET Framework y no requiere configurar un DSN. El inicializador Python usa `pyodbc` y ODBC Driver 17/18.
+
+## Diagnóstico de conexión
+
+Ejecuta la comprobación desde la cuenta exacta del Runtime Resource de Blue Prism, no solo desde la sesión del desarrollador:
+
+```powershell
+whoami
+sqllocaldb info MSSQLLocalDB
+sqllocaldb start MSSQLLocalDB
+```
+
+Si la instancia no existe, la base no está adjunta en esa identidad o el servicio no puede iniciar LocalDB, `Integrated Security=True` no podrá acceder a la instancia que inicializó otra cuenta. Revisa también el mensaje completo de excepción de la primera acción SQL (`Write Collection` o `Execute Non Query`); `Set Connection Details` solo guarda la cadena y no prueba la conexión.
+
+Para ejecución desatendida, usa una instancia compartida de SQL Server Express/Developer. Por ejemplo, con una instancia local `SQLEXPRESS`, actualiza `vConnectionString` en los procesos 01, 02 y 03:
+
+```text
+Data Source=localhost\SQLEXPRESS;Initial Catalog=TeletonPlanificacion;Integrated Security=True;Connect Timeout=30;TrustServerCertificate=True;
+```
+
+Configura el dashboard con la misma instancia/base (el usuario Windows del proceso web también debe tener permisos):
+
+```powershell
+$env:TELETON_SQL_CONNECTION_STRING = 'DRIVER={ODBC Driver 18 for SQL Server};SERVER=localhost\SQLEXPRESS;DATABASE=TeletonPlanificacion;Trusted_Connection=yes;TrustServerCertificate=yes;'
+```
+
+Concede a ambas identidades solo los permisos necesarios sobre `TeletonPlanificacion`; no es necesario darles rol de administrador de SQL Server. La cadena y el nombre de servidor deben apuntar a la misma instancia en Blue Prism y en el dashboard.

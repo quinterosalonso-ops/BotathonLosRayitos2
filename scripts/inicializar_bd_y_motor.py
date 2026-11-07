@@ -36,9 +36,12 @@ def connection_string(database):
     driver = next((name for name in ('ODBC Driver 18 for SQL Server', 'ODBC Driver 17 for SQL Server') if name in drivers), None)
     if driver is None:
         raise RuntimeError('No se encontró ODBC Driver 18 o 17 for SQL Server.')
+    server = os.getenv('TELETON_SQL_SERVER', r'(LocalDB)\MSSQLLocalDB').strip()
+    if not server:
+        raise RuntimeError('TELETON_SQL_SERVER no puede estar vacío.')
     return (
         f'DRIVER={{{driver}}};'
-        f'SERVER=(LocalDB)\\MSSQLLocalDB;'
+        f'SERVER={server};'
         f'DATABASE={database};'
         'Trusted_Connection=yes;TrustServerCertificate=yes;'
     )

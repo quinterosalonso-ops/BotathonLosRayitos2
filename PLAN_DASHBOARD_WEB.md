@@ -32,11 +32,13 @@ Dar al equipo central una vista web del consolidado nacional y permitir consulta
 
 1. FastAPI crea un `job_id` y guarda el archivo como `source.xlsx` en una subcarpeta única de `inbox`, con manifiesto y hash; evita reemplazar cargas anteriores.
 2. Blue Prism toma solo trabajos `PENDING`, valida que el archivo y su manifiesto estén completos, y ejecuta el proceso correspondiente.
-3. Blue Prism registra `RUNNING`, `SUCCEEDED` o `FAILED`, conteos y errores en SQL mediante el endpoint de callback de la web.
-4. FastAPI consulta el estado y presenta el detalle. Un archivo fallido queda disponible para revisión y reintento explícito.
+3. Blue Prism registra `RUNNING`, `SUCCEEDED` o `FAILED`, conteos y errores en SQL mediante el endpoint de callback de la web; el estado también se sincroniza con el manifiesto.
+4. FastAPI consulta el estado y presenta el detalle. Una carga `PENDING` puede cancelarse y una carga `FAILED` puede reencolarse desde el dashboard.
 5. Definir la carpeta de intercambio y permisos en configuración; no acoplarla a una ruta personal fija del equipo actual.
 
 La carpeta por sí sola no inicia un proceso: Blue Prism debe tener un proceso programado/polling que recoja trabajos pendientes. La web no debe simular un clic de Control Room ni depender de una API de ejecución no confirmada.
+
+El release actual todavía usa rutas fijas de archivos de demo y no consume esta cola web. El coordinador/polling y la adaptación de esos procesos son pendientes de integración; la carga web solo registra el trabajo y no debe presentarse como procesada hasta que el estado llegue a `SUCCEEDED`.
 
 ## Entidades y fuentes
 
@@ -71,7 +73,7 @@ La aplicación está implementada en `dashboard.py` y se inicia con `python inic
 
 - Subida local, validación de extensión/tamaño/hojas y registro del trabajo en SQL.
 - Crear trabajos de carga en carpeta `inbox` y exponer callback de estados.
-- Pendiente: vista previa, coordinador/polling en Blue Prism y adaptación de los procesos para consumir rutas por trabajo.
+- Pendiente: vista previa, coordinador/polling en Blue Prism, adaptación de los procesos para consumir rutas por trabajo y validación de negocio antes de aplicar cambios.
 
 **Aceptación:** una carga válida se procesa una sola vez; una inválida muestra sus errores y no modifica datos maestros.
 
@@ -89,6 +91,7 @@ La aplicación está implementada en `dashboard.py` y se inicia con `python inic
 
 ## Riesgos y decisiones pendientes
 
+- **Referencia numérica no conciliada:** en la instancia local revisada, el archivo `Nac - Planificación Asistencial x mes.xlsx` y `dotacion_asistencial` contienen las mismas 471 filas, pero suman 16.165 H/S dic y 772.356 atenciones anuales (618.998 directas y 153.358 indirectas). La tabla de `Solicitud/Solicitud.md` espera 21.586 H/S y 1.042.866 atenciones (823.982 directas y 218.884 indirectas), además de dotación en Castro y Ñuble, que no aparece en esas 471 filas. Acordar cuál archivo/versión es la fuente de verdad antes de modificar fórmulas o presentar aceptación de cálculo exacto.
 - LocalDB es por usuario y no es una buena base de servicio multiusuario; mantenerlo solo para desarrollo/demo.
 - El runtime de Blue Prism debe consumir los trabajos de la carpeta de forma programada. Acordar si se modifican los tres procesos existentes o se crea un proceso coordinador.
 - Definir roles (consulta, planificación, administrador) antes de habilitar edición.

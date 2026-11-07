@@ -19,13 +19,16 @@ from urllib.parse import urlsplit
 from xml.etree import ElementTree
 
 import pyodbc
-from fastapi import FastAPI, File, Form, Header, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, Header, HTTPException, Request, UploadFile
+from fastapi.exceptions import RequestValidationError
+from fastapi.exception_handlers import request_validation_exception_handler
 from fastapi.responses import HTMLResponse, RedirectResponse
 
 
 BASE_DIR = Path(__file__).resolve().parent
 INBOX_DIR = Path(os.getenv("TELETON_INBOX_DIR", str(BASE_DIR / "blueprism_inbox"))).resolve()
 MAX_UPLOAD_BYTES = 20 * 1024 * 1024
+SQL_QUERY_TIMEOUT_SECONDS = 15
 MONTHS = [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
@@ -64,6 +67,46 @@ DISTRIBUTION_FIELDS = {
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"))
 logger = logging.getLogger("teleton.dashboard")
 app = FastAPI(title="Teletón | Planificación asistencial", docs_url=None, redoc_url=None)
+
+
+@app.exception_handler(RequestValidationError)
+async def handle_filter_validation_error(request: Request, exc: RequestValidationError):
+    if request.method == "GET" and request.url.path in {"/", "/detalle"}:
+        def positive_int(name: str) -> int | None:
+            try:
+                value = int(request.query_params.get(name, ""))
+                return value if value > 0 else None
+            except ValueError:
+                return None
+
+        it = positive_int("it")
+        if request.url.path == "/":
+            response = filter_error_page(
+                "Resumen nacional",
+                "home",
+                "El instituto debe ser un código numérico válido.",
+                home_filters(it, None),
+                "/",
+            )
+        else:
+            mes = positive_int("mes")
+            if mes is not None and mes > 12:
+                mes = None
+            periodo = request.query_params.get("periodo", "")
+            if periodo not in {"", "ENE_ABR", "MAY_DIC"}:
+                periodo = ""
+            area = request.query_params.get("area", "")
+            cargo = request.query_params.get("cargo", "")
+            persona_id = request.query_params.get("persona_id", "")
+            response = filter_error_page(
+                "Planificación por profesional",
+                "detail",
+                "Revisa los valores ingresados para los filtros.",
+                filters(it, mes, area, cargo, persona_id, periodo, load_institutes=False),
+                "/detalle",
+            )
+        return response
+    return await request_validation_exception_handler(request, exc)
 
 
 @app.middleware("http")
@@ -135,8 +178,24 @@ def ensure_job_table(conn) -> None:
                     rows_processed INT NULL,
                     error_message NVARCHAR(2000) NULL,
                     CONSTRAINT CK_web_import_jobs_status CHECK
-                        (status IN ('PENDING','RUNNING','SUCCEEDED','FAILED'))
+                        (status IN ('PENDING','RUNNING','SUCCEEDED','FAILED','CANCELLED'))
                 );
+            END
+            IF NOT EXISTS (
+                SELECT 1 FROM sys.check_constraints
+                WHERE parent_object_id=OBJECT_ID(N'dbo.web_import_jobs')
+                  AND name=N'CK_web_import_jobs_status'
+                  AND definition LIKE '%CANCELLED%'
+            )
+            BEGIN
+                IF EXISTS (
+                    SELECT 1 FROM sys.check_constraints
+                    WHERE parent_object_id=OBJECT_ID(N'dbo.web_import_jobs')
+                      AND name=N'CK_web_import_jobs_status'
+                )
+                    ALTER TABLE dbo.web_import_jobs DROP CONSTRAINT CK_web_import_jobs_status;
+                ALTER TABLE dbo.web_import_jobs ADD CONSTRAINT CK_web_import_jobs_status
+                    CHECK (status IN ('PENDING','RUNNING','SUCCEEDED','FAILED','CANCELLED'));
             END
             """
         )
@@ -154,12 +213,20 @@ def rows_as_dicts(cursor) -> list[dict[str, Any]]:
 def query(sql: str, params: tuple[Any, ...] = ()) -> list[dict[str, Any]]:
     conn = connect()
     try:
+        conn.timeout = SQL_QUERY_TIMEOUT_SECONDS
         cursor = conn.cursor()
         cursor.execute(sql, params)
         return rows_as_dicts(cursor)
     except pyodbc.Error as exc:
         logger.exception("Falló una consulta del dashboard")
-        raise DashboardError(f"No se pudo consultar la base de planificación. Detalle: {exc}") from exc
+        if any(code in str(exc) for code in ("HYT00", "HYT01")):
+            message = (
+                f"La consulta superó el límite de {SQL_QUERY_TIMEOUT_SECONDS} segundos. "
+                "Reduce los filtros e inténtalo nuevamente."
+            )
+        else:
+            message = f"No se pudo consultar la base de planificación. Detalle: {exc}"
+        raise DashboardError(message) from exc
     finally:
         conn.close()
 
@@ -225,7 +292,8 @@ button,.button{{border:0;border-radius:7px;padding:10px 15px;background:var(--bl
 .table-wrap{{overflow:auto}}table{{border-collapse:collapse;width:100%;font-size:13px;white-space:nowrap}}th,td{{border-bottom:1px solid var(--line);padding:10px 11px;text-align:left}}th{{color:#546b7f;font-size:11px;text-transform:uppercase;letter-spacing:.045em;background:#f8fafc;position:sticky;top:0}}
 .bar{{display:inline-block;vertical-align:middle;height:8px;background:var(--cyan);border-radius:5px;margin-left:8px;min-width:2px}}
 .notice{{padding:12px 15px;border-radius:8px;margin:14px 0;background:#e8f4fc;color:#174f78}}.notice.error{{background:#fff0f0;color:var(--red);border:1px solid #f1c8cc}}
-.badge{{display:inline-block;border-radius:20px;padding:3px 9px;background:#e7f2fa;color:#245b7e;font-size:11px;font-weight:700}}.badge.FAILED{{background:#ffe9e9;color:#9e2635}}.badge.SUCCEEDED{{background:#e2f5ee;color:#17694e}}.badge.RUNNING{{background:#fff4db;color:#765416}}
+.badge{{display:inline-block;border-radius:20px;padding:3px 9px;background:#e7f2fa;color:#245b7e;font-size:11px;font-weight:700}}.badge.FAILED,.badge.CANCELLED{{background:#ffe9e9;color:#9e2635}}.badge.SUCCEEDED{{background:#e2f5ee;color:#17694e}}.badge.RUNNING{{background:#fff4db;color:#765416}}
+.danger{{background:#a42d3c}}.danger:hover{{background:#7d1e2b}}
 .empty{{text-align:center;padding:35px;color:var(--muted)}}.subtle{{font-size:12px;color:var(--muted)}}.inline{{display:inline-flex;gap:8px;align-items:center}}
 details{{min-width:240px}}summary{{cursor:pointer;color:var(--blue);font-weight:650}}.wide{{min-width:240px}}
 @media(max-width:850px){{.shell{{grid-template-columns:1fr}}aside{{padding:12px}}.brand{{padding:8px 10px}}nav{{display:flex;overflow:auto}}nav a{{white-space:nowrap}}main{{padding:22px 15px}}.cards{{grid-template-columns:repeat(2,minmax(130px,1fr))}}}}
@@ -239,24 +307,80 @@ def error_page(title: str, active: str, error: str) -> HTMLResponse:
     return page(title, '<section class="panel"><p>No se pudo completar la consulta.</p></section>', active, error)
 
 
-def filters(it: int | None, month: int | None, area: str = "", search: str = "") -> str:
-    institutes = query(
-        "SELECT it, codigo_inst, nombre_instituto FROM dbo.institutos ORDER BY nombre_instituto"
+def filter_error_page(
+    title: str,
+    active: str,
+    error: str,
+    filter_form: str,
+    reset_url: str,
+    status_code: int = 400,
+) -> HTMLResponse:
+    body = (
+        '<div class="notice error" role="alert"><b>No se pudieron aplicar los filtros.</b> '
+        f'{safe(error)}<p>Los filtros siguen disponibles: corrige los valores o vuelve a intentar. '
+        'Si el problema persiste, revisa la conexión a la base.</p></div>'
+        f'{filter_form}<p><a href="{safe(reset_url)}">Restablecer filtros</a></p>'
     )
-    institute_options = '<option value="">Todos</option>' + "".join(
-        f'<option value="{safe(row["it"])}" {"selected" if it == row["it"] else ""}>'
-        f'{safe(row["codigo_inst"])} · {safe(row["nombre_instituto"])}</option>'
-        for row in institutes
-    )
+    response = page(title, body, active)
+    response.status_code = status_code
+    return response
+
+
+def home_filters(it: int | None, institutes: list[dict[str, Any]] | None) -> str:
+    if institutes is None:
+        institute_input = (
+            '<label>Instituto · código IT<input type="number" min="1" name="it" '
+            f'value="{safe(it) if it is not None else ""}" placeholder="Todos"></label>'
+        )
+    else:
+        options = '<option value="">Todos</option>' + "".join(
+            f'<option value="{safe(row["IT"])}" {"selected" if it == row["IT"] else ""}>'
+            f'{safe(row["Cod_Inst"])} · {safe(row["Instituto"])}</option>'
+            for row in institutes
+        )
+        institute_input = f'<label>Instituto<select name="it">{options}</select></label>'
+    return f'<form class="filters" method="get">{institute_input}<button type="submit">Filtrar</button></form>'
+
+
+def filters(
+    it: int | None,
+    month: int | None,
+    area: str = "",
+    cargo: str = "",
+    persona_id: str = "",
+    periodo: str = "",
+    load_institutes: bool = True,
+) -> str:
+    if load_institutes:
+        institutes = query(
+            "SELECT it, codigo_inst, nombre_instituto FROM dbo.institutos ORDER BY nombre_instituto"
+        )
+        institute_options = '<label>Instituto<select name="it"><option value="">Todos</option>' + "".join(
+            f'<option value="{safe(row["it"])}" {"selected" if it == row["it"] else ""}>'
+            f'{safe(row["codigo_inst"])} · {safe(row["nombre_instituto"])}</option>'
+            for row in institutes
+        ) + "</select></label>"
+    else:
+        institute_options = (
+            '<label>Instituto · código IT<input type="number" min="1" name="it" '
+            f'value="{safe(it) if it is not None else ""}" placeholder="Todos"></label>'
+        )
     month_options = '<option value="">Año completo</option>' + "".join(
         f'<option value="{i}" {"selected" if month == i else ""}>{name}</option>'
         for i, name in enumerate(MONTHS, 1)
     )
+    period_options = (
+        '<option value="">Todos</option>'
+        f'<option value="ENE_ABR" {"selected" if periodo == "ENE_ABR" else ""}>Ene-Abr (44 h)</option>'
+        f'<option value="MAY_DIC" {"selected" if periodo == "MAY_DIC" else ""}>May-Dic (42 h)</option>'
+    )
     return f"""<form class="panel filters" method="get">
-<label>Instituto<select name="it">{institute_options}</select></label>
+{institute_options}
 <label>Mes<select name="mes">{month_options}</select></label>
+<label>Período<select name="periodo">{period_options}</select></label>
 <label>Área<input name="area" value="{safe(area)}" placeholder="Filtrar área"></label>
-<label>Profesional<input name="q" value="{safe(search)}" placeholder="ID o nombre"></label>
+<label>Cargo<input name="cargo" value="{safe(cargo)}" placeholder="Filtrar cargo"></label>
+<label>PersonaId<input name="persona_id" value="{safe(persona_id)}" placeholder="ID profesional"></label>
 <button type="submit">Aplicar filtros</button><a class="subtle" href="/detalle">Limpiar</a></form>"""
 
 
@@ -292,41 +416,73 @@ def home(it: int | None = None):
             f"<td>{safe(row.get('Dotacion_Profesionales'))}"
             f'<span class="bar" style="width:{min(200, int((row.get("Dotacion_Profesionales") or 0) * 200 / max_staff))}px"></span></td>'
             f"<td>{safe(row.get('Suma_Horas_Semanales_Dic'))}</td>"
-            f"<td>{safe(row.get('FOJA_Pct'))}%</td><td>{safe(row.get('Plan_Total_Atenciones_Ano'))}</td>"
-            f"<td>{safe(row.get('MG_Total_Atenciones_Ano'))}</td></tr>"
+            f"<td>{safe(row.get('Hrs_Sem_Atencion_Directa'))}</td>"
+            f"<td>{safe(row.get('Hrs_Sem_Atencion_Indirecta'))}</td>"
+            f"<td>{safe(row.get('Hrs_Sem_Actividad_NAS'))}</td>"
+            f"<td>{safe(row.get('Plan_Atencion_Anual_Directa'))}</td>"
+            f"<td>{safe(row.get('Plan_Atencion_Anual_Indirecta'))}</td>"
+            f"<td>{safe(row.get('Plan_Total_Atenciones_Ano'))}</td>"
+            f"<td>{safe(row.get('MG_Total_Atenciones_Ano'))}</td>"
+            f"<td>{safe(row.get('FOJA_Pct'))}%</td></tr>"
             for row in rows
         )
+        if rows:
+            weekly_hours = sum(float(row.get("Suma_Horas_Semanales_Dic") or 0) for row in rows)
+            direct_hours = sum(float(row.get("Hrs_Sem_Atencion_Directa") or 0) for row in rows)
+            total_foja = direct_hours / weekly_hours * 100 if weekly_hours else 0
+            table_rows += (
+                "<tr><th colspan=\"3\">Total general</th>"
+                f"<th>{safe(round(weekly_hours))}</th>"
+                f"<th>{safe(round(direct_hours, 2))}</th>"
+                f"<th>{safe(round(sum(float(row.get('Hrs_Sem_Atencion_Indirecta') or 0) for row in rows), 2))}</th>"
+                f"<th>{safe(round(sum(float(row.get('Hrs_Sem_Actividad_NAS') or 0) for row in rows), 2))}</th>"
+                f"<th>{safe(sum(int(row.get('Plan_Atencion_Anual_Directa') or 0) for row in rows))}</th>"
+                f"<th>{safe(sum(int(row.get('Plan_Atencion_Anual_Indirecta') or 0) for row in rows))}</th>"
+                f"<th>{safe(annual)}</th><th>{safe(goal)}</th><th>{safe(round(total_foja, 2))}%</th></tr>"
+            )
         if not rows:
-            table_rows = '<tr><td colspan="7" class="empty">No hay planificación cargada todavía. Inicializa la base de datos antes de usar el tablero.</td></tr>'
+            table_rows = '<tr><td colspan="12" class="empty">No hay planificación cargada todavía. Inicializa la base de datos antes de usar el tablero.</td></tr>'
         content = (
             '<p>Vista nacional por instituto; selecciona un centro para revisar su detalle.</p>'
-            + f'<form class="filters" method="get"><label>Instituto<select name="it">'
-            + '<option value="">Todos</option>'
-            + "".join(
-                f'<option value="{safe(row["IT"])}" {"selected" if it == row["IT"] else ""}>'
-                f'{safe(row["Cod_Inst"])} · {safe(row["Instituto"])}</option>'
-                for row in institutes
-            )
-            + '</select></label><button>Filtrar</button></form>'
+            + home_filters(it, institutes)
             + f'<section class="grid cards">{cards}</section>'
             + '<section class="panel"><h2>Consolidado nacional</h2><div class="table-wrap"><table><thead><tr>'
-            + '<th>IT</th><th>Instituto</th><th>Profesionales</th><th>Horas semanales</th><th>FOJA</th>'
-            + '<th>Plan anual</th><th>Meta anual</th></tr></thead><tbody>'
+            + '<th>IT</th><th>Instituto</th><th>Profesionales</th><th>Horas semanales</th>'
+            + '<th>Atención directa H/S</th><th>Atención indirecta H/S</th><th>NAS H/S</th>'
+            + '<th>Atenciones directas año</th><th>Atenciones indirectas año</th>'
+            + '<th>Plan anual total</th><th>Meta gestión 90%</th><th>FOJA</th></tr></thead><tbody>'
             + table_rows
             + '</tbody></table></div></section>'
             + '<p class="subtle">El dashboard no muestra datos ficticios: si la base está vacía, los indicadores aparecerán en cero.</p>'
         )
         return page("Resumen nacional", content, "home")
     except DashboardError as exc:
-        return error_page("Resumen nacional", "home", str(exc))
+        return filter_error_page(
+            "Resumen nacional", "home", str(exc), home_filters(it, None), "/", status_code=503
+        )
 
 
 @app.get("/detalle", response_class=HTMLResponse)
-def detail(it: int | None = None, mes: int | None = None, area: str = "", q: str = ""):
+def detail(
+    it: int | None = None,
+    mes: int | None = None,
+    area: str = "",
+    cargo: str = "",
+    persona_id: str = "",
+    periodo: str = "",
+):
     if mes is not None and not 1 <= mes <= 12:
-        return error_page("Planificación por profesional", "detail", "El mes debe estar entre 1 y 12.")
+        return filter_error_page(
+            "Planificación por profesional",
+            "detail",
+            "El mes debe estar entre 1 y 12.",
+            filters(it, None, area, cargo, persona_id, periodo, load_institutes=False),
+            "/detalle",
+        )
+    if periodo not in {"", "ENE_ABR", "MAY_DIC"}:
+        return error_page("Planificación por profesional", "detail", "El período seleccionado no es válido.")
     try:
-        content = filters(it, mes, area, q)
+        content = filters(it, mes, area, cargo, persona_id, periodo)
         if mes:
             sql = """
                 SELECT TOP (500) p.persona_id, p.it, p.instituto, p.area, p.cargo,
@@ -339,12 +495,16 @@ def detail(it: int | None = None, mes: int | None = None, area: str = "", q: str
                 LEFT JOIN dbo.ejecucion_sic s
                   ON s.persona_id=p.persona_id AND s.it=p.it AND s.mes=p.mes
                 WHERE (? IS NULL OR p.it=?) AND (? = '' OR p.area LIKE ?)
-                  AND (? = '' OR CONVERT(NVARCHAR(30),p.persona_id) LIKE ? OR p.cargo LIKE ?)
+                  AND (? = '' OR p.cargo LIKE ?)
+                  AND (? = '' OR CONVERT(NVARCHAR(30),p.persona_id) LIKE ?)
                   AND p.mes=?
+                  AND (? = '' OR (?='ENE_ABR' AND p.periodo_jornada=N'Ene-Abr (44h)')
+                       OR (?='MAY_DIC' AND p.periodo_jornada=N'May-Dic (42h)'))
                 ORDER BY p.instituto,p.area,p.persona_id
             """
             params = (
-                it, it, area, f"%{area}%", q, f"%{q}%", f"%{q}%", mes,
+                it, it, area, f"%{area}%", cargo, f"%{cargo}%",
+                persona_id, f"%{persona_id}%", mes, periodo, periodo, periodo,
             )
             headers = [
                 "ID", "IT", "Instituto", "Área", "Cargo", "Mes", "H/S",
@@ -359,10 +519,16 @@ def detail(it: int | None = None, mes: int | None = None, area: str = "", q: str
                        d.observaciones, d.version_id
                 FROM dbo.dotacion_asistencial d
                 WHERE (? IS NULL OR d.it=?) AND (? = '' OR d.area LIKE ?)
-                  AND (? = '' OR CONVERT(NVARCHAR(30),d.persona_id) LIKE ? OR d.cargo LIKE ?)
+                  AND (? = '' OR d.cargo LIKE ?)
+                  AND (? = '' OR CONVERT(NVARCHAR(30),d.persona_id) LIKE ?)
+                  AND (? = '' OR (?='ENE_ABR' AND COALESCE(d.hs_m1,0)+COALESCE(d.hs_m2,0)+COALESCE(d.hs_m3,0)+COALESCE(d.hs_m4,0)>0)
+                       OR (?='MAY_DIC' AND COALESCE(d.hs_m5,0)+COALESCE(d.hs_m6,0)+COALESCE(d.hs_m7,0)+COALESCE(d.hs_m8,0)+COALESCE(d.hs_m9,0)+COALESCE(d.hs_m10,0)+COALESCE(d.hs_m11,0)+COALESCE(d.hs_m12,0)>0))
                 ORDER BY d.instituto,d.area,d.persona_id
             """
-            params = (it, it, area, f"%{area}%", q, f"%{q}%", f"%{q}%")
+            params = (
+                it, it, area, f"%{area}%", cargo, f"%{cargo}%",
+                persona_id, f"%{persona_id}%", periodo, periodo, periodo,
+            )
             headers = ["ID", "IT", "Instituto", "Área", "Cargo", "H/S dic", "FOJA", "Plan anual", "Meta anual", "Observaciones", "Versión"]
         rows = query(sql, params)
         table = (
@@ -387,7 +553,14 @@ def detail(it: int | None = None, mes: int | None = None, area: str = "", q: str
         )
         return page("Planificación por profesional", info + content + table, "detail")
     except DashboardError as exc:
-        return error_page("Planificación por profesional", "detail", str(exc))
+        return filter_error_page(
+            "Planificación por profesional",
+            "detail",
+            str(exc),
+            filters(it, mes, area, cargo, persona_id, periodo, load_institutes=False),
+            "/detalle",
+            status_code=503,
+        )
 
 
 def validate_workbook(path: Path, import_type: str) -> list[str]:
@@ -419,6 +592,104 @@ def load_jobs(limit: int = 100) -> list[dict[str, Any]]:
     )
 
 
+def update_job_manifest(job_id: str, stored_path: str, status: str) -> None:
+    expected_source = (INBOX_DIR / job_id / "source.xlsx").resolve()
+    if Path(stored_path).resolve() != expected_source:
+        raise ValueError("La ruta de la carga no coincide con su carpeta de intercambio.")
+    manifest_path = expected_source.parent / "manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if manifest.get("job_id") != job_id:
+        raise ValueError("El manifiesto no coincide con el identificador de la carga.")
+    manifest["status"] = status
+    temp_path: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w", encoding="utf-8", dir=manifest_path.parent,
+            prefix="manifest-", suffix=".tmp", delete=False,
+        ) as temp:
+            temp_path = Path(temp.name)
+            json.dump(manifest, temp, ensure_ascii=False, indent=2)
+            temp.write("\n")
+        os.replace(temp_path, manifest_path)
+    finally:
+        if temp_path and temp_path.exists():
+            temp_path.unlink()
+
+
+def transition_job(
+    job_id: str,
+    *,
+    expected_status: str,
+    new_status: str,
+    error_message: str | None,
+    clear_result: bool = False,
+) -> None:
+    try:
+        uuid.UUID(job_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail="Invalid job id") from exc
+    try:
+        conn = connect()
+    except DashboardError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    previous_status: str | None = None
+    stored_path: str | None = None
+    manifest_updated = False
+    try:
+        ensure_job_table(conn)
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT status, stored_path FROM dbo.web_import_jobs WITH (UPDLOCK,HOLDLOCK) WHERE job_id=?",
+            job_id,
+        )
+        current = cursor.fetchone()
+        if current is None:
+            raise HTTPException(status_code=404, detail="Job not found")
+        previous_status, stored_path = current
+        if previous_status != expected_status:
+            raise HTTPException(
+                status_code=409,
+                detail=f"Solo se permite cambiar una carga {expected_status}; estado actual: {previous_status}",
+            )
+        cursor.execute(
+            """
+            UPDATE dbo.web_import_jobs
+            SET status=?, error_message=?, rows_processed=CASE WHEN ?=1 THEN NULL ELSE rows_processed END,
+                completed_at=CASE WHEN ? IN ('SUCCEEDED','FAILED','CANCELLED')
+                    THEN SYSUTCDATETIME() ELSE NULL END
+            WHERE job_id=?
+            """,
+            new_status, error_message, int(clear_result), new_status, job_id,
+        )
+        update_job_manifest(job_id, stored_path, new_status)
+        manifest_updated = True
+        conn.commit()
+    except HTTPException:
+        conn.rollback()
+        raise
+    except DashboardError as exc:
+        conn.rollback()
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        conn.rollback()
+        logger.exception("No se pudo sincronizar el manifiesto de la carga %s", job_id)
+        raise HTTPException(
+            status_code=503,
+            detail=f"No se cambió el estado porque no se pudo actualizar el manifiesto: {exc}",
+        ) from exc
+    except pyodbc.Error as exc:
+        conn.rollback()
+        if manifest_updated and previous_status and stored_path:
+            try:
+                update_job_manifest(job_id, stored_path, previous_status)
+            except (OSError, ValueError, json.JSONDecodeError):
+                logger.exception("No se pudo restaurar el manifiesto de la carga %s", job_id)
+        logger.exception("No se pudo cambiar el estado de la carga %s", job_id)
+        raise HTTPException(status_code=500, detail="Database update failed") from exc
+    finally:
+        conn.close()
+
+
 @app.get("/cargas", response_class=HTMLResponse)
 def loads():
     try:
@@ -428,14 +699,27 @@ def loads():
         finally:
             conn.close()
         jobs = load_jobs()
-        rows = "".join(
-            "<tr>"
-            f"<td><code>{safe(job['job_id'])}</code></td><td>{safe(job['import_type'])}</td>"
-            f"<td>{safe(job['original_filename'])}</td><td><span class=\"badge {safe(job['status'])}\">{safe(job['status'])}</span></td>"
-            f"<td>{safe(job['submitted_by'])}</td><td>{safe(job['created_at'])}</td>"
-            f"<td>{safe(job['rows_processed'])}</td><td>{safe(job['error_message'])}</td></tr>"
-            for job in jobs
-        ) or '<tr><td colspan="8" class="empty">No hay cargas registradas.</td></tr>'
+        job_rows = []
+        for job in jobs:
+            actions = ""
+            if job["status"] == "PENDING":
+                actions = (
+                    f'<form class="inline" action="/cargas/{safe(job["job_id"])}/cancelar" method="post">'
+                    '<button class="danger" type="submit">Cancelar</button></form>'
+                )
+            elif job["status"] == "FAILED":
+                actions = (
+                    f'<form class="inline" action="/cargas/{safe(job["job_id"])}/reintentar" method="post">'
+                    '<button type="submit">Reencolar</button></form>'
+                )
+            job_rows.append(
+                "<tr>"
+                f"<td><code>{safe(job['job_id'])}</code></td><td>{safe(job['import_type'])}</td>"
+                f"<td>{safe(job['original_filename'])}</td><td><span class=\"badge {safe(job['status'])}\">{safe(job['status'])}</span></td>"
+                f"<td>{safe(job['submitted_by'])}</td><td>{safe(job['created_at'])}</td>"
+                f"<td>{safe(job['rows_processed'])}</td><td>{safe(job['error_message'])}</td><td>{actions or '—'}</td></tr>"
+            )
+        rows = "".join(job_rows) or '<tr><td colspan="9" class="empty">No hay cargas registradas.</td></tr>'
         body = f"""<p>Sube reportes Excel para crear un trabajo pendiente que Blue Prism puede recoger en la carpeta de intercambio.</p>
 <section class="panel"><h2>Nueva carga</h2><form action="/cargas" method="post" enctype="multipart/form-data" class="form-row">
 <label>Tipo de reporte<select name="import_type" required><option value="BUK">BUK · Dotacion_2026</option><option value="SIC">SIC · Ejecucion_SIC</option></select></label>
@@ -444,10 +728,11 @@ def loads():
 <button type="submit">Validar y poner en cola</button></form>
 <p class="subtle">Máximo 20 MB. Se valida el formato y la hoja esperada antes de guardar el original. No se modifican datos hasta que Blue Prism procese el trabajo.</p></section>
 <section class="panel"><h2>Historial de cargas</h2><div class="table-wrap"><table><thead><tr>
-<th>Job ID</th><th>Tipo</th><th>Archivo</th><th>Estado</th><th>Solicitante</th><th>Creada</th><th>Filas</th><th>Detalle</th>
+<th>Job ID</th><th>Tipo</th><th>Archivo</th><th>Estado</th><th>Solicitante</th><th>Creada</th><th>Filas</th><th>Detalle</th><th>Acciones</th>
 </tr></thead><tbody>{rows}</tbody></table></div></section>
 <section class="panel"><h2>Carpeta para Blue Prism</h2><p>Entrada configurada: <code>{safe(INBOX_DIR)}</code></p>
-<p>Un trabajo <b>PENDING</b> contiene <code>source.xlsx</code> y <code>manifest.json</code>. La web no inicia Blue Prism: debe existir un proceso programado que recoja trabajos pendientes.</p></section>"""
+<p>Un trabajo <b>PENDING</b> contiene <code>source.xlsx</code> y <code>manifest.json</code>. Cancelar cambia ambos estados a <b>CANCELLED</b>; el coordinador de Blue Prism debe consultar el estado antes de procesar. Una carga ya reclamada (<b>RUNNING</b>) no se cancela desde la web.</p>
+<p>La web no inicia Blue Prism: debe existir un proceso programado que recoja trabajos pendientes.</p></section>"""
         return page("Cargas BUK y SIC", body, "loads")
     except DashboardError as exc:
         return error_page("Cargas BUK y SIC", "loads", str(exc))
@@ -526,6 +811,35 @@ async def upload(
         await file.close()
         if temp_path and temp_path.exists():
             temp_path.unlink()
+
+
+@app.post("/cargas/{job_id}/cancelar")
+def cancel_job(job_id: str):
+    try:
+        transition_job(
+            job_id,
+            expected_status="PENDING",
+            new_status="CANCELLED",
+            error_message="Cancelada desde el dashboard.",
+        )
+        return RedirectResponse("/cargas", status_code=303)
+    except HTTPException as exc:
+        return error_page("Cargas BUK y SIC", "loads", str(exc.detail))
+
+
+@app.post("/cargas/{job_id}/reintentar")
+def retry_job(job_id: str):
+    try:
+        transition_job(
+            job_id,
+            expected_status="FAILED",
+            new_status="PENDING",
+            error_message=None,
+            clear_result=True,
+        )
+        return RedirectResponse("/cargas", status_code=303)
+    except HTTPException as exc:
+        return error_page("Cargas BUK y SIC", "loads", str(exc.detail))
 
 
 @app.get("/parametros", response_class=HTMLResponse)
@@ -771,20 +1085,30 @@ def update_job_status(
         conn = connect()
     except DashboardError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
+    previous_status: str | None = None
+    stored_path: str | None = None
+    manifest_updated = False
     try:
+        ensure_job_table(conn)
         cursor = conn.cursor()
-        cursor.execute("SELECT status FROM dbo.web_import_jobs WITH (UPDLOCK,HOLDLOCK) WHERE job_id=?", job_id)
+        cursor.execute(
+            "SELECT status, stored_path FROM dbo.web_import_jobs WITH (UPDLOCK,HOLDLOCK) WHERE job_id=?",
+            job_id,
+        )
         current = cursor.fetchone()
         if current is None:
             raise HTTPException(status_code=404, detail="Job not found")
+        current_status, stored_path = current
+        previous_status = current_status
         allowed = {
             "PENDING": {"RUNNING"},
             "RUNNING": {"SUCCEEDED", "FAILED"},
             "FAILED": {"RUNNING"},
             "SUCCEEDED": set(),
+            "CANCELLED": set(),
         }
-        if status not in allowed.get(current[0], set()):
-            raise HTTPException(status_code=409, detail=f"Transition {current[0]} -> {status} is not allowed")
+        if status not in allowed.get(current_status, set()):
+            raise HTTPException(status_code=409, detail=f"Transition {current_status} -> {status} is not allowed")
         cursor.execute(
             """
             UPDATE dbo.web_import_jobs
@@ -795,13 +1119,27 @@ def update_job_status(
             """,
             status, rows_processed, error_message or None, status, job_id,
         )
+        update_job_manifest(job_id, stored_path, status)
+        manifest_updated = True
         conn.commit()
         return {"job_id": job_id, "status": status}
     except HTTPException:
         conn.rollback()
         raise
+    except DashboardError as exc:
+        conn.rollback()
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        conn.rollback()
+        logger.exception("No se pudo sincronizar el manifiesto de la carga %s", job_id)
+        raise HTTPException(status_code=503, detail="Manifest update failed") from exc
     except pyodbc.Error as exc:
         conn.rollback()
+        if manifest_updated and previous_status and stored_path:
+            try:
+                update_job_manifest(job_id, stored_path, previous_status)
+            except (OSError, ValueError, json.JSONDecodeError):
+                logger.exception("No se pudo restaurar el manifiesto de la carga %s", job_id)
         logger.exception("No se pudo actualizar el trabajo %s", job_id)
         raise HTTPException(status_code=500, detail="Database update failed") from exc
     finally:
